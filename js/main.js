@@ -61,7 +61,7 @@
   function buildHeader() {
     return '<header class="site-header"><div class="container">' +
       '<a class="brand" href="index.html">' +
-      '<span class="brand-mark">노회</span>' +
+      '<img class="brand-logo" src="images/logo.svg" alt="시화산노회 로고">' +
       '<span class="brand-text"><span class="denom">THE PRESBYTERIAN CHURCH IN KOREA</span>' +
       '<span class="name">시화산노회</span></span></a>' +
       '<div class="header-contact">노회 사무실<strong>031-486-9993</strong>안산시 단원구 와동공원로1안길 13-7</div>' +
@@ -94,6 +94,12 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
+    var fav = document.createElement('link');
+    fav.rel = 'icon';
+    fav.type = 'image/svg+xml';
+    fav.href = 'images/logo.svg';
+    document.head.appendChild(fav);
+
     document.body.insertAdjacentHTML('afterbegin', buildTopbar() + buildHeader() + buildGnb());
     document.body.insertAdjacentHTML('beforeend', buildFooter());
 

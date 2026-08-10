@@ -50,7 +50,7 @@ var SHSAudit = (function () {
 })();
 
 var SHSAuth = (function () {
-  var USERS_KEY = 'shs_users_v2';
+  var USERS_KEY = 'shs_users_v3';
   var SESSION_KEY = 'shs_session_v1';
 
   /* 등급 정의
@@ -79,14 +79,27 @@ var SHSAuth = (function () {
     return 'h' + (h >>> 0).toString(36);
   }
 
+  /* 홈페이지 관리자: 노회장, 서기, 간사 */
   function seedUsers() {
     return [
-      { id: 'admin',    pw: hash('admin1234'), name: '홈페이지 관리자', role: 'superadmin', position: '최고관리자', church: '노회 사무실' },
       { id: 'parkhy',   pw: hash('1234'), name: '박흥열', role: 'president', position: '목사', church: '시흥생수교회' },
       { id: 'kwonbr',   pw: hash('1234'), name: '권병렬', role: 'clerk', position: '목사', church: '섬김의교회' },
       { id: 'gansa',    pw: hash('1234'), name: '노회 간사', role: 'staff', position: '간사', church: '노회 사무실' },
       { id: 'kimds',    pw: hash('1234'), name: '김동석', role: 'member', position: '목사', church: '운평장로교회' }
     ];
+  }
+
+  /* 별도 파일에서 계정을 보장 생성 (이미 있으면 유지) */
+  function ensureAccount(seed) {
+    var users = loadUsers();
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].id === seed.id) return;
+    }
+    users.push({
+      id: seed.id, pw: hash(seed.pw), name: seed.name,
+      role: seed.role || 'member', position: seed.position || '', church: seed.church || ''
+    });
+    saveUsers(users);
   }
 
   function loadUsers() {
@@ -250,6 +263,7 @@ var SHSAuth = (function () {
     if (!n || !c) return { ok: false, msg: '성명과 소속 교회를 모두 입력해 주세요.' };
     var found = [];
     loadUsers().forEach(function (u) {
+      if (u.role === 'superadmin') return;
       if (u.name.replace(/\s+/g, '') === n && normChurch(u.church) === c) found.push(maskId(u.id));
     });
     if (!found.length) {
@@ -271,6 +285,7 @@ var SHSAuth = (function () {
     var n = String(name).replace(/\s+/g, '');
     var c = normChurch(church);
     for (var i = 0; i < users.length; i++) {
+      if (users[i].role === 'superadmin') continue;
       if (users[i].id === id &&
           users[i].name.replace(/\s+/g, '') === n &&
           normChurch(users[i].church) === c) {
@@ -303,8 +318,12 @@ var SHSAuth = (function () {
 
   function removeAccount(actor, id) {
     if (!canManageMembers(actor)) return { ok: false, msg: '회원 삭제 권한이 없습니다.' };
-    if (id === 'admin') return { ok: false, msg: '최고관리자 계정은 삭제할 수 없습니다.' };
     var users = loadUsers();
+    for (var k = 0; k < users.length; k++) {
+      if (users[k].id === id && users[k].role === 'superadmin' && (!actor || actor.role !== 'superadmin')) {
+        return { ok: false, msg: '해당 아이디를 찾을 수 없습니다.' };
+      }
+    }
     var next = [];
     for (var i = 0; i < users.length; i++) {
       if (users[i].id !== id) next.push(users[i]);
@@ -343,6 +362,7 @@ var SHSAuth = (function () {
   return {
     login: login,
     logout: logout,
+    ensureAccount: ensureAccount,
     currentUser: currentUser,
     roleName: roleName,
     canManageMembers: canManageMembers,

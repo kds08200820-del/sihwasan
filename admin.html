@@ -60,12 +60,15 @@ document.addEventListener('DOMContentLoaded', function () {
       html += '</tbody></table>';
     }
 
-    /* 계정 목록 */
+    /* 계정 목록 (최고관리자 계정은 최고관리자에게만 표시) */
+    var visible = accounts.filter(function (a) {
+      return a.role !== 'superadmin' || isSuper;
+    });
     html += '<h2>홈페이지 회원 목록</h2>';
     html += '<table class="tbl"><thead><tr><th>아이디</th><th>성명</th><th>직분</th><th>소속</th><th>등급</th>' +
       (isSuper ? '<th style="width:210px">등급 변경</th>' : '') +
       '<th style="width:80px">관리</th></tr></thead><tbody>';
-    accounts.forEach(function (a) {
+    visible.forEach(function (a) {
       html += '<tr><td>' + e(a.id) + '</td><td>' + e(a.name) + '</td><td>' + e(a.position) + '</td><td>' + e(a.church) + '</td>' +
         '<td><span class="role-badge">' + SHSAuth.roleName(a.role) + '</span></td>';
       if (isSuper) {

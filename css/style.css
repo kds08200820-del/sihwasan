@@ -59,13 +59,7 @@ input, select, textarea { font-family: inherit; font-size: 0.95rem; }
   height: 92px;
 }
 .brand { display: flex; align-items: center; gap: 14px; }
-.brand-mark {
-  width: 52px; height: 52px; border: 2.5px solid var(--navy);
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Noto Serif KR', serif;
-  font-weight: 700; font-size: 1.15rem; color: var(--navy);
-  letter-spacing: -1px;
-}
+.brand-logo { height: 58px; width: auto; }
 .brand-text .denom {
   font-size: 0.72rem; color: var(--gray-5); letter-spacing: 2px;
 }
