@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로그인 - 시화산노회</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="page-head">
+  <div class="container">
+    <h1>로그인</h1>
+    <div class="crumb">홈 &gt; 로그인</div>
+  </div>
+</div>
+
+<div class="page-body container">
+
+  <div class="form-card">
+    <h2>회원 로그인</h2>
+    <div class="field">
+      <label for="login-id">아이디</label>
+      <input type="text" id="login-id" autocomplete="username">
+    </div>
+    <div class="field">
+      <label for="login-pw">비밀번호</label>
+      <input type="password" id="login-pw" autocomplete="current-password">
+    </div>
+    <div class="field">
+      <label><input type="checkbox" id="login-keep" style="width:auto;margin-right:6px">로그인 상태 유지</label>
+    </div>
+    <button class="btn" id="btn-login" style="width:100%">로그인</button>
+    <div class="form-msg" id="login-msg"></div>
+    <div class="find-links">
+      <a href="#" id="link-find-id">아이디 찾기</a>
+      <span class="sep">|</span>
+      <a href="#" id="link-find-pw">비밀번호 재설정</a>
+    </div>
+  </div>
+
+  <!-- 아이디 찾기 -->
+  <div class="form-card hidden" id="find-id-card" style="margin-top:20px">
+    <h2>아이디 찾기</h2>
+    <p style="font-size:0.85rem;color:var(--gray-5);text-align:center;margin-bottom:20px">
+      가입 시 등록한 성명과 소속 교회를 입력해 주세요.
+    </p>
+    <div class="field">
+      <label for="fi-name">성명</label>
+      <input type="text" id="fi-name">
+    </div>
+    <div class="field">
+      <label for="fi-church">소속 교회</label>
+      <input type="text" id="fi-church" placeholder="예: 운평장로교회">
+    </div>
+    <button class="btn" id="btn-find-id" style="width:100%">아이디 찾기</button>
+    <button class="btn ghost" id="btn-fi-cancel" style="width:100%;margin-top:8px">닫기</button>
+    <div class="form-msg" id="fi-msg"></div>
+    <div id="fi-result" class="hidden" style="margin-top:14px;border:1px solid var(--gray-2);background:var(--gray-1);padding:14px;font-size:0.9rem"></div>
+  </div>
+
+  <!-- 비밀번호 재설정 -->
+  <div class="form-card hidden" id="find-pw-card" style="margin-top:20px">
+    <h2>비밀번호 재설정</h2>
+    <p style="font-size:0.85rem;color:var(--gray-5);text-align:center;margin-bottom:20px">
+      본인 확인을 위해 아이디와 가입 시 등록한 성명·소속 교회를 입력해 주세요.
+    </p>
+    <div class="field">
+      <label for="fp-id">아이디</label>
+      <input type="text" id="fp-id" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="fp-name">성명</label>
+      <input type="text" id="fp-name">
+    </div>
+    <div class="field">
+      <label for="fp-church">소속 교회</label>
+      <input type="text" id="fp-church" placeholder="예: 운평장로교회">
+    </div>
+    <div class="field">
+      <label for="fp-pw">새 비밀번호 (4자 이상)</label>
+      <input type="password" id="fp-pw" autocomplete="new-password">
+    </div>
+    <div class="field">
+      <label for="fp-pw2">새 비밀번호 확인</label>
+      <input type="password" id="fp-pw2" autocomplete="new-password">
+    </div>
+    <button class="btn" id="btn-find-pw" style="width:100%">비밀번호 변경</button>
+    <button class="btn ghost" id="btn-fp-cancel" style="width:100%;margin-top:8px">닫기</button>
+    <div class="form-msg" id="fp-msg"></div>
+  </div>
+
+  <div class="form-card" style="margin-top:36px">
+    <h2>회원가입</h2>
+    <div class="field">
+      <label for="reg-id">아이디 (영문·숫자 4~20자)</label>
+      <input type="text" id="reg-id" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="reg-pw">비밀번호</label>
+      <input type="password" id="reg-pw" autocomplete="new-password">
+    </div>
+    <div class="field">
+      <label for="reg-name">성명</label>
+      <input type="text" id="reg-name">
+    </div>
+    <div class="field">
+      <label for="reg-pos">직분</label>
+      <select id="reg-pos"><option>목사</option><option>장로</option></select>
+    </div>
+    <div class="field">
+      <label for="reg-church">소속 교회</label>
+      <input type="text" id="reg-church" placeholder="예: 운평장로교회">
+    </div>
+    <div class="field" style="font-size:0.85rem">
+      <label style="font-weight:400">
+        <input type="checkbox" id="reg-agree" style="width:auto;margin-right:6px">
+        <a href="terms.html" target="_blank" style="color:var(--navy);text-decoration:underline">이용약관</a>과
+        <a href="privacy.html" target="_blank" style="color:var(--navy);text-decoration:underline">개인정보처리방침</a>에 동의합니다. (필수)
+      </label>
+    </div>
+    <button class="btn" id="btn-register" style="width:100%">가입하기</button>
+    <div class="form-msg" id="reg-msg"></div>
+  </div>
+
+
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  function doLogin() {
+    var id = document.getElementById('login-id').value.trim();
+    var pw = document.getElementById('login-pw').value;
+    var keep = document.getElementById('login-keep').checked;
+    var msg = document.getElementById('login-msg');
+    if (!id || !pw) {
+      msg.className = 'form-msg err';
+      msg.textContent = '아이디와 비밀번호를 입력해 주세요.';
+      return;
+    }
+    var r = SHSAuth.login(id, pw, keep);
+    if (r.ok) {
+      msg.className = 'form-msg ok';
+      msg.textContent = r.user.name + ' 님, 환영합니다.';
+      setTimeout(function () { location.href = 'index.html'; }, 400);
+    } else {
+      msg.className = 'form-msg err';
+      msg.textContent = r.msg;
+    }
+  }
+  document.getElementById('btn-login').addEventListener('click', doLogin);
+  document.getElementById('login-pw').addEventListener('keydown', function (ev) {
+    if (ev.key === 'Enter') doLogin();
+  });
+
+  /* ---- 아이디 찾기 / 비밀번호 재설정 ---- */
+  var fiCard = document.getElementById('find-id-card');
+  var fpCard = document.getElementById('find-pw-card');
+
+  function openCard(card) {
+    fiCard.classList.add('hidden');
+    fpCard.classList.add('hidden');
+    card.classList.remove('hidden');
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  document.getElementById('link-find-id').addEventListener('click', function (ev) {
+    ev.preventDefault();
+    openCard(fiCard);
+  });
+  document.getElementById('link-find-pw').addEventListener('click', function (ev) {
+    ev.preventDefault();
+    openCard(fpCard);
+  });
+  document.getElementById('btn-fi-cancel').addEventListener('click', function () {
+    fiCard.classList.add('hidden');
+  });
+  document.getElementById('btn-fp-cancel').addEventListener('click', function () {
+    fpCard.classList.add('hidden');
+  });
+
+  document.getElementById('btn-find-id').addEventListener('click', function () {
+    var msg = document.getElementById('fi-msg');
+    var box = document.getElementById('fi-result');
+    var r = SHSAuth.findIds(
+      document.getElementById('fi-name').value.trim(),
+      document.getElementById('fi-church').value.trim()
+    );
+    if (!r.ok) {
+      box.classList.add('hidden');
+      msg.className = 'form-msg err';
+      msg.textContent = r.msg;
+      return;
+    }
+    msg.className = 'form-msg ok';
+    msg.textContent = '일치하는 계정을 찾았습니다.';
+    box.classList.remove('hidden');
+    box.innerHTML = '<strong>회원님의 아이디</strong><div style="margin-top:6px">' +
+      r.ids.map(function (i) { return '<div>' + i + '</div>'; }).join('') + '</div>' +
+      '<div style="margin-top:10px;color:var(--gray-5);font-size:0.82rem">' +
+      '개인정보 보호를 위해 아이디 일부를 가려 표시합니다. 전체 아이디가 필요하시면 노회 사무실(031-486-9993)로 문의해 주세요.</div>';
+  });
+
+  document.getElementById('btn-find-pw').addEventListener('click', function () {
+    var msg = document.getElementById('fp-msg');
+    var pw = document.getElementById('fp-pw').value;
+    var pw2 = document.getElementById('fp-pw2').value;
+    if (pw !== pw2) {
+      msg.className = 'form-msg err';
+      msg.textContent = '새 비밀번호가 서로 일치하지 않습니다.';
+      return;
+    }
+    var r = SHSAuth.resetPassword(
+      document.getElementById('fp-id').value.trim(),
+      document.getElementById('fp-name').value.trim(),
+      document.getElementById('fp-church').value.trim(),
+      pw
+    );
+    if (!r.ok) {
+      msg.className = 'form-msg err';
+      msg.textContent = r.msg;
+      return;
+    }
+    msg.className = 'form-msg ok';
+    msg.textContent = '비밀번호가 변경되었습니다. 새 비밀번호로 로그인해 주세요.';
+    ['fp-id', 'fp-name', 'fp-church', 'fp-pw', 'fp-pw2'].forEach(function (id) {
+      document.getElementById(id).value = '';
+    });
+  });
+
+  document.getElementById('btn-register').addEventListener('click', function () {
+    var msg = document.getElementById('reg-msg');
+    if (!document.getElementById('reg-agree').checked) {
+      msg.className = 'form-msg err';
+      msg.textContent = '이용약관과 개인정보처리방침에 동의해야 가입할 수 있습니다.';
+      return;
+    }
+    var r = SHSAuth.register({
+      id: document.getElementById('reg-id').value.trim(),
+      pw: document.getElementById('reg-pw').value,
+      name: document.getElementById('reg-name').value.trim(),
+      position: document.getElementById('reg-pos').value,
+      church: document.getElementById('reg-church').value.trim()
+    });
+    if (!r.ok) {
+      msg.className = 'form-msg err';
+      msg.textContent = r.msg;
+      return;
+    }
+    msg.className = 'form-msg ok';
+    if (r.autoApproved) {
+      msg.textContent = '가입이 완료되었습니다. 회원명단과 일치하여 정회원으로 가입되었습니다. 로그인해 주세요.';
+    } else {
+      msg.textContent = '가입이 완료되었습니다. 회원명단과 일치하지 않아 승인대기 상태입니다. 서기·간사·최고관리자 확인 후 정회원으로 전환됩니다.';
+    }
+    document.getElementById('reg-id').value = '';
+    document.getElementById('reg-pw').value = '';
+    document.getElementById('reg-name').value = '';
+    document.getElementById('reg-church').value = '';
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>노회소개 - 시화산노회</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="page-head">
+  <div class="container">
+    <h1>노회소개</h1>
+    <div class="crumb">홈 &gt; 노회소개</div>
+  </div>
+</div>
+
+<div class="page-body container">
+
+  <h2 id="greeting">인사말</h2>
+  <p class="lead">시화산노회 홈페이지를 찾아주신 여러분을 환영합니다.</p>
+  <p>
+    대한예수교장로회(합동) 시화산노회는 화성시, 안산시, 시흥시와 수원시·용인시·오산시 일부 지역의
+    교회들이 함께 세운 노회입니다. 우리 노회는 장로회 정치 원리에 따라 지교회를 돌아보고,
+    목사와 장로를 세우며, 지역 복음화와 미자립교회 지원, 다음 세대 교육의 사명을 감당하고 있습니다.
+  </p>
+  <p>
+    "그의 안에서 건물마다 서로 연결하여 주 안에서 성전이 되어 가고"(엡 2:21)라는 말씀처럼,
+    시화산노회는 하나 됨을 이루고 함께 지어져 가는 교회를 소망합니다. 소속 교회와 성도들이
+    서로 연결되어 주님의 몸 된 교회를 세우는 일에 쓰임 받기를 기도합니다.
+  </p>
+  <p class="text-right"><strong>시화산노회장 박흥열 목사</strong></p>
+
+  <h2 id="history">노회 연혁</h2>
+  <p>
+    시화산노회는 2017년 창립되어 올해로 제19회기를 맞이하였습니다.
+    창립 이래 역대 노회장은 다음과 같습니다.
+  </p>
+  <table class="tbl" style="max-width:640px">
+    <thead>
+      <tr><th>회기</th><th>연도</th><th>노회장</th></tr>
+    </thead>
+    <tbody id="history-body"></tbody>
+  </table>
+  <h3>주요 연혁</h3>
+  <table class="tbl" style="max-width:640px">
+    <tbody>
+      <tr><td>2017. 2.</td><td class="left">시화산노회 창립, 노회규칙 제정</td></tr>
+      <tr><td>2017. 4.</td><td class="left">미래교회자립위원회 내규 제정</td></tr>
+      <tr><td>2018. 2.</td><td class="left">선거관리위원회 규약 제정</td></tr>
+      <tr><td>2025. 10.</td><td class="left">노회규칙 개정 (현행)</td></tr>
+      <tr><td>2026. 4.</td><td class="left">제19회 정기노회 (섬기는교회) — 제10대 임원 선출 (노회장 박흥열 목사)</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="area">관할지역 안내</h2>
+  <p>노회규칙 제1조에 따라 본회의 관할지역은 화성시, 안산시, 시흥시, 오산시, 수원시 일부, 용인시 일부를 포함한 지역이며, 세 개의 시찰회를 두고 있습니다.</p>
+  <table class="tbl">
+    <thead>
+      <tr><th>시찰회</th><th>관할 구역</th><th>소속 교회 수</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>북부시찰</td><td class="left">안산시 단원구와 시흥시 일부 지역</td><td>15개 교회</td></tr>
+      <tr><td>상록시찰</td><td class="left">안산시 상록구와 수원시 일부 지역</td><td>8개 교회</td></tr>
+      <tr><td>남부시찰</td><td class="left">화성시 지역과 오산시 일부, 용인시 일부 지역</td><td>15개 교회</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="location">오시는 길</h2>
+  <div class="side-box" style="max-width:640px">
+    <div class="box-head">노회 사무실</div>
+    <div class="box-body">
+      <p><strong>주소</strong> 경기도 안산시 단원구 와동공원로1안길 13-7 (반월교회 교육관 1층)</p>
+      <p><strong>전화</strong> 031-486-9993</p>
+      <p><strong>팩스</strong> 031-486-9993</p>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var tb = document.getElementById('history-body');
+  SHSData.history.forEach(function (h) {
+    tb.insertAdjacentHTML('beforeend',
+      '<tr><td>' + h.no + '</td><td>' + h.year + '년</td><td>' + h.president + ' 목사</td></tr>');
+  });
+});
+</script>
+</body>
+</html>

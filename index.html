@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>대한예수교장로회 시화산노회</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-kicker">대한예수교장로회(합동)</div>
+    <h1>시화산노회가 하나 됨을 이루고<br>함께 지어져 가는 교회를 세웁니다</h1>
+    <p>화성, 안산, 시흥, 수원, 용인, 오산 지역의 교회들이 그리스도 안에서 한 몸을 이루어
+       복음 전파와 교회 섬김의 사명을 감당하고 있습니다.</p>
+    <div class="hero-verse">"그의 안에서 건물마다 서로 연결하여 주 안에서 성전이 되어 가고" (엡 2:21)</div>
+  </div>
+</section>
+
+<div class="container">
+  <div class="home-grid">
+    <div>
+      <div class="section-title">
+        <h2>공지사항</h2>
+        <a class="more" href="board.html">더보기</a>
+      </div>
+      <ul class="notice-list" id="home-notices"></ul>
+    </div>
+    <div>
+      <div class="side-box">
+        <div class="box-head">노회 일정</div>
+        <div class="box-body" id="home-schedule"></div>
+      </div>
+      <div class="side-box">
+        <div class="box-head">제19회 정기노회</div>
+        <div class="box-body">
+          <p><strong>일시</strong> 2026년 4월 13일(월) 오전 10시</p>
+          <p><strong>장소</strong> 섬기는교회<br>경기도 화성특례시 수노을2로 15</p>
+          <p><strong>개회예배 설교</strong> 함께 지어져가는 교회<br>(엡 2:16~22, 노회장 박양수 목사)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quick-links">
+    <a href="organization.html#members">
+      <div class="q-title">회원명단</div>
+      <div class="q-desc">노회 소속 목사와 총대 장로 명단을 확인합니다.</div>
+    </a>
+    <a href="rules-presbytery.html">
+      <div class="q-title">노회 회칙</div>
+      <div class="q-desc">노회규칙 전문과 각종 내규를 열람합니다.</div>
+    </a>
+    <a href="archive.html#resolutions">
+      <div class="q-title">결의사항</div>
+      <div class="q-desc">지난 회기 임원회와 정기노회의 결의사항입니다.</div>
+    </a>
+    <a href="documents.html">
+      <div class="q-title">서류 발급</div>
+      <div class="q-desc">소속·재직·대표자 증명서 등 각종 서류를 발급합니다.</div>
+    </a>
+  </div>
+
+  <div class="home-gallery">
+    <div class="section-title">
+      <h2>갤러리</h2>
+      <a class="more" href="gallery.html">더보기</a>
+    </div>
+    <div class="grid" id="home-gallery"></div>
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var ul = document.getElementById('home-notices');
+  SHSData.notices.slice(0, 6).forEach(function (n) {
+    ul.insertAdjacentHTML('beforeend',
+      '<li><span class="cat">' + n.cat + '</span>' +
+      '<a href="board.html#notice">' + SHS.esc(n.title) + '</a>' +
+      '<span class="date">' + n.date + '</span></li>');
+  });
+
+  var sc = document.getElementById('home-schedule');
+  SHSData.schedule.forEach(function (s) {
+    sc.insertAdjacentHTML('beforeend',
+      '<div class="schedule-item"><span class="d">' + s.date + '</span><span class="t">' + SHS.esc(s.title) + '</span></div>');
+  });
+
+  var g = document.getElementById('home-gallery');
+  SHSData.gallery.slice(0, 4).forEach(function (p) {
+    g.insertAdjacentHTML('beforeend',
+      '<a href="gallery.html"><img src="' + p.thumb + '" alt="' + SHS.esc(p.title) + '"></a>');
+  });
+});
+</script>
+</body>
+</html>

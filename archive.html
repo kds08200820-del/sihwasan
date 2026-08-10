@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>자료실 - 시화산노회</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="page-head">
+  <div class="container">
+    <h1>자료실</h1>
+    <div class="crumb">홈 &gt; 자료실</div>
+  </div>
+</div>
+
+<div class="page-body container">
+
+  <div class="notice-banner">
+    자료실의 일부 자료는 <strong>정회원(노회 소속 목사·총대 장로)</strong> 로그인 후 열람할 수 있습니다.
+    임원회 내부 자료는 <a href="officer.html"><strong>임원방</strong></a>에서 열람하시기 바랍니다.
+  </div>
+
+  <h2>자료 목록</h2>
+  <table class="tbl">
+    <thead><tr><th style="width:70px">번호</th><th style="width:100px">분류</th><th>제목</th><th style="width:110px">등록일</th><th style="width:90px">열람</th></tr></thead>
+    <tbody id="archive-body"></tbody>
+  </table>
+
+  <h2 id="resolutions">지난 회기 결의사항</h2>
+  <div id="resolution-area"></div>
+
+  <h2 id="forms">구비서류 안내</h2>
+  <p>노회에 청원할 때에는 노회규칙 제36조에 따라 규정된 서식대로 당회장이 시찰회에 제출하여 진단받은 후 노회 서기에게 접수하여야 합니다. 주요 청원별 구비서류는 다음과 같습니다.</p>
+  <table class="tbl">
+    <thead><tr><th style="width:220px">청원 구분</th><th>구비서류</th></tr></thead>
+    <tbody>
+      <tr><td>청빙 청원 (위임·시무목사)</td><td class="left">당회장 청원서 2통, 교인 청빙서(서명날인) 2통, 공동의회록 사본 2통</td></tr>
+      <tr><td>청빙 청원 (부목사·부목사 계속)</td><td class="left">당회장 청원서 1통, 당회록 사본 1통</td></tr>
+      <tr><td>목사고시 청원</td><td class="left">본인 청원서·당회장 추천서 1통, 강도사 인허증 사본 1통, 사진 첨부 이력서 1통, 가족관계증명서 1통</td></tr>
+      <tr><td>장로고시 청원</td><td class="left">본인 청원서·당회장 추천서 1통, 공동의회록 1통, 사진 첨부 이력서 1통, 가족관계증명서 1통, 성경통신과 수료증 사본 1통</td></tr>
+      <tr><td>전도사고시 청원</td><td class="left">본인 청원서·당회장 청원서 1통, 사진 첨부 이력서 1통, 졸업(예정)증명서 1통</td></tr>
+      <tr><td>신학입학 추천 청원</td><td class="left">본인 청원서·당회장 청원서 1통, 졸업증명서 1통, 사진 첨부 이력서 1통, 목사후보생고시 합격증 사본 1통</td></tr>
+      <tr><td>당회조직·장로증원 청원</td><td class="left">당회장 청원서 1통</td></tr>
+      <tr><td>교회가입 청원</td><td class="left">임시당회장 가입청원서 1통, 설립자 및 교인 서명 1통, 공동의회록 사본 1통</td></tr>
+      <tr><td>교회주소·명칭 변경 청원</td><td class="left">당회장 청원서 1통(사유 첨부), 공동의회록 사본 1통</td></tr>
+      <tr><td>이명이래 청원</td><td class="left">본인 청원서 1통, (강도사·목사후보생) 당회장 청원서 1통, 사진 첨부 이력서 1통, 가족관계증명서 1통</td></tr>
+      <tr><td>이명이거 청원</td><td class="left">본인 청원서 1통, (강도사·목사후보생) 당회장 청원서 1통</td></tr>
+      <tr><td>각종 연기 청원</td><td class="left">당회장 청원서 1통 (목사위임·장로고시·장로장립, 한 노회기에 한하여 연기 가능)</td></tr>
+      <tr><td>목사 시무 사면 청원</td><td class="left">본인 청원서 1통</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/data.js"></script>
+<script src="private/resolutions.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var user = SHSAuth.currentUser();
+  var e = SHS.esc;
+
+  var tb = document.getElementById('archive-body');
+  SHSData.archives.forEach(function (a, i) {
+    var canView = a.officerOnly ? SHSAuth.isOfficer(user) : (a.memberOnly ? SHSAuth.isMember(user) : true);
+    var badge = a.officerOnly ? ' <span class="badge-locked">임원</span>' :
+                (a.memberOnly ? ' <span class="badge-locked">정회원</span>' : '');
+    var lockMsg = a.officerOnly ? '노회 임원(노회장·서기·간사)과 최고관리자만 열람할 수 있습니다.' :
+                  '정회원 로그인 후 열람할 수 있습니다.';
+    var title = (canView && a.href)
+      ? '<a href="' + a.href + '" style="color:var(--navy);text-decoration:underline">' + e(a.title) + '</a>'
+      : e(a.title);
+    var status;
+    if (canView) {
+      status = a.href ? '<a href="' + a.href + '" style="color:var(--navy);text-decoration:underline">바로가기</a>'
+                      : ((a.memberOnly || a.officerOnly) ? '열람 가능' : '공개');
+    } else {
+      status = user ? '권한 없음' : '<a href="login.html" style="color:var(--navy);text-decoration:underline">로그인</a>';
+    }
+    tb.insertAdjacentHTML('beforeend',
+      '<tr><td>' + (SHSData.archives.length - i) + '</td>' +
+      '<td>' + a.type + '</td>' +
+      '<td class="left">' + title + badge +
+      '<div style="font-size:0.82rem;color:var(--gray-5);margin-top:2px">' + (canView ? e(a.desc) : lockMsg) + '</div></td>' +
+      '<td>' + a.date + '</td>' +
+      '<td>' + status + '</td></tr>');
+  });
+
+  var area = document.getElementById('resolution-area');
+  if (!SHSAuth.isMember(user)) {
+    area.innerHTML =
+      '<div class="notice-banner">지난 회기 결의사항은 <strong>정회원 전용</strong> 자료입니다. ' +
+      (user ? '현재 승인대기 상태입니다. 서기·간사·최고관리자의 확인 후 열람할 수 있습니다.'
+            : '노회 소속 목사와 총대 장로께서는 로그인 후 열람하시기 바랍니다. ' +
+              '<a class="btn sm" style="margin-left:10px" href="login.html">로그인</a>') +
+      '</div>';
+    return;
+  }
+  /* 결의사항 자료는 공개 저장소에 포함되지 않는 별도 파일에서 제공된다. */
+  if (!SHSData.resolutions || !SHSData.resolutions.length) {
+    area.innerHTML =
+      '<div class="notice-banner">결의사항 자료는 보안을 위해 인터넷 홈페이지에 게시하지 않습니다. ' +
+      '서버 인증 연동 후 정회원에게 온라인으로 제공될 예정이며, 현재는 노회 사무실(031-486-9993)에서 열람하실 수 있습니다.</div>';
+    return;
+  }
+  SHSAudit.log('view', '결의사항 열람', '자료실에서 지난 회기 결의사항 열람');
+  var html = '';
+  SHSData.resolutions.forEach(function (r) {
+    var items = '';
+    r.items.forEach(function (it, i) { items += '<li>' + (i + 1) + '. ' + e(it) + '</li>'; });
+    html += '<div class="side-box" style="margin-bottom:18px"><div class="box-head">' + e(r.session) + '</div>' +
+      '<div class="box-body"><ol style="list-style:none">' + items + '</ol></div></div>';
+  });
+  html += '<h3>제19회 정기노회 주요 헌의안건</h3><div class="side-box"><div class="box-body"><ol style="list-style:none">';
+  SHSData.agenda.forEach(function (a, i) { html += '<li>' + (i + 1) + '. ' + e(a) + '</li>'; });
+  html += '</ol></div></div>';
+  area.innerHTML = html;
+});
+</script>
+</body>
+</html>

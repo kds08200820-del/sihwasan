@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>서류 발급 - 시화산노회</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="page-head">
+  <div class="container">
+    <h1>서류 발급</h1>
+    <div class="crumb">홈 &gt; 임원방 &gt; 서류 발급</div>
+  </div>
+</div>
+
+<div class="page-body container">
+  <div id="doc-area"></div>
+  <div id="cert-print"></div>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var user = SHSAuth.currentUser();
+  var area = document.getElementById('doc-area');
+  var e = SHS.esc;
+  var LOG_KEY = 'shs_doclog_v1';
+
+  if (!user || !SHSAuth.canIssueDocuments(user)) {
+    area.innerHTML =
+      '<div class="notice-banner">서류 발급은 <strong>서기, 노회장, 간사</strong>만 할 수 있습니다.' +
+      (user ? ' 현재 등급(' + SHSAuth.roleName(user.role) + ')으로는 발급할 수 없습니다. 서류가 필요하신 회원께서는 노회 사무실(031-486-9993)로 신청해 주시기 바랍니다.'
+            : ' <a class="btn sm" style="margin-left:10px" href="login.html">로그인</a>') +
+      '</div>' +
+      '<h2>발급 가능 서류 안내</h2>' +
+      '<div class="doc-list">' +
+      '<div class="doc-item"><div class="d-name">소속증명서</div><div class="d-desc">노회 소속 교역자임을 증명합니다. 연말정산, 기관 제출 등에 사용합니다.</div></div>' +
+      '<div class="doc-item"><div class="d-name">재직증명서</div><div class="d-desc">해당 교회에 재직 중임을 증명합니다.</div></div>' +
+      '<div class="doc-item"><div class="d-name">대표자증명서</div><div class="d-desc">해당 교회의 대표자임을 증명합니다. 은행 제출 등에 사용합니다.</div></div>' +
+      '<div class="doc-item"><div class="d-name">직인증명서</div><div class="d-desc">교회 직인을 증명합니다. 은행 제출 등에 사용합니다.</div></div>' +
+      '</div>';
+    return;
+  }
+
+  function loadLog() {
+    try { return JSON.parse(localStorage.getItem(LOG_KEY)) || []; } catch (x) { return []; }
+  }
+  function saveLog(l) { localStorage.setItem(LOG_KEY, JSON.stringify(l)); }
+
+  var html = '';
+  html += '<div class="notice-banner"><strong>' + e(user.name) + '</strong> 님(' + SHSAuth.roleName(user.role) + '), 서류 발급 권한이 확인되었습니다. 발급된 서류는 발급 대장에 자동 기록됩니다.</div>';
+  html += '<h2>증명서 발급</h2>';
+  html += '<div class="admin-card" style="max-width:760px"><div class="inline-form">' +
+    '<div class="field"><label>서류 종류</label><select id="d-type">' +
+    '<option>소속증명서</option><option>재직증명서</option><option>대표자증명서</option><option>직인증명서</option><option>은퇴목사확인서</option>' +
+    '</select></div>' +
+    '<div class="field"><label>대상자 성명</label><input type="text" id="d-name"></div>' +
+    '<div class="field"><label>직위</label><select id="d-pos"><option>목사</option><option>부목사</option><option>장로</option><option>전도사</option></select></div>' +
+    '<div class="field"><label>소속 교회</label><input type="text" id="d-church"></div>' +
+    '<div class="field"><label>용도</label><select id="d-purpose">' +
+    '<option>연말정산용</option><option>은행제출용</option><option>기관제출용</option><option>총회제출용</option><option>회사제출용</option><option>교회제출용</option><option>기타</option>' +
+    '</select></div>' +
+    '<button class="btn" id="btn-issue">발급</button>' +
+    '</div><div class="form-msg" id="d-msg"></div></div>';
+
+  /* 발급 대장 */
+  html += '<h2>발급 대장</h2><div id="log-table"></div>';
+  area.innerHTML = html;
+
+  function renderLog() {
+    var log = loadLog();
+    var t = document.getElementById('log-table');
+    if (!log.length) {
+      t.innerHTML = '<p style="color:var(--gray-5)">발급 기록이 없습니다.</p>';
+      return;
+    }
+    var rows = '';
+    log.slice().reverse().forEach(function (d) {
+      rows += '<tr><td>' + e(d.no) + '</td><td>' + e(d.date) + '</td><td>' + e(d.doc) + '</td><td>' + e(d.name) + '</td><td>' + e(d.church) + '</td><td>' + e(d.purpose) + '</td><td>' + e(d.issuer) + '</td></tr>';
+    });
+    t.innerHTML = '<table class="tbl"><thead><tr><th>발급번호</th><th>발급일</th><th>서류명</th><th>대상자</th><th>교회</th><th>용도</th><th>발급자</th></tr></thead><tbody>' + rows + '</tbody></table>';
+  }
+  renderLog();
+
+  document.getElementById('btn-issue').addEventListener('click', function () {
+    var msg = document.getElementById('d-msg');
+    var doc = document.getElementById('d-type').value;
+    var name = document.getElementById('d-name').value.trim();
+    var pos = document.getElementById('d-pos').value;
+    var church = document.getElementById('d-church').value.trim();
+    var purpose = document.getElementById('d-purpose').value;
+    if (!name || !church) {
+      msg.className = 'form-msg err';
+      msg.textContent = '대상자 성명과 소속 교회를 입력해 주세요.';
+      return;
+    }
+    var log = loadLog();
+    var seq = log.length + 1;
+    var today = new Date();
+    var ds = today.getFullYear() + '. ' + (today.getMonth() + 1) + '. ' + today.getDate() + '.';
+    var no = '시화산노 제19-' + String(seq).padStart(3, '0') + '호';
+    var rec = { no: no, date: ds, doc: doc, name: name, pos: pos, church: church, purpose: purpose, issuer: user.name };
+    log.push(rec);
+    saveLog(log);
+    SHSAudit.log('issue', '서류 발급', no + ' ' + doc + ' (대상 ' + name + ', ' + church + ', ' + purpose + ')');
+    msg.className = 'form-msg ok';
+    msg.textContent = no + ' ' + doc + '가 발급되었습니다. 아래 증명서를 인쇄하시기 바랍니다.';
+    renderLog();
+    renderCert(rec);
+    document.getElementById('cert-print').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  function certText(rec) {
+    switch (rec.doc) {
+      case '재직증명서':
+        return '위 사람은 대한예수교장로회(합동) 시화산노회 소속 ' + rec.church + ' ' + rec.pos + '로 재직 중임을 증명합니다.';
+      case '대표자증명서':
+        return '위 사람은 대한예수교장로회(합동) 시화산노회 소속 ' + rec.church + '의 대표자임을 증명합니다.';
+      case '직인증명서':
+        return '위 ' + rec.church + '의 직인은 본 노회에 등록된 직인임을 증명합니다.';
+      case '은퇴목사확인서':
+        return '위 사람은 대한예수교장로회(합동) 시화산노회 소속 은퇴목사임을 확인합니다.';
+      default:
+        return '위 사람은 대한예수교장로회(합동) 시화산노회 소속 ' + rec.church + ' ' + rec.pos + '임을 증명합니다.';
+    }
+  }
+
+  function renderCert(rec) {
+    var c = document.getElementById('cert-print');
+    c.innerHTML =
+      '<div class="cert-sheet">' +
+      '<div class="c-no">' + e(rec.no) + '</div>' +
+      '<h2>' + e(rec.doc) + '</h2>' +
+      '<table class="c-body" style="width:100%"><tbody>' +
+      '<tr><td>성명</td><td>' + e(rec.name) + '</td></tr>' +
+      '<tr><td>직위</td><td>' + e(rec.pos) + '</td></tr>' +
+      '<tr><td>소속</td><td>대한예수교장로회 ' + e(rec.church) + '</td></tr>' +
+      '<tr><td>용도</td><td>' + e(rec.purpose) + '</td></tr>' +
+      '</tbody></table>' +
+      '<div class="c-text">' + e(certText(rec)) + '</div>' +
+      '<div class="c-date">' + e(rec.date) + '</div>' +
+      '<div class="c-issuer">대한예수교장로회 시화산노회장</div>' +
+      '<p style="text-align:center;font-size:0.8rem;color:var(--gray-5);margin-top:20px" class="no-print">노회 직인은 노회 사무실에서 날인합니다.</p>' +
+      '</div>' +
+      '<p class="text-right no-print" style="max-width:720px;margin:0 auto 40px">' +
+      '<button class="btn" onclick="window.print()">인쇄</button></p>';
+  }
+});
+</script>
+</body>
+</html>

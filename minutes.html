@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>노회 회의록 - 시화산노회</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="page-head">
+  <div class="container">
+    <h1>노회 회의록</h1>
+    <div class="crumb">홈 &gt; 임원방 &gt; 회의록</div>
+  </div>
+</div>
+
+<div class="page-body container" style="max-width:900px">
+  <div id="minutes-gate"></div>
+  <div id="minutes-content" class="hidden"></div>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var user = SHSAuth.currentUser();
+  var gate = document.getElementById('minutes-gate');
+  var box = document.getElementById('minutes-content');
+
+  if (!SHSAuth.isOfficer(user)) {
+    if (!user) {
+      gate.innerHTML =
+        '<div class="notice-banner">노회 회의록은 <strong>노회 임원(노회장·서기·간사)과 최고관리자</strong>만 열람할 수 있습니다. ' +
+        '임원 계정으로 로그인해 주시기 바랍니다. <a class="btn sm" style="margin-left:10px" href="login.html">로그인</a></div>';
+    } else {
+      gate.innerHTML =
+        '<div class="notice-banner">노회 회의록은 <strong>노회 임원(노회장·서기·간사)과 최고관리자</strong>만 열람할 수 있는 자료입니다. ' +
+        '현재 등급(' + SHSAuth.roleName(user.role) + ')으로는 열람할 수 없습니다. 회의록 열람이 필요한 회원께서는 노회 사무실(031-486-9993)로 문의해 주시기 바랍니다.</div>';
+    }
+    return;
+  }
+
+  /* 회의록 본문은 공개 저장소에 포함되지 않는 별도 파일에서 불러온다.
+   * 서버 인증(Supabase 등) 연동 전까지는 노회 내부 컴퓨터에서만 열람된다. */
+  fetch('private/minutes-content.html')
+    .then(function (res) {
+      if (!res.ok) throw new Error('not available');
+      return res.text();
+    })
+    .then(function (html) {
+      box.innerHTML = html;
+      box.classList.remove('hidden');
+      SHSAudit.log('view', '회의록 열람', '제19회 정기노회 회의록 열람');
+    })
+    .catch(function () {
+      gate.innerHTML =
+        '<div class="notice-banner">회의록 본문은 보안을 위해 인터넷 홈페이지에 게시하지 않습니다. ' +
+        '서버 인증 연동 후 임원에게 온라인으로 제공될 예정이며, 현재는 노회 사무실(031-486-9993)에서 열람하실 수 있습니다.</div>';
+    });
+});
+</script>
+</body>
+</html>

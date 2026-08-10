@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>회원 관리 - 시화산노회</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="page-head">
+  <div class="container">
+    <h1>회원 관리</h1>
+    <div class="crumb">홈 &gt; 임원방 &gt; 회원 관리</div>
+  </div>
+</div>
+
+<div class="page-body container">
+  <div id="admin-area"></div>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var user = SHSAuth.currentUser();
+  var area = document.getElementById('admin-area');
+  var e = SHS.esc;
+
+  if (!user || !SHSAuth.canManageMembers(user)) {
+    area.innerHTML =
+      '<div class="notice-banner">회원 관리는 <strong>노회장, 서기, 간사, 최고관리자</strong>만 이용할 수 있습니다.' +
+      (user ? ' 현재 등급(' + SHSAuth.roleName(user.role) + ')으로는 이용할 수 없습니다.'
+            : ' <a class="btn sm" style="margin-left:10px" href="login.html">로그인</a>') +
+      '</div>';
+    return;
+  }
+
+  var isSuper = SHSAuth.canAssignRoles(user);
+  var canApprove = SHSAuth.canApproveMembers(user);
+
+  function render() {
+    var accounts = SHSAuth.listAccounts();
+    var html = '';
+    html += '<div class="notice-banner">회원명단 추가·삭제 권한: <strong>노회장, 서기, 간사, 최고관리자</strong>' +
+      ' / 승인대기 회원의 정회원 설정: <strong>서기, 간사, 최고관리자</strong>' +
+      (isSuper ? ' / 직책(노회장·서기·간사) 지정 권한: <strong>최고관리자</strong>' : '') + '</div>';
+
+    /* 승인대기 회원 */
+    var pendings = accounts.filter(function (a) { return a.role === 'pending'; });
+    if (pendings.length) {
+      html += '<h2>승인대기 회원</h2>';
+      html += '<p>가입 시 입력한 이름과 소속 교회가 회원명단과 일치하지 않은 회원입니다. 확인 후 정회원으로 설정해 주세요.</p>';
+      html += '<table class="tbl"><thead><tr><th>아이디</th><th>성명</th><th>직분</th><th>소속 교회</th><th style="width:120px">처리</th></tr></thead><tbody>';
+      pendings.forEach(function (a) {
+        html += '<tr><td>' + e(a.id) + '</td><td>' + e(a.name) + '</td><td>' + e(a.position) + '</td><td>' + e(a.church) + '</td>' +
+          '<td>' + (canApprove ? '<button class="btn sm" data-approve="' + e(a.id) + '">정회원 설정</button>' : '승인 권한 없음') + '</td></tr>';
+      });
+      html += '</tbody></table>';
+    }
+
+    /* 계정 목록 */
+    html += '<h2>홈페이지 회원 목록</h2>';
+    html += '<table class="tbl"><thead><tr><th>아이디</th><th>성명</th><th>직분</th><th>소속</th><th>등급</th>' +
+      (isSuper ? '<th style="width:210px">등급 변경</th>' : '') +
+      '<th style="width:80px">관리</th></tr></thead><tbody>';
+    accounts.forEach(function (a) {
+      html += '<tr><td>' + e(a.id) + '</td><td>' + e(a.name) + '</td><td>' + e(a.position) + '</td><td>' + e(a.church) + '</td>' +
+        '<td><span class="role-badge">' + SHSAuth.roleName(a.role) + '</span></td>';
+      if (isSuper) {
+        html += '<td><select data-role-for="' + e(a.id) + '">' +
+          ['member', 'staff', 'clerk', 'president', 'superadmin'].map(function (r) {
+            return '<option value="' + r + '"' + (a.role === r ? ' selected' : '') + '>' + SHSAuth.roleName(r) + '</option>';
+          }).join('') +
+          '</select> <button class="btn sm" data-assign="' + e(a.id) + '">적용</button></td>';
+      }
+      html += '<td>' + (a.id !== 'admin' ? '<button class="btn danger sm" data-remove="' + e(a.id) + '">삭제</button>' : '') + '</td></tr>';
+    });
+    html += '</tbody></table>';
+
+    /* 회원 추가 */
+    html += '<h2>회원 추가</h2>';
+    html += '<div class="admin-card" style="max-width:760px"><div class="inline-form">' +
+      '<div class="field"><label>아이디</label><input type="text" id="na-id"></div>' +
+      '<div class="field"><label>초기 비밀번호</label><input type="text" id="na-pw"></div>' +
+      '<div class="field"><label>성명</label><input type="text" id="na-name"></div>' +
+      '<div class="field"><label>직분</label><select id="na-pos"><option>목사</option><option>장로</option><option>간사</option></select></div>' +
+      '<div class="field"><label>소속 교회</label><input type="text" id="na-church"></div>' +
+      '<button class="btn" id="btn-add">추가</button>' +
+      '</div><div class="form-msg" id="add-msg"></div>' +
+      '<p style="font-size:0.82rem;color:var(--gray-5);margin-top:10px">' +
+      '정회원은 시화산노회 소속 목사와 총대 장로로 구성됩니다. 신규 계정은 정회원 등급으로 생성되며, ' +
+      (isSuper ? '직책 지정은 위 목록의 등급 변경에서 할 수 있습니다.' : '직책 지정은 최고관리자에게 요청하시기 바랍니다.') +
+      '</p></div>';
+
+    area.innerHTML = html;
+    bind();
+  }
+
+  function bind() {
+    area.querySelectorAll('button[data-approve]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var id = b.dataset.approve;
+        if (!confirm('회원 "' + id + '" 님을 정회원으로 설정하시겠습니까?')) return;
+        var r = SHSAuth.approveMember(user, id);
+        if (!r.ok) alert(r.msg);
+        render();
+      });
+    });
+    area.querySelectorAll('button[data-remove]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var id = b.dataset.remove;
+        if (!confirm('회원 "' + id + '" 계정을 삭제하시겠습니까?')) return;
+        var r = SHSAuth.removeAccount(user, id);
+        if (!r.ok) alert(r.msg);
+        render();
+      });
+    });
+    area.querySelectorAll('button[data-assign]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var id = b.dataset.assign;
+        var sel = area.querySelector('select[data-role-for="' + id + '"]');
+        var r = SHSAuth.assignRole(user, id, sel.value);
+        if (!r.ok) { alert(r.msg); return; }
+        alert('등급이 변경되었습니다: ' + id + ' → ' + SHSAuth.roleName(sel.value));
+        render();
+      });
+    });
+    document.getElementById('btn-add').addEventListener('click', function () {
+      var msg = document.getElementById('add-msg');
+      var data = {
+        id: document.getElementById('na-id').value.trim(),
+        pw: document.getElementById('na-pw').value,
+        name: document.getElementById('na-name').value.trim(),
+        position: document.getElementById('na-pos').value,
+        church: document.getElementById('na-church').value.trim()
+      };
+      if (!data.id || !data.pw || !data.name) {
+        msg.className = 'form-msg err';
+        msg.textContent = '아이디, 비밀번호, 성명은 필수 항목입니다.';
+        return;
+      }
+      var r = SHSAuth.addAccount(user, data);
+      if (!r.ok) {
+        msg.className = 'form-msg err';
+        msg.textContent = r.msg;
+        return;
+      }
+      render();
+    });
+  }
+
+  render();
+});
+</script>
+</body>
+</html>

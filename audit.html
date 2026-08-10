@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>감독(감사 로그) - 시화산노회</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="page-head">
+  <div class="container">
+    <h1>감독 (감사 로그)</h1>
+    <div class="crumb">홈 &gt; 임원방 &gt; 감독</div>
+  </div>
+</div>
+
+<div class="page-body container">
+  <div id="audit-area"></div>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var user = SHSAuth.currentUser();
+  var area = document.getElementById('audit-area');
+  var e = SHS.esc;
+
+  if (!user || !SHSAuth.canAssignRoles(user)) {
+    area.innerHTML =
+      '<div class="notice-banner">감사 로그는 <strong>최고관리자</strong>만 열람할 수 있습니다.' +
+      (user ? ' 현재 등급(' + SHSAuth.roleName(user.role) + ')으로는 열람할 수 없습니다.'
+            : ' <a class="btn sm" style="margin-left:10px" href="login.html">로그인</a>') +
+      '</div>';
+    return;
+  }
+
+  SHSAudit.log('view', '감사 로그 열람', '감독 페이지 접속');
+
+  var html = '';
+  html += '<div class="notice-banner">개인정보 열람, 자료의 추가·수정·삭제, 서류 발급, 로그인 등 주요 행위가 자동으로 기록됩니다. ' +
+    '기록은 삭제할 수 없으며 최근 500건까지 보존됩니다.</div>';
+  html += '<div class="board-controls">' +
+    '<select id="filter-type" style="border:1px solid var(--gray-3);padding:8px 12px">' +
+    '<option value="">전체 구분</option>' +
+    '<option value="view">열람</option>' +
+    '<option value="create">추가</option>' +
+    '<option value="update">수정</option>' +
+    '<option value="delete">삭제</option>' +
+    '<option value="issue">서류발급</option>' +
+    '<option value="auth">접속</option>' +
+    '</select>' +
+    '<input type="text" id="filter-text" placeholder="이용자·내용 검색">' +
+    '</div>';
+  html += '<div id="log-list"></div>';
+  area.innerHTML = html;
+
+  function render() {
+    var type = document.getElementById('filter-type').value;
+    var q = document.getElementById('filter-text').value.trim();
+    var rows = SHSAudit.list().slice().reverse().filter(function (r) {
+      if (type && r.type !== type) return false;
+      if (q && (r.userId + r.userName + r.action + r.detail).indexOf(q) === -1) return false;
+      return true;
+    });
+    var t = document.getElementById('log-list');
+    if (!rows.length) {
+      t.innerHTML = '<p style="color:var(--gray-5)">기록이 없습니다.</p>';
+      return;
+    }
+    var body = '';
+    rows.forEach(function (r) {
+      body += '<tr><td style="white-space:nowrap">' + e(r.time) + '</td>' +
+        '<td>' + e(r.userName) + '<div style="font-size:0.78rem;color:var(--gray-5)">' + e(r.userId) +
+        (r.role !== '-' ? ' / ' + SHSAuth.roleName(r.role) : '') + '</div></td>' +
+        '<td><span class="role-badge">' + SHSAudit.typeName(r.type) + '</span></td>' +
+        '<td class="left">' + e(r.action) +
+        (r.detail ? '<div style="font-size:0.82rem;color:var(--gray-5)">' + e(r.detail) + '</div>' : '') + '</td></tr>';
+    });
+    t.innerHTML = '<table class="tbl"><thead><tr><th style="width:170px">일시</th><th style="width:160px">이용자</th>' +
+      '<th style="width:100px">구분</th><th>내용</th></tr></thead><tbody>' + body + '</tbody></table>' +
+      '<p style="font-size:0.82rem;color:var(--gray-5)">총 ' + rows.length + '건</p>';
+  }
+  document.getElementById('filter-type').addEventListener('change', render);
+  document.getElementById('filter-text').addEventListener('input', render);
+  render();
+});
+</script>
+</body>
+</html>

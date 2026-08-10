@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>갤러리 - 시화산노회</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="page-head">
+  <div class="container">
+    <h1>갤러리</h1>
+    <div class="crumb">홈 &gt; 갤러리</div>
+  </div>
+</div>
+
+<div class="page-body container">
+  <h2>노회 행사</h2>
+  <p>노회 수련회와 각종 행사 사진을 모았습니다. 사진을 누르면 크게 볼 수 있습니다.</p>
+  <div class="gallery-grid" id="gallery-grid"></div>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lb-close" aria-label="닫기">&times;</button>
+  <img id="lb-img" src="" alt="">
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var grid = document.getElementById('gallery-grid');
+  SHSData.gallery.forEach(function (p) {
+    grid.insertAdjacentHTML('beforeend',
+      '<figure><a href="#" data-img="' + p.img + '"><img src="' + p.thumb + '" alt="' + SHS.esc(p.title) + '" loading="lazy"></a>' +
+      '<figcaption><div class="g-title">' + SHS.esc(p.title) + '</div><div class="g-date">' + SHS.esc(p.date) + '</div></figcaption></figure>');
+  });
+
+  var lb = document.getElementById('lightbox');
+  var lbImg = document.getElementById('lb-img');
+  grid.addEventListener('click', function (ev) {
+    var a = ev.target.closest('a[data-img]');
+    if (!a) return;
+    ev.preventDefault();
+    lbImg.src = a.dataset.img;
+    lb.classList.add('open');
+  });
+  function close() { lb.classList.remove('open'); lbImg.src = ''; }
+  document.getElementById('lb-close').addEventListener('click', close);
+  lb.addEventListener('click', function (ev) { if (ev.target === lb) close(); });
+  document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') close(); });
+});
+</script>
+</body>
+</html>

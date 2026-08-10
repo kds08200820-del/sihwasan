@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>조직 - 시화산노회</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="page-head">
+  <div class="container">
+    <h1>조직</h1>
+    <div class="crumb">홈 &gt; 조직</div>
+  </div>
+</div>
+
+<div class="page-body container">
+
+  <div class="tabs">
+    <button class="active" data-tab="officers">노회 임원</button>
+    <button data-tab="members">회원명단</button>
+    <button data-tab="sichal">시찰회</button>
+    <button data-tab="committees">상비부</button>
+  </div>
+
+  <!-- 임원 -->
+  <div class="tab-panel active" id="officers">
+    <h2>노회 임원</h2>
+    <p>노회규칙 제6조에 따라 본회의 임원은 회장 1인, 부회장 2인(목사 1인, 장로 1인), 서기 1인, 부서기 1인, 회록서기 1인, 회록부서기 1인, 회계 1인, 부회계 1인으로 구성됩니다. 임기는 1년이며 매년 4월 봄 정기노회에서 선출합니다. 현 임원은 2026년 4월 13일 제19회 정기노회에서 선출되었습니다.</p>
+    <table class="tbl" style="max-width:720px">
+      <thead><tr><th>직책</th><th>성명</th><th>직분</th><th>시무교회</th></tr></thead>
+      <tbody id="officers-body"></tbody>
+    </table>
+
+    <h2>총회 총대</h2>
+    <p>제19회 정기노회에서 선출된 총회 총대입니다. 노회규칙 제16조에 따라 노회장과 장로 부노회장은 자동 총대가 됩니다.</p>
+    <table class="tbl" style="max-width:720px">
+      <tbody id="delegates-body"></tbody>
+    </table>
+  </div>
+
+  <!-- 회원명단 -->
+  <div class="tab-panel" id="members">
+    <h2>회원명단</h2>
+    <div class="notice-banner">
+      회원명단의 추가·삭제는 노회규정에 따라 <strong>노회장, 서기, 간사, 최고관리자</strong>만 할 수 있습니다.
+      권한이 있는 분은 로그인 후 <a href="admin.html"><strong>회원 관리</strong></a> 페이지를 이용해 주시기 바랍니다.
+    </div>
+
+    <h3>원로목사</h3>
+    <table class="tbl" style="max-width:640px">
+      <thead><tr><th>번호</th><th>성명</th><th>교회</th><th>은퇴일</th></tr></thead>
+      <tbody id="senior-body"></tbody>
+    </table>
+
+    <h3>은퇴목사</h3>
+    <table class="tbl" style="max-width:640px">
+      <thead><tr><th>번호</th><th>성명</th><th>교회</th></tr></thead>
+      <tbody id="retired-body"></tbody>
+    </table>
+
+    <h3>목사 회원</h3>
+    <table class="tbl">
+      <thead><tr><th>번호</th><th>성명</th><th>시무교회</th><th>번호</th><th>성명</th><th>시무교회</th></tr></thead>
+      <tbody id="pastors-body"></tbody>
+    </table>
+
+    <h3>부목사</h3>
+    <table class="tbl" style="max-width:640px">
+      <thead><tr><th>번호</th><th>성명</th><th>시무교회</th></tr></thead>
+      <tbody id="assoc-body"></tbody>
+    </table>
+
+    <h3>무임목사</h3>
+    <p id="nocharge-body" style="font-size:0.94rem"></p>
+
+    <h3>장로 총대</h3>
+    <div id="elders-body"></div>
+  </div>
+
+  <!-- 시찰회 -->
+  <div class="tab-panel" id="sichal">
+    <h2>시찰회</h2>
+    <p>노회규칙 제20조에 따라 본회는 세 개의 시찰 구역을 두고 있으며, 각 시찰회는 경내 지교회의 형편을 살펴 지도하고 그 상황을 노회에 보고합니다.</p>
+    <div id="sichal-body"></div>
+  </div>
+
+  <!-- 상비부 -->
+  <div class="tab-panel" id="committees">
+    <h2>상비부</h2>
+    <p>노회규칙 제10조에 따라 본회는 7개 상비부를 두며, 각 부원은 매년 4월 봄 정기노회에서 공천위원회의 보고에 의하여 본회가 인준합니다. 임기는 3개년으로 하되 매년 3분의 1씩 개선합니다.</p>
+    <div id="committees-body"></div>
+  </div>
+
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var e = SHS.esc;
+  var user = SHSAuth.currentUser();
+
+  /* 개인정보 보호: 정회원 이상만 실명 열람, 그 외에는 마스킹(**) 처리 */
+  var canSee = SHSAuth.isMember(user);
+  if (canSee) {
+    SHSAudit.log('view', '회원명단 열람', '조직 페이지에서 실명 명단을 열람함');
+  } else {
+    document.querySelector('.page-body').insertAdjacentHTML('afterbegin',
+      '<div class="notice-banner">개인정보 보호를 위해 성명은 일부 가려서 표시됩니다. ' +
+      '실명 명단은 <strong>정회원 로그인</strong> 후 열람할 수 있으며, 열람 기록이 남습니다.</div>');
+  }
+  function dn(name) { return e(canSee ? name : SHS.maskName(name)); }
+  /* "김종수 목사(섬기는교회)" / "박흥열 (노회장)" 등 이름이 앞에 오는 문자열 마스킹 */
+  function dt(s) {
+    if (canSee) return e(s);
+    var m = String(s).match(/^(\S+)([\s\S]*)$/);
+    return m ? e(SHS.maskName(m[1]) + m[2]) : e(s);
+  }
+  /* "이재용, 주강완, 박영수" 형태 명단 마스킹 */
+  function dl(s) {
+    if (canSee) return e(s);
+    return e(String(s).split(',').map(function (x) { return SHS.maskName(x.trim()); }).join(', '));
+  }
+
+  var ob = document.getElementById('officers-body');
+  SHSData.officers.forEach(function (o) {
+    ob.insertAdjacentHTML('beforeend',
+      '<tr><td><span class="role-badge">' + o.role + '</span></td><td>' + dn(o.name) + '</td><td>' + o.position + '</td><td>' + e(o.church) + '</td></tr>');
+  });
+
+  var db = document.getElementById('delegates-body');
+  var d = SHSData.delegates;
+  function dlist(arr) { return arr.map(dt).join(', '); }
+  db.insertAdjacentHTML('beforeend',
+    '<tr><th style="width:140px">목사 정총대</th><td class="left">' + dlist(d.pastorMain) + '</td></tr>' +
+    '<tr><th>목사 부총대</th><td class="left">' + dlist(d.pastorSub) + '</td></tr>' +
+    '<tr><th>장로 정총대</th><td class="left">' + dlist(d.elderMain) + '</td></tr>' +
+    '<tr><th>장로 부총대</th><td class="left">' + dlist(d.elderSub) + '</td></tr>');
+
+  var sb = document.getElementById('senior-body');
+  SHSData.seniorPastors.forEach(function (m, i) {
+    sb.insertAdjacentHTML('beforeend',
+      '<tr><td>' + (i + 1) + '</td><td>' + dn(m.name) + '</td><td>' + e(m.church) + '</td><td>' + m.retired + '</td></tr>');
+  });
+
+  var rb = document.getElementById('retired-body');
+  SHSData.retiredPastors.forEach(function (m, i) {
+    rb.insertAdjacentHTML('beforeend',
+      '<tr><td>' + (i + 1) + '</td><td>' + dn(m.name) + '</td><td>' + e(m.church) + '</td></tr>');
+  });
+
+  var pb = document.getElementById('pastors-body');
+  var ps = SHSData.pastors;
+  var half = Math.ceil(ps.length / 2);
+  for (var i = 0; i < half; i++) {
+    var a = ps[i], b = ps[i + half];
+    pb.insertAdjacentHTML('beforeend',
+      '<tr><td>' + (i + 1) + '</td><td>' + dn(a.name) + '</td><td>' + e(a.church) + '</td>' +
+      (b ? '<td>' + (i + half + 1) + '</td><td>' + dn(b.name) + '</td><td>' + e(b.church) + '</td>' : '<td></td><td></td><td></td>') + '</tr>');
+  }
+
+  var ab = document.getElementById('assoc-body');
+  SHSData.assocPastors.forEach(function (m, i) {
+    ab.insertAdjacentHTML('beforeend',
+      '<tr><td>' + (i + 1) + '</td><td>' + dn(m.name) + '</td><td>' + e(m.church) + '</td></tr>');
+  });
+
+  document.getElementById('nocharge-body').textContent =
+    SHSData.pastorsWithoutCharge.map(function (n) { return canSee ? n : SHS.maskName(n); }).join(', ');
+
+  var eb = document.getElementById('elders-body');
+  Object.keys(SHSData.elders).forEach(function (k) {
+    var rows = '';
+    SHSData.elders[k].forEach(function (m, i) {
+      rows += '<tr><td>' + (i + 1) + '</td><td>' + dn(m.name) + '</td><td>' + e(m.church) + '</td></tr>';
+    });
+    eb.insertAdjacentHTML('beforeend',
+      '<h4 style="color:var(--navy);margin:18px 0 8px">' + k + ' (' + SHSData.elders[k].length + '명)</h4>' +
+      '<table class="tbl" style="max-width:640px"><thead><tr><th>번호</th><th>성명</th><th>교회</th></tr></thead><tbody>' + rows + '</tbody></table>');
+  });
+
+  var scb = document.getElementById('sichal-body');
+  SHSData.sichals.forEach(function (s) {
+    var churches = s.churches.join(', ');
+    scb.insertAdjacentHTML('beforeend',
+      '<div class="side-box" style="margin-bottom:20px"><div class="box-head">' + s.name + '</div>' +
+      '<div class="box-body">' +
+      '<p><strong>관할</strong> ' + e(s.area) + '</p>' +
+      '<p><strong>시찰장</strong> ' + dt(s.head) + ' / <strong>서기</strong> ' + dt(s.clerk) + ' / <strong>회계</strong> ' + dt(s.treasurer) + '</p>' +
+      '<p><strong>소속 교회 (' + s.churches.length + ')</strong> ' + e(churches) + '</p>' +
+      '</div></div>');
+  });
+
+  var cb = document.getElementById('committees-body');
+  SHSData.committees.forEach(function (c) {
+    cb.insertAdjacentHTML('beforeend',
+      '<div class="side-box" style="margin-bottom:20px"><div class="box-head">' + c.name + '</div>' +
+      '<div class="box-body">' +
+      '<p>' + e(c.duty) + '</p>' +
+      '<table class="tbl" style="margin:10px 0 0">' +
+      '<tbody>' +
+      '<tr><th style="width:90px">임원</th><td class="left">부장 ' + dt(c.head) + ' / 서기 ' + dt(c.clerk) + ' / 회계 ' + dt(c.treasurer) + '</td></tr>' +
+      '<tr><th style="width:90px">1년조</th><td class="left">' + dl(c.y1) + '</td></tr>' +
+      '<tr><th>2년조</th><td class="left">' + dl(c.y2) + '</td></tr>' +
+      '<tr><th>3년조</th><td class="left">' + dl(c.y3) + '</td></tr>' +
+      '</tbody></table>' +
+      '</div></div>');
+  });
+});
+</script>
+</body>
+</html>

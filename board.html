@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>게시판 - 시화산노회</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="page-head">
+  <div class="container">
+    <h1>게시판</h1>
+    <div class="crumb">홈 &gt; 게시판</div>
+  </div>
+</div>
+
+<div class="page-body container">
+
+  <div class="tabs">
+    <button class="active" data-tab="notice">공지사항</button>
+    <button data-tab="free">자유게시판</button>
+  </div>
+
+  <!-- 공지사항 -->
+  <div class="tab-panel active" id="notice">
+    <table class="tbl">
+      <thead><tr><th style="width:70px">번호</th><th style="width:80px">분류</th><th>제목</th><th style="width:110px">등록일</th></tr></thead>
+      <tbody id="notice-body"></tbody>
+    </table>
+    <div id="notice-view" class="hidden side-box" style="margin-top:20px">
+      <div class="box-head" id="nv-title"></div>
+      <div class="box-body">
+        <p id="nv-date" style="font-size:0.82rem;color:var(--gray-5)"></p>
+        <p id="nv-body"></p>
+        <button class="btn ghost sm" id="nv-close">목록으로</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 자유게시판 -->
+  <div class="tab-panel" id="free">
+    <div class="notice-banner">
+      자유게시판은 <strong>정회원</strong>만 글을 작성할 수 있습니다. 목록은 누구나 열람할 수 있습니다.
+    </div>
+    <div class="board-controls">
+      <input type="text" id="post-search" placeholder="제목 검색">
+      <button class="btn" id="btn-write">글쓰기</button>
+    </div>
+    <table class="tbl">
+      <thead><tr><th style="width:70px">번호</th><th>제목</th><th style="width:110px">작성자</th><th style="width:110px">작성일</th><th style="width:80px">관리</th></tr></thead>
+      <tbody id="post-body"></tbody>
+    </table>
+
+    <div id="write-form" class="hidden side-box" style="margin-top:20px">
+      <div class="box-head">글쓰기</div>
+      <div class="box-body">
+        <div class="field"><label>제목</label><input type="text" id="w-title"></div>
+        <div class="field"><label>내용</label><textarea id="w-body" rows="6"></textarea></div>
+        <button class="btn" id="btn-submit">등록</button>
+        <button class="btn ghost" id="btn-cancel">취소</button>
+        <div class="form-msg" id="w-msg"></div>
+      </div>
+    </div>
+
+    <div id="post-view" class="hidden side-box" style="margin-top:20px">
+      <div class="box-head" id="pv-title"></div>
+      <div class="box-body">
+        <p id="pv-meta" style="font-size:0.82rem;color:var(--gray-5)"></p>
+        <p id="pv-body" style="white-space:pre-wrap"></p>
+        <button class="btn ghost sm" id="pv-close">목록으로</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var user = SHSAuth.currentUser();
+  var e = SHS.esc;
+  var POSTS_KEY = 'shs_posts_v1';
+
+  /* ---- 공지사항 ---- */
+  var nb = document.getElementById('notice-body');
+  var notices = SHSData.notices;
+  notices.forEach(function (n, i) {
+    nb.insertAdjacentHTML('beforeend',
+      '<tr><td>' + (notices.length - i) + '</td><td>' + n.cat + '</td>' +
+      '<td class="left"><a href="#" data-nid="' + n.id + '" style="color:var(--ink)">' + e(n.title) + '</a></td>' +
+      '<td>' + n.date + '</td></tr>');
+  });
+  nb.addEventListener('click', function (ev) {
+    var a = ev.target.closest('a[data-nid]');
+    if (!a) return;
+    ev.preventDefault();
+    var n = notices.filter(function (x) { return x.id === +a.dataset.nid; })[0];
+    if (!n) return;
+    document.getElementById('nv-title').textContent = n.title;
+    document.getElementById('nv-date').textContent = n.date;
+    document.getElementById('nv-body').textContent = n.body;
+    document.getElementById('notice-view').classList.remove('hidden');
+    document.getElementById('notice-view').scrollIntoView({ behavior: 'smooth' });
+  });
+  document.getElementById('nv-close').addEventListener('click', function () {
+    document.getElementById('notice-view').classList.add('hidden');
+  });
+
+  /* ---- 자유게시판 ---- */
+  function loadPosts() {
+    try { return JSON.parse(localStorage.getItem(POSTS_KEY)) || []; } catch (x) { return []; }
+  }
+  function savePosts(p) { localStorage.setItem(POSTS_KEY, JSON.stringify(p)); }
+
+  if (!localStorage.getItem(POSTS_KEY)) {
+    savePosts([
+      { id: 1, title: '제19회 정기노회 장소 안내 부탁드립니다', author: '김동석', authorId: 'kimds',
+        date: '2026-03-20', body: '섬기는교회 주차 안내 부탁드립니다. 교회 주차장이 협소한 경우 인근 공영주차장 정보를 공유해 주시면 감사하겠습니다.' },
+      { id: 2, title: '노회 홈페이지 개설을 축하합니다', author: '노회 간사', authorId: 'gansa',
+        date: '2026-03-18', body: '노회 소식과 자료를 한곳에서 볼 수 있게 되어 감사합니다. 많은 이용 바랍니다.' }
+    ]);
+  }
+
+  var canDelete = function (p) {
+    return user && (user.id === p.authorId || SHSAuth.canManageMembers(user));
+  };
+
+  function renderPosts(filter) {
+    var tb = document.getElementById('post-body');
+    tb.innerHTML = '';
+    var posts = loadPosts();
+    var shown = posts.filter(function (p) {
+      return !filter || p.title.indexOf(filter) !== -1;
+    });
+    if (!shown.length) {
+      tb.innerHTML = '<tr><td colspan="5">게시글이 없습니다.</td></tr>';
+      return;
+    }
+    shown.slice().reverse().forEach(function (p, idx) {
+      tb.insertAdjacentHTML('beforeend',
+        '<tr><td>' + (shown.length - idx) + '</td>' +
+        '<td class="left"><a href="#" data-pid="' + p.id + '" style="color:var(--ink)">' + e(p.title) + '</a></td>' +
+        '<td>' + e(p.author) + '</td><td>' + p.date + '</td>' +
+        '<td>' + (canDelete(p) ? '<button class="btn danger sm" data-del="' + p.id + '">삭제</button>' : '') + '</td></tr>');
+    });
+  }
+  renderPosts('');
+
+  document.getElementById('post-search').addEventListener('input', function () {
+    renderPosts(this.value.trim());
+  });
+
+  document.getElementById('post-body').addEventListener('click', function (ev) {
+    var del = ev.target.closest('button[data-del]');
+    if (del) {
+      if (!confirm('이 게시글을 삭제하시겠습니까?')) return;
+      var target = loadPosts().filter(function (p) { return p.id === +del.dataset.del; })[0];
+      savePosts(loadPosts().filter(function (p) { return p.id !== +del.dataset.del; }));
+      SHSAudit.log('delete', '게시글 삭제', '자유게시판 "' + (target ? target.title : del.dataset.del) + '"');
+      renderPosts(document.getElementById('post-search').value.trim());
+      return;
+    }
+    var a = ev.target.closest('a[data-pid]');
+    if (!a) return;
+    ev.preventDefault();
+    var p = loadPosts().filter(function (x) { return x.id === +a.dataset.pid; })[0];
+    if (!p) return;
+    document.getElementById('pv-title').textContent = p.title;
+    document.getElementById('pv-meta').textContent = p.author + ' / ' + p.date;
+    document.getElementById('pv-body').textContent = p.body;
+    document.getElementById('post-view').classList.remove('hidden');
+    document.getElementById('post-view').scrollIntoView({ behavior: 'smooth' });
+  });
+  document.getElementById('pv-close').addEventListener('click', function () {
+    document.getElementById('post-view').classList.add('hidden');
+  });
+
+  document.getElementById('btn-write').addEventListener('click', function () {
+    if (!SHSAuth.isMember(user)) {
+      if (user) {
+        alert('현재 승인대기 상태입니다. 정회원 전환 후 글을 쓸 수 있습니다.');
+        return;
+      }
+      alert('글쓰기는 정회원 로그인 후 이용할 수 있습니다.');
+      location.href = 'login.html';
+      return;
+    }
+    document.getElementById('write-form').classList.remove('hidden');
+    document.getElementById('write-form').scrollIntoView({ behavior: 'smooth' });
+  });
+  document.getElementById('btn-cancel').addEventListener('click', function () {
+    document.getElementById('write-form').classList.add('hidden');
+  });
+  document.getElementById('btn-submit').addEventListener('click', function () {
+    var t = document.getElementById('w-title').value.trim();
+    var b = document.getElementById('w-body').value.trim();
+    var msg = document.getElementById('w-msg');
+    if (!t || !b) {
+      msg.className = 'form-msg err';
+      msg.textContent = '제목과 내용을 모두 입력해 주세요.';
+      return;
+    }
+    var posts = loadPosts();
+    var nid = posts.length ? Math.max.apply(null, posts.map(function (p) { return p.id; })) + 1 : 1;
+    var today = new Date();
+    var ds = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+    posts.push({ id: nid, title: t, author: user.name, authorId: user.id, date: ds, body: b });
+    savePosts(posts);
+    SHSAudit.log('create', '게시글 등록', '자유게시판 "' + t + '"');
+    document.getElementById('w-title').value = '';
+    document.getElementById('w-body').value = '';
+    document.getElementById('write-form').classList.add('hidden');
+    renderPosts('');
+  });
+});
+</script>
+</body>
+</html>

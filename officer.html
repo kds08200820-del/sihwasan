@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>임원방 - 시화산노회</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="page-head">
+  <div class="container">
+    <h1>임원방</h1>
+    <div class="crumb">홈 &gt; 임원방</div>
+  </div>
+</div>
+
+<div class="page-body container">
+  <div id="officer-area"></div>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/data.js"></script>
+<script src="private/resolutions.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var user = SHSAuth.currentUser();
+  var area = document.getElementById('officer-area');
+  var e = SHS.esc;
+
+  /* 임원방 접근: 노회장, 서기, 간사, 최고관리자 */
+  var hasAccess = user && (user.role === 'president' || user.role === 'clerk' || user.role === 'staff' || user.role === 'superadmin');
+
+  if (!user) {
+    area.innerHTML =
+      '<div class="notice-banner">임원방은 노회 임원(노회장·서기·간사)과 최고관리자만 이용할 수 있습니다. ' +
+      '로그인 후 이용해 주시기 바랍니다. <a class="btn sm" style="margin-left:10px" href="login.html">로그인</a></div>';
+    return;
+  }
+  if (!hasAccess) {
+    area.innerHTML =
+      '<div class="notice-banner">임원방은 <strong>노회장, 서기, 간사, 최고관리자</strong>만 이용할 수 있는 공간입니다. ' +
+      '현재 등급(' + SHSAuth.roleName(user.role) + ')으로는 열람할 수 없습니다.</div>';
+    return;
+  }
+
+  var html = '';
+  html += '<div class="notice-banner"><strong>' + e(user.name) + '</strong> 님(' + SHSAuth.roleName(user.role) + '), 임원방에 오신 것을 환영합니다.</div>';
+
+  /* 바로가기 */
+  html += '<h2>임원 업무</h2><div class="doc-list">';
+  html += '<div class="doc-item"><div class="d-name">노회 회의록</div><div class="d-desc">제19회 정기노회 회의록 전문을 열람합니다. (임원 전용)</div><a class="btn sm" href="minutes.html">바로가기</a></div>';
+  html += '<div class="doc-item"><div class="d-name">서류 발급</div><div class="d-desc">소속·재직·대표자·직인 증명서 등 각종 서류를 발급합니다. (노회장·서기·간사)</div><a class="btn sm" href="documents.html">바로가기</a></div>';
+  html += '<div class="doc-item"><div class="d-name">회원 관리</div><div class="d-desc">회원명단과 홈페이지 계정을 추가·삭제하고, 승인대기 회원을 정회원으로 설정합니다.</div><a class="btn sm" href="admin.html">바로가기</a></div>';
+  html += '<div class="doc-item"><div class="d-name">감독 (감사 로그)</div><div class="d-desc">개인정보 열람, 자료 추가·수정·삭제, 서류 발급 기록을 확인합니다. (최고관리자 전용)</div><a class="btn sm" href="audit.html">바로가기</a></div>';
+  html += '</div>';
+
+  /* 임원회 결의사항 전체 (공개 저장소 미포함 자료) */
+  html += '<h2>임원회 결의사항</h2>';
+  if (SHSData.resolutions && SHSData.resolutions.length) {
+    SHSData.resolutions.forEach(function (r) {
+      var items = '';
+      r.items.forEach(function (it, i) { items += '<li>' + (i + 1) + '. ' + e(it) + '</li>'; });
+      html += '<div class="side-box" style="margin-bottom:18px"><div class="box-head">' + e(r.session) + '</div>' +
+        '<div class="box-body"><ol style="list-style:none">' + items + '</ol></div></div>';
+    });
+  } else {
+    html += '<div class="notice-banner">결의사항 자료는 보안을 위해 인터넷 홈페이지에 게시하지 않습니다. ' +
+      '서버 인증 연동 후 온라인으로 제공될 예정이며, 현재는 노회 사무실에서 열람하실 수 있습니다.</div>';
+  }
+
+  /* 서류 발급 대장 */
+  html += '<h2>서류 발급 대장</h2>';
+  html += '<p>홈페이지에서 발급한 서류의 기록입니다. 발급 업무는 <a href="documents.html" style="text-decoration:underline;color:var(--navy)">서류 발급</a> 페이지에서 처리합니다.</p>';
+  var log = [];
+  try { log = JSON.parse(localStorage.getItem('shs_doclog_v1')) || []; } catch (x) {}
+  if (!log.length) {
+    html += '<p style="color:var(--gray-5)">발급 기록이 없습니다.</p>';
+  } else {
+    html += '<table class="tbl"><thead><tr><th>발급번호</th><th>발급일</th><th>서류명</th><th>대상자</th><th>교회</th><th>용도</th><th>발급자</th></tr></thead><tbody>';
+    log.slice().reverse().forEach(function (d) {
+      html += '<tr><td>' + e(d.no) + '</td><td>' + e(d.date) + '</td><td>' + e(d.doc) + '</td><td>' + e(d.name) + '</td><td>' + e(d.church) + '</td><td>' + e(d.purpose) + '</td><td>' + e(d.issuer) + '</td></tr>';
+    });
+    html += '</tbody></table>';
+  }
+
+  area.innerHTML = html;
+});
+</script>
+</body>
+</html>
