@@ -36,6 +36,7 @@
     <h2>총회 총대</h2>
     <p>제19회 정기노회에서 선출된 총회 총대입니다. 노회규칙 제16조에 따라 노회장과 장로 부노회장은 자동 총대가 됩니다.</p>
     <table class="tbl" style="max-width:720px">
+      <thead><tr><th>구분</th><th>성명</th><th>소속 교회</th></tr></thead>
       <tbody id="delegates-body"></tbody>
     </table>
   </div>
@@ -132,13 +133,10 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   var db = document.getElementById('delegates-body');
-  var d = SHSData.delegates;
-  function dlist(arr) { return arr.map(dt).join(', '); }
-  db.insertAdjacentHTML('beforeend',
-    '<tr><th style="width:140px">목사 정총대</th><td class="left">' + dlist(d.pastorMain) + '</td></tr>' +
-    '<tr><th>목사 부총대</th><td class="left">' + dlist(d.pastorSub) + '</td></tr>' +
-    '<tr><th>장로 정총대</th><td class="left">' + dlist(d.elderMain) + '</td></tr>' +
-    '<tr><th>장로 부총대</th><td class="left">' + dlist(d.elderSub) + '</td></tr>');
+  SHSData.delegates.forEach(function (m) {
+    db.insertAdjacentHTML('beforeend',
+      '<tr><td>' + e(m.type) + '</td><td>' + dn(m.name) + (m.note ? '<br><span style="font-size:0.82rem;color:var(--gray-5)">(' + e(m.note) + ')</span>' : '') + '</td><td>' + e(m.church) + '</td></tr>');
+  });
 
   var sb = document.getElementById('senior-body');
   SHSData.seniorPastors.forEach(function (m, i) {

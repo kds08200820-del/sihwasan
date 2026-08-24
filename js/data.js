@@ -18,12 +18,20 @@ var SHSData = {
   ],
 
   /* ---------- 총회 총대 (제19회 정기노회 선출) ---------- */
-  delegates: {
-    pastorMain: ['박흥열 (노회장)', '김종수', '서용호'],
-    pastorSub: ['박재완', '김성중', '박양수'],
-    elderMain: ['이신영 (부노회장)', '윤성복', '정재영'],
-    elderSub: ['김창룡', '백윤복', '이재복']
-  },
+  delegates: [
+    { type: '목사 정총대', name: '박흥열', note: '노회장', church: '시흥생수교회' },
+    { type: '목사 정총대', name: '김종수', note: '', church: '섬기는교회' },
+    { type: '목사 정총대', name: '서용호', note: '', church: '수암제일교회' },
+    { type: '목사 부총대', name: '박재완', note: '', church: '수암새권능교회' },
+    { type: '목사 부총대', name: '김성중', note: '', church: '한숲우리교회' },
+    { type: '목사 부총대', name: '박양수', note: '', church: '힘찬교회' },
+    { type: '장로 정총대', name: '이신영', note: '부노회장', church: '수암제일교회' },
+    { type: '장로 정총대', name: '윤성복', note: '', church: '섬기는교회' },
+    { type: '장로 정총대', name: '정재영', note: '', church: '반월교회' },
+    { type: '장로 부총대', name: '김창룡', note: '', church: '반월교회' },
+    { type: '장로 부총대', name: '백윤복', note: '', church: '성산교회' },
+    { type: '장로 부총대', name: '이재복', note: '', church: '안산상록교회' }
+  ],
 
   /* ---------- 역대 노회장 (시화산노회) ---------- */
   history: [
