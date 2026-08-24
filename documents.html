@@ -147,7 +147,38 @@ document.addEventListener('DOMContentLoaded', function () {
       '<p style="text-align:center;font-size:0.8rem;color:var(--gray-5);margin-top:20px" class="no-print">노회 직인은 노회 사무실에서 날인합니다.</p>' +
       '</div>' +
       '<p class="text-right no-print" style="max-width:720px;margin:0 auto 40px">' +
+      '<button class="btn ghost" id="btn-pdf">PDF 다운로드</button> ' +
       '<button class="btn" onclick="window.print()">인쇄</button></p>';
+    document.getElementById('btn-pdf').addEventListener('click', function () {
+      downloadCertPdf(rec);
+    });
+  }
+
+  /* 증명서를 PDF 파일로 내려받기 (html2pdf.js를 필요할 때만 로드) */
+  function downloadCertPdf(rec) {
+    var btn = document.getElementById('btn-pdf');
+    btn.disabled = true; btn.textContent = 'PDF 생성 중...';
+    function done() { btn.disabled = false; btn.textContent = 'PDF 다운로드'; }
+    function run() {
+      var sheet = document.querySelector('#cert-print .cert-sheet');
+      var fname = rec.doc + '_' + rec.name + '_' + rec.date.replace(/[.\s]/g, '') + '.pdf';
+      html2pdf().set({
+        margin: [15, 12, 15, 12],
+        filename: fname,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }).from(sheet).save().then(done).catch(done);
+    }
+    if (window.html2pdf) { run(); return; }
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.2/dist/html2pdf.bundle.min.js';
+    s.onload = run;
+    s.onerror = function () {
+      done();
+      alert('PDF 모듈을 불러오지 못했습니다. 네트워크 상태를 확인한 뒤 다시 시도해 주세요.\n(임시로 [인쇄] 버튼에서 "PDF로 저장"을 선택하셔도 됩니다.)');
+    };
+    document.head.appendChild(s);
   }
 });
 </script>
