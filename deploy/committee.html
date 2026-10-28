@@ -73,9 +73,15 @@ document.addEventListener('DOMContentLoaded', function () {
   var accReqs = [];
   var retreats = [];   /* 이 부서가 여는 수양회 (140 sql) — 있으면 「수양회」 탭이 생긴다 */
   var view = new Date(); view.setDate(1);
-  var tab = location.hash === '#lg' ? 'lg'
-          : location.hash === '#retreat' ? 'retreat'
-          : 'cal';   /* 감사함·알림에서 #lg 로 오면 회계 장부 탭, 수양회 안내에서 #retreat */
+  /* 주소 뒤 #탭 으로 그 탭을 연다 (감사함·알림에서 #lg, 수양회 화면에서 돌아오면 #retreat).
+   * 탭을 옮길 때마다 방문 기록을 남겨 브라우저 「뒤로」가 이전 탭으로 가게 한다. */
+  var TABS = ['cal', 'list', 'retreat', 'mem', 'min', 'lg', 'exam', 'acc'];
+  function hashTab() { var t = (location.hash || '').slice(1); return TABS.indexOf(t) >= 0 ? t : 'cal'; }
+  var tab = hashTab();
+  window.addEventListener('popstate', function () {
+    var t = hashTab();
+    if (t !== tab && com) { tab = t; draw(); }
+  });
 
   function db() { return SHSCloud.init(); }
   function ymd(d) {
@@ -132,6 +138,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function draw() {
     var pendAcc = accReqs.filter(function (r) { return r.status === 'pending'; }).length;
+    /* 이 부서에 없는 탭이면 일정 달력으로 */
+    if ((tab === 'retreat' && !retreats.length) || (tab === 'exam' && NAME !== '고시규칙부')) tab = 'cal';
 
     var h = '<div class="notice-banner">' +
       (isOfficer
@@ -168,7 +176,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     area.innerHTML = h;
     area.querySelectorAll('#cm-tabs button').forEach(function (b) {
-      b.addEventListener('click', function () { tab = b.dataset.t; draw(); });
+      b.addEventListener('click', function () {
+        if (b.dataset.t === tab) return;
+        tab = b.dataset.t; history.pushState({ cmTab: tab }, '', '#' + tab); draw();
+      });
     });
 
     if (tab === 'cal') drawCal();

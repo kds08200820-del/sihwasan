@@ -136,6 +136,20 @@ document.addEventListener('DOMContentLoaded', function () {
   function db() { return SHSCloud.init(); }
   function msgBox(id) { return document.getElementById(id); }
 
+  /* 열 수 있는 탭 — 진행 관리는 임원만, 명단은 정회원만 */
+  var TABS = ['me', 'prog', 'media', 'list', 'ops'];
+  function okTab(t) {
+    return TABS.indexOf(t) >= 0 && !(t === 'ops' && !isOfficer) && !(t === 'list' && S && S.member === false);
+  }
+  /* 브라우저 「뒤로」 — 사진·영상 창이 열려 있으면 그 창만 닫고, 아니면 이전 탭으로 */
+  window.addEventListener('popstate', function () {
+    if (viewer && viewer.classList.contains('open')) { closeViewer(true); return; }
+    if (!S || !R) return;
+    var t = (location.hash || '').replace('#', '');
+    if (!okTab(t)) t = S.me ? 'me' : 'prog';
+    if (t !== tab) { tab = t; draw(); }
+  });
+
   function load() {
     db().then(function (c) { return c.rpc('retreat_state', { p_retreat: RID }); })
       .then(function (r) {
@@ -174,9 +188,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.title = R.title + ' - 시화산노회';
         var cl = document.getElementById('rt-crumb-com');
         cl.textContent = R.committee; cl.href = 'committee.html?c=' + encodeURIComponent(R.committee);
-        if (!tab) tab = S.me ? 'me' : 'prog';
-        if (tab === 'ops' && !isOfficer) tab = 'prog';
-        if (tab === 'list' && S.member === false) tab = 'me';
+        /* 모르는 탭·볼 수 없는 탭으로 오면 내 안내(참가자가 아니면 일정)로 */
+        if (!okTab(tab)) tab = S.me ? 'me' : 'prog';
         /* 수양회 기간이면 오늘 날짜의 날을 먼저 편다 */
         var dn = dayNo(S.today);
         if (dn >= 1 && dn <= totalDays()) day = dn;
@@ -269,7 +282,11 @@ document.addEventListener('DOMContentLoaded', function () {
       '</div><div id="rt-body"></div>';
     area.innerHTML = h;
     area.querySelectorAll('#rt-tabs button').forEach(function (b) {
-      b.addEventListener('click', function () { tab = b.dataset.t; history.replaceState(null, '', '#' + tab); draw(); });
+      /* 탭마다 방문 기록을 남겨, 브라우저 「뒤로」가 이전 탭으로 가게 한다 */
+      b.addEventListener('click', function () {
+        if (b.dataset.t === tab) return;
+        tab = b.dataset.t; history.pushState({ rtTab: tab }, '', '#' + tab); draw();
+      });
     });
     if (tab === 'me') drawMe();
     else if (tab === 'prog') drawProg();
@@ -724,10 +741,16 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     return viewer;
   }
-  function closeViewer() {
-    if (!viewer) return;
+  /* 창을 열 때 방문 기록을 하나 더 남기므로, 휴대폰 「뒤로」는 창만 닫는다.
+   * ×·바깥·Esc 로 닫으면 그 기록도 걷어 낸다 (fromPop: 「뒤로」로 이미 걷힌 경우) */
+  function closeViewer(fromPop) {
+    if (!viewer || !viewer.classList.contains('open')) return;
     viewer.classList.remove('open');
     viewer.querySelector('.rt-view').innerHTML = '';
+    if (fromPop !== true && history.state && history.state.rtView) history.back();
+  }
+  function markViewer() {
+    if (!(viewer && viewer.classList.contains('open'))) history.pushState({ rtView: 1, rtTab: tab }, '', location.href);
   }
   function showPhoto() {
     var p = vList[vIdx] || {};
@@ -743,6 +766,7 @@ document.addEventListener('DOMContentLoaded', function () {
     vList = list; vIdx = i;
     var v = viewerEl();
     v.querySelectorAll('.lb-nav').forEach(function (b) { b.style.display = list.length > 1 ? '' : 'none'; });
+    markViewer();
     v.classList.add('open');
     showPhoto();
   }
@@ -757,6 +781,7 @@ document.addEventListener('DOMContentLoaded', function () {
       'allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="' + e(m.title || '영상') + '"></iframe></div>' +
       '<div style="color:#dfe4ee;font-size:0.92rem;margin-top:10px">' + e(m.title || '') + '</div>' +
       '<a href="' + e(m.image_url) + '" target="_blank" rel="noopener" style="color:#dfe4ee;font-size:0.82rem;text-decoration:underline">유튜브에서 보기</a>';
+    markViewer();
     v.classList.add('open');
   }
 
