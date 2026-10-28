@@ -182,9 +182,9 @@ document.addEventListener('DOMContentLoaded', function () {
     else badge = '<span class="rt-badge">다녀왔습니다</span>';
 
     var links = '';
-    if (R.chat_url) links += '<a class="btn ghost sm" href="' + e(R.chat_url) + '" target="_blank" rel="noopener">💬 단톡방</a>';
-    if (R.guide_url) links += '<a class="btn ghost sm" href="' + e(R.guide_url) + '" target="_blank" rel="noopener">📖 가이드북</a>';
-    if (R.survey_url) links += '<a class="btn ghost sm" href="' + e(R.survey_url) + '" target="_blank" rel="noopener">📝 설문·자료</a>';
+    if (R.chat_url) links += '<a class="btn ghost sm" href="' + e(R.chat_url) + '" target="_blank" rel="noopener">단톡방</a>';
+    if (R.guide_url) links += '<a class="btn ghost sm" href="' + e(R.guide_url) + '" target="_blank" rel="noopener">가이드북</a>';
+    if (R.survey_url) links += '<a class="btn ghost sm" href="' + e(R.survey_url) + '" target="_blank" rel="noopener">설문·자료</a>';
 
     var st = R.settings || {};
     return '<div class="rt-head">' +
@@ -192,8 +192,8 @@ document.addEventListener('DOMContentLoaded', function () {
       '<h2>' + e(R.title) + ' ' + badge + '</h2>' +
       '<div class="rt-meta">' + e(rangeText(R.start_date, R.end_date)) +
       (R.place ? ' · ' + e(R.place) : '') +
-      (st.flight_out ? '<br>✈ ' + e(st.flight_out) : '') +
-      (st.hotel ? '<br>🏨 ' + e(st.hotel) : '') + '</div>' +
+      (st.flight_out ? '<br><strong>항공</strong> ' + e(st.flight_out) : '') +
+      (st.hotel ? '<br><strong>숙소</strong> ' + e(st.hotel) : '') + '</div>' +
       (R.verse ? '<div class="rt-verse">' + e(R.verse) + '</div>' : '') +
       (links ? '<div class="rt-links">' + links + '</div>' : '') +
       '</div>';
@@ -345,16 +345,15 @@ document.addEventListener('DOMContentLoaded', function () {
     var ments = prog.filter(function (g) { return g.day_no === day && g.kind === 'ment'; });
     var isToday = dayNo(S.today) === day;
     if (!stops.length) h += '<p class="rt-muted">이 날의 일정이 아직 없습니다.</p>';
-    var ICON = { move: '🚌', meal: '🍽', sight: '🌿', rest: '🏨', wor: '🙏' };
     stops.forEach(function (g) {
       var cls = 'rt-stop' + (g.status === '진행' ? ' now' : '') + (g.status === '끝' ? ' done' : '');
       h += '<div class="' + cls + '" data-g="' + g.id + '"><div class="t">' + e(g.time || '') + '</div>' +
-        '<div><div class="h">' + (ICON[g.kind] || '') + ' ' + e(g.title) +
+        '<div><div class="h">' + e(g.title) +
         (g.status === '변경' ? ' <span class="rt-badge live">변경</span>' : '') +
         (g.status === '진행' ? ' <span class="rt-badge on">지금</span>' : '') + '</div>' +
         (g.body ? '<div class="d">' + e(g.body) + '</div>' : '') +
         ((g.place || g.depart || g.move)
-          ? '<div class="m">' + (g.place ? '📍 ' + e(g.place) : '') + (g.depart ? ' · ' + e(g.depart) + ' 출발' : '') + (g.move ? ' · ' + e(g.move) : '') + '</div>'
+          ? '<div class="m">' + [g.place, g.depart ? g.depart + ' 출발' : '', g.move].filter(Boolean).map(e).join(' · ') + '</div>'
           : '') + '</div>' +
         (isOfficer
           ? '<div class="st"><select data-st="' + g.id + '">' +
