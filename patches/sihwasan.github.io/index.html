@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>시화산노회 - 대한예수교장로회(합동) 공식 홈페이지</title>
+<meta name="description" content="대한예수교장로회(합동) 시화산노회 공식 홈페이지. 화성·안산·시흥·수원·용인·오산 지역 교회들의 노회 소식, 회원명단, 노회 회칙, 결의사항, 서류 발급 안내를 제공합니다.">
+<meta name="keywords" content="시화산노회, 대한예수교장로회, 예장합동, 노회, 화성노회, 안산노회, 시흥, 수원, 용인, 오산, 교회, 노회사무실">
+<meta name="author" content="대한예수교장로회(합동) 시화산노회">
+<link rel="canonical" href="https://sihwasan.org/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="시화산노회">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="시화산노회 - 대한예수교장로회(합동)">
+<meta property="og:description" content="화성·안산·시흥·수원·용인·오산 지역 교회들이 하나 됨을 이루는 시화산노회 공식 홈페이지입니다.">
+<meta property="og:url" content="https://sihwasan.org/">
+<meta property="og:image" content="https://sihwasan.org/images/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="시화산노회 - 대한예수교장로회(합동)">
+<meta name="twitter:description" content="화성·안산·시흥·수원·용인·오산 지역 교회들이 하나 됨을 이루는 시화산노회 공식 홈페이지입니다.">
+<meta name="twitter:image" content="https://sihwasan.org/images/og-cover.png">
+<!-- 네이버 서치어드바이저 사이트 소유확인 (searchadvisor.naver.com) -->
+<meta name="naver-site-verification" content="b11a0bbfe07b9aa32b21a3f6e6c9e00955d3a5cf">
+<!-- 검색 결과에 단체 정보가 함께 나오도록 알려 준다 -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Church",
+  "name": "대한예수교장로회(합동) 시화산노회",
+  "alternateName": "시화산노회",
+  "url": "https://sihwasan.org/",
+  "logo": "https://sihwasan.org/images/og-cover.png",
+  "image": "https://sihwasan.org/images/og-cover.png",
+  "description": "대한예수교장로회(합동) 시화산노회 공식 홈페이지. 화성·안산·시흥·수원·용인·오산 지역 교회들의 노회입니다.",
+  "telephone": "+82-31-486-9993",
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "KR",
+    "addressRegion": "경기도",
+    "addressLocality": "안산시 단원구",
+    "streetAddress": "와동공원로1안길 13-7 (반월교회 교육관 1층)"
+  },
+  "areaServed": ["화성시", "안산시", "시흥시", "수원시", "용인시", "오산시"],
+  "parentOrganization": {
+    "@type": "Organization",
+    "name": "대한예수교장로회 총회(합동)",
+    "url": "https://gapck.org/"
+  }
+}
+</script>
+<link rel="stylesheet" href="css/style.css?v=20261021w">
+</head>
+<body>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-top">
+      <img class="hero-logo" src="images/logo.svg" alt="시화산노회 로고" width="150" height="225">
+      <div class="hero-text">
+        <div class="hero-kicker">대한예수교장로회(합동)</div>
+        <h1 class="hero-title"><span class="hero-line1">시화산노회가 하나 됨을 이루고</span><br><span class="hero-line2">함께 지어져 가는 교회를 세웁니다</span></h1>
+        <p class="hero-desc hidden"></p>
+        <p class="hero-verse">"그의 안에서 건물마다 서로 연결하여 주 안에서 성전이 되어 가고" (엡 2:21)</p>
+      </div>
+    </div>
+    <!-- 정기노회 날에는 히어로에 이 창이 보인다 (아래 스크립트가 켠다) -->
+    <a class="hero-today-card hidden" id="hero-today" href="today.html">
+      <span class="ht-kicker">TODAY</span>
+      <span class="ht-title">오늘의 노회</span>
+      <span class="ht-name" id="hero-today-name"></span>
+      <span class="ht-go">들어가기 &rarr;</span>
+    </a>
+    <!-- 수양회 기간에는 로그인한 회원에게 이 창이 보인다 (js/retreat-card.js 가 켠다) -->
+    <a class="hero-today-card hidden" id="hero-retreat" href="retreat.html" style="margin:22px auto 10px">
+      <span class="ht-kicker">RETREAT</span>
+      <span class="ht-title">수양회</span>
+      <span class="ht-name"></span>
+      <span class="ht-go">내 안내 보기 &rarr;</span>
+    </a>
+    <!-- AI 자료 검색 — 로그인한 정회원 이상에게만 보인다 (js/ai-chat.js) -->
+    <div id="ai-hero" class="ai-hero hidden" aria-label="AI 자료 검색"></div>
+  </div>
+</section>
+
+<main class="container" id="main">
+  <!-- 로그인한 정회원에게는 대시보드를, 그 밖에는 아래 기존 화면을 보여 준다 -->
+  <section id="dash-area" class="hidden" aria-label="대시보드"></section>
+
+  <div class="home-grid" id="home-plain">
+    <section aria-label="공지사항">
+      <div class="section-title">
+        <h2>공지사항</h2>
+        <a class="more" href="board.html">더보기</a>
+      </div>
+      <ul class="notice-list" id="home-notices"></ul>
+    </section>
+    <aside aria-label="노회 일정">
+      <section class="side-box">
+        <h3 class="box-head">노회 일정</h3>
+        <div class="box-body" id="home-schedule"></div>
+      </section>
+    </aside>
+  </div>
+
+  <section class="home-committees hidden" id="home-com-wrap" aria-label="대시보드">
+    <div class="section-title">
+      <h2>대시보드</h2>
+      <a class="more" href="dashboard.html">상비부 전체 보기</a>
+    </div>
+    <div id="home-noti"></div>
+    <div id="home-committees"></div>
+  </section>
+
+  <section class="home-gallery" aria-label="갤러리">
+    <div class="gal-head">
+      <div class="gal-kicker">ALBUM &amp; NEWS</div>
+      <h2 class="gal-title">시화산 갤러리</h2>
+      <p class="gal-sub">사진과 짧은 글로 전하는 노회의 일상.</p>
+    </div>
+    <div class="gal-carousel" id="home-gallery"></div>
+  </section>
+</main>
+
+<script src="js/auth.js?v=20260921j"></script>
+<script src="js/data.js"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/supabase-auth.js?v=20261020za"></script>
+<script src="js/main.js?v=20261022n"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/retreat-card.js?v=20261028a"></script>
+<script src="js/photos-config.js"></script>
+<script src="js/photos.js"></script>
+<script src="js/church-report.js?v=20260903a"></script>
+<script src="js/elder-notice.js?v=20261003f"></script>
+<script src="js/absence.js?v=20261021a"></script>
+<script src="js/board.js?v=20261022a"></script>
+<script src="js/ai-chat.js?v=20261021a"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var e = SHS.esc;
+
+  function renderNotices(list) {
+    var ul = document.getElementById('home-notices');
+    ul.innerHTML = '';
+    list.slice(0, 6).forEach(function (n) {
+      ul.insertAdjacentHTML('beforeend',
+        '<li><span class="cat">' + e(n.cat) + '</span>' +
+        '<a href="board.html#notice">' + SHS.newTag(n.date) + e(n.title) + '</a>' +
+        '<span class="date">' + e(n.date) + '</span></li>');
+    });
+  }
+  function renderSchedule(list) {
+    var sc = document.getElementById('home-schedule');
+    sc.innerHTML = '';
+    list.forEach(function (s) {
+      sc.insertAdjacentHTML('beforeend',
+        '<div class="schedule-item"><span class="d">' + e(s.date) + '</span><span class="t">' + e(s.title) + '</span></div>');
+    });
+  }
+  /* ---------- 갤러리: 큰 사진 넘김(캐러셀) ---------- */
+  var galTimer = null;
+  function galDate(s) {
+    var m = String(s || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+    return m ? m[1] + '년 ' + Number(m[2]) + '월 ' + Number(m[3]) + '일' : '';
+  }
+  function renderGallery(list) {
+    var g = document.getElementById('home-gallery');
+    if (!g) return;
+    /* 전체 사진을 무작위 순서로 섞어 돌린다 */
+    var pool = list.filter(function (p) { return p.img || p.thumb; });
+    for (var si = pool.length - 1; si > 0; si--) {
+      var sj = Math.floor(Math.random() * (si + 1));
+      var st = pool[si]; pool[si] = pool[sj]; pool[sj] = st;
+    }
+    if (!pool.length) { g.innerHTML = ''; return; }
+    if (galTimer) { clearInterval(galTimer); galTimer = null; }
+
+    g.innerHTML = pool.map(function (p, i) {
+      var cap = [galDate(p.taken), p.category].filter(Boolean).join(' · ');
+      return '<a class="gal-slide' + (i === 0 ? ' on' : '') + '" data-gi="' + i + '" ' +
+        'href="gallery.html#albums">' +
+        '<img src="' + e(p.img || p.thumb) + '" alt="' + e(p.title || '') + '" loading="lazy">' +
+        '<span class="gal-cap"><strong>' + e(p.title || '') + '</strong>' +
+        (cap ? '<span>' + e(cap) + '</span>' : '') + '</span></a>';
+    }).join('') +
+      '<button type="button" class="gal-nav prev" aria-label="이전 사진">&#8249;</button>' +
+      '<button type="button" class="gal-nav next" aria-label="다음 사진">&#8250;</button>' +
+      (pool.length > 12
+        ? '<div class="gal-dots"><span class="gal-count" id="gal-count">1 / ' + pool.length + '</span></div>'
+        : '<div class="gal-dots">' + pool.map(function (p, i) {
+            return '<button type="button" data-gd="' + i + '"' + (i === 0 ? ' class="on"' : '') +
+              ' aria-label="' + (i + 1) + '번째 사진"></button>';
+          }).join('') + '</div>');
+
+    var cur = 0;
+    function show(i) {
+      cur = (i + pool.length) % pool.length;
+      g.querySelectorAll('.gal-slide').forEach(function (s2) {
+        s2.classList.toggle('on', Number(s2.dataset.gi) === cur);
+      });
+      g.querySelectorAll('.gal-dots button').forEach(function (d) {
+        d.classList.toggle('on', Number(d.dataset.gd) === cur);
+      });
+      var cnt = g.querySelector('#gal-count');
+      if (cnt) cnt.textContent = (cur + 1) + ' / ' + pool.length;
+    }
+    g.querySelector('.gal-nav.prev').addEventListener('click', function () { show(cur - 1); restart(); });
+    g.querySelector('.gal-nav.next').addEventListener('click', function () { show(cur + 1); restart(); });
+    g.querySelectorAll('.gal-dots button').forEach(function (d) {
+      d.addEventListener('click', function () { show(Number(d.dataset.gd)); restart(); });
+    });
+    function restart() {
+      if (galTimer) clearInterval(galTimer);
+      galTimer = setInterval(function () { show(cur + 1); }, 5000);
+    }
+    restart();
+  }
+
+  /* ---------- 나의 알림 ---------- */
+  function renderNoti(rows) {
+    var box = document.getElementById('home-noti');
+    var wrap = document.getElementById('home-com-wrap');
+    if (!box) return;
+    var unread = rows.filter(function (n) { return !n.read_at; });
+
+    var h = '<div class="noti-card' + (unread.length ? ' has' : '') + '">' +
+      '<div class="noti-card-head">' +
+      '<span class="n-label">나의 알림</span>' +
+      (unread.length
+        ? '<span class="n-count">' + unread.length + '</span>' +
+          '<span class="n-sub">확인하지 않은 알림이 ' + unread.length + '건 있습니다</span>'
+        : '<span class="n-sub">확인하지 않은 알림이 없습니다</span>') +
+      '<a class="more" href="notifications.html">알림함</a>' +
+      '</div>';
+
+    if (unread.length) {
+      h += '<ul class="noti-card-list">' +
+        unread.slice(0, 5).map(function (n) {
+          return '<li><a href="notifications.html">' +
+            (n.kind ? '<span class="n-kind">' + e(n.kind) + '</span>' : '') +
+            '<span class="n-t">' + e(n.title) + '</span>' +
+            '<span class="n-d">' + e(String(n.created_at).slice(0, 10)) + '</span></a></li>';
+        }).join('') + '</ul>' +
+        (unread.length > 5
+          ? '<div class="noti-card-more"><a href="notifications.html">' +
+            (unread.length - 5) + '건 더 보기</a></div>' : '');
+    }
+    box.innerHTML = h + '</div>';
+    if (wrap) wrap.classList.remove('hidden');
+  }
+
+  /* ---------- 상비부 활동 (로그인 회원에게만) ---------- */
+  function renderCommittees(coms, evs, mine) {
+    var wrap = document.getElementById('home-com-wrap');
+    var box = document.getElementById('home-committees');
+    if (!wrap || !box || !coms.length) return;
+
+    var today = new Date().toISOString().slice(0, 10);
+    var byCom = {};
+    evs.forEach(function (v) { (byCom[v.committee] = byCom[v.committee] || []).push(v); });
+    var mineMap = {};
+    (mine || []).forEach(function (m) { mineMap[m.committee] = m.duty_name; });
+
+    var h = '<div class="db-grid">';
+    coms.forEach(function (c) {
+      var list = byCom[c.name] || [];
+      var next = list.filter(function (v) { return v.event_date && v.event_date >= today; })
+                     .sort(function (a, b) { return a.event_date < b.event_date ? -1 : 1; })[0];
+      var notice = list.filter(function (v) { return v.kind === '공지'; })[0];
+      h += '<a class="db-card' + (mineMap[c.name] ? ' mine' : '') + '" href="committee.html?c=' +
+        encodeURIComponent(c.name) + '">' +
+        (mineMap[c.name] ? '<div class="db-role">' + e(mineMap[c.name]) + '</div>' : '') +
+        '<div class="db-name">' + e(c.name) + '</div>' +
+        '<div class="db-lines">' +
+        (next ? '<div><strong>다음 일정</strong> ' + e(next.event_date) + ' ' + e(next.title) + '</div>' : '') +
+        (notice ? '<div><strong>공지</strong> ' + e(notice.title) + '</div>' : '') +
+        (!next && !notice ? '<div style="color:var(--gray-5)">등록된 활동이 없습니다</div>' : '') +
+        '</div></a>';
+    });
+    box.innerHTML = h + '</div>';
+    wrap.classList.remove('hidden');
+  }
+
+  /* 로그인한 정회원이면 대시보드를 보여 주고 기존 화면은 감춘다.
+   * 로그인하지 않은 분과 정회원이 아닌 분은 예전 그대로 공지·일정을 본다. */
+  /* AI 자료 검색창 — 로그인한 정회원 이상에게만 */
+  SHS.getUser().then(function (me) {
+    if (window.SHSAI) SHSAI.mount(document.getElementById('ai-hero'), me);
+  });
+
+  SHS.getUser().then(function (me) {
+    if (!SHSBoard.can(me)) return;
+    var plain = document.getElementById('home-plain');
+    var com = document.getElementById('home-com-wrap');
+    if (plain) plain.classList.add('hidden');
+    if (com) com.remove();          /* 대시보드가 그 몫을 대신한다 */
+    SHSBoard.mount(document.getElementById('dash-area'), me);
+  });
+
+  /* 정기노회 날(노회 운영 → 노회 일정 설정에 정해진 날)에는 히어로에
+   * 「오늘의 노회」 창 하나만 보여 준다. 그 밖의 날은 평소 화면 그대로다. */
+  if (window.SHSCloud && SHSCloud.enabled()) {
+    SHSCloud.init().then(function (c) {
+      return c ? c.rpc('assembly_today') : null;
+    }).then(function (r) {
+      if (!r || r.error || !r.data) return;
+      var hero = document.querySelector('.hero');
+      var card = document.getElementById('hero-today');
+      if (!hero || !card) return;
+      document.getElementById('hero-today-name').textContent = r.data.title || '';
+      card.classList.remove('hidden');
+      hero.classList.add('hero-today', 'done');
+      /* QR을 찍고 로그인하러 다녀온 분은 곧바로 입장 화면으로 보낸다 */
+      var code = '';
+      try { var o = JSON.parse(localStorage.getItem('shs_asm_code') || 'null'); if (o && o.c && Date.now() - o.t < 1800000) code = o.c; } catch (x) {}
+      if (code) SHS.getUser().then(function (me) { if (me && me.cloud) location.replace('today.html'); });
+    }, function () {});
+  }
+
+  /* 수양회 기간(140 sql retreat_today)에는 로그인한 회원에게 히어로에 「수양회」 창을 띄운다.
+   * 정기노회 날 창이 켜져 있으면 그쪽이 우선한다. */
+  if (window.SHSRetreat) SHS.getUser().then(function (me) { SHSRetreat.hero(me); });
+
+  /* 우선 내장 자료로 표시 */
+  renderNotices(SHSData.notices);
+  renderSchedule(SHSData.schedule);
+  renderGallery(SHSData.gallery);
+
+  /* 관리자가 사이트 관리에서 수정한 내용이 서버에 있으면 그것으로 교체 */
+  if (window.SHSCloud && SHSCloud.enabled()) {
+    SHSCloud.init().then(function (c) {
+      if (!c) return;
+      c.from('site_notices').select('*').order('date', { ascending: false }).order('id', { ascending: false })
+        .then(function (r) {
+          if (r.data && r.data.length) renderNotices(r.data);
+        });
+      c.from('site_schedule').select('*').order('sort').then(function (r) {
+        if (r.data && r.data.length) {
+          /* 지난 일정은 빼고 앞으로 올 것부터 8개 (날짜 없는 옛 줄은 그대로 둔다) */
+          var today = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
+          var rows = r.data.filter(function (s) { return !s.event_date || (s.end_date || s.event_date) >= today; }).slice(0, 8);
+          if (!rows.length) rows = r.data.slice(-5);
+          renderSchedule(rows.map(function (s) { return { date: s.date_label, title: s.title }; }));
+        }
+      });
+      c.from('gallery_items').select('*').order('sort').order('id', { ascending: false }).limit(40)
+        .then(function (r) {
+          if (r.data && r.data.length) {
+            renderGallery(r.data.map(function (g) {
+              return { id: g.id, img: g.image_url || g.thumb_url, thumb: g.thumb_url,
+                title: g.title, taken: g.taken, category: g.category };
+            }));
+          }
+        });
+      /* 나의 알림 */
+      c.from('notifications').select('*').order('created_at', { ascending: false }).limit(30)
+        .then(function (r) {
+          if (r && r.data) renderNoti(SHS.notiLive ? SHS.notiLive(r.data) : r.data);   /* 기간이 지난 안내는 뺀다 */
+        }, function () {});
+
+      /* 상비부 활동 (로그인한 회원에게만 보인다) */
+      Promise.all([
+        c.from('committees').select('name').order('sort'),
+        c.from('committee_events').select('committee, kind, title, event_date')
+          .order('event_date', { ascending: false }),
+        c.rpc('my_committees')
+      ]).then(function (cs) {
+        var coms = (cs[0] && cs[0].data) || [];
+        if (!coms.length) return;
+        renderCommittees(coms, (cs[1] && cs[1].data) || [], (cs[2] && cs[2].data) || []);
+      }).catch(function () {});
+
+      c.from('site_settings').select('*').eq('key', 'hero').then(function (r) {
+        (r.data || []).forEach(function (row) {
+          if (row.key === 'hero') {
+            var h = row.value || {};
+            var hero = document.querySelector('.hero');
+            if (!hero) return;
+            function put(sel, v) { var el = hero.querySelector(sel); if (el && v) el.textContent = v; }
+            put('.hero-kicker', h.kicker);
+            put('.hero-line1', h.line1);
+            put('.hero-line2', h.line2);
+            put('.hero-verse', h.verse);
+            var desc = hero.querySelector('.hero-desc');
+            if (desc && h.desc) { desc.textContent = h.desc; desc.classList.remove('hidden'); }
+          }
+        });
+      });
+    });
+  }
+});
+</script>
+
+<!-- 아래쪽 안내는 글로 미리 적어 둔다.
+     검색로봇은 자바스크립트를 돌리지 않으므로, 이렇게 적어 두어야
+     노회 주소·연락처와 안쪽 화면들을 찾아 읽어 갈 수 있다.
+     (js/main.js?v=20261022n 는 이 자리가 이미 있으면 새로 만들지 않는다) -->
+<footer class="site-footer"><div class="container">
+  <div class="f-name">대한예수교장로회(합동) 시화산노회</div>
+  <div>노회 사무실 : 경기도 안산시 단원구 와동공원로1안길 13-7 (반월교회 교육관 1층)</div>
+  <div>전화 031-486-9993 / 팩스 031-486-9993</div>
+  <div>관할 지역 : 경기도 화성시 · 안산시 · 시흥시와 수원시 · 용인시 · 오산시 일부 지역</div>
+  <div class="f-links">
+    <a href="about.html">노회소개</a>
+    <a href="organization.html">조직 · 임원 · 총회 총대</a>
+    <a href="rules-presbytery.html">노회 회칙</a>
+    <a href="archive.html">자료실 · 구비서류 안내</a>
+    <a href="request.html">서류 발급 신청</a>
+    <a href="board.html">공지사항</a>
+    <a href="gallery.html">갤러리</a>
+    <a href="guide.html">홈페이지 이용안내</a>
+    <a href="assembly-constitution.html">총회 헌법</a>
+    <a href="assembly-rules.html">총회 규정</a>
+    <a href="assembly-resolution.html">총회 회의결의</a>
+    <a href="assembly-report.html">총회 보고서</a>
+    <a href="committee.html">상비부</a>
+    <a href="minutes.html">노회 회의록</a>
+    <a href="verify.html">증명서 진위 확인</a>
+    <a href="terms.html"><strong>이용약관</strong></a>
+    <a href="privacy.html"><strong>개인정보처리방침</strong></a>
+    <a href="https://gapck.org" target="_blank" rel="noopener">대한예수교장로회총회</a>
+  </div>
+</div></footer>
+</body>
+</html>
