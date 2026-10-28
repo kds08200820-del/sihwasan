@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>수양회 - 시화산노회</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="css/style.css?v=20261021w">
+<style>
+/* 수양회 — 휴대전화에서 한 손으로 보기 좋게. 색은 모두 홈페이지 변수만 쓴다 */
+.rt-head { background: #fff; border: 1px solid var(--gray-3); border-radius: 12px; padding: 22px; margin-bottom: 20px; }
+.rt-head h2 { font-family: 'Noto Serif KR', serif; font-size: 1.5rem; margin: 0 0 6px; color: var(--navy); }
+.rt-kicker { font-size: 0.8rem; letter-spacing: 3px; color: var(--accent); margin-bottom: 4px; }
+.rt-meta { color: var(--gray-5); font-size: 0.9rem; line-height: 1.7; }
+.rt-verse { margin-top: 10px; padding: 10px 14px; background: var(--gray-1); border-radius: 8px; font-size: 0.9rem; color: var(--gray-7); white-space: pre-line; }
+.rt-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.rt-badge { display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 0.78rem; background: var(--gray-1); color: var(--gray-5); border: 1px solid var(--gray-3); margin-right: 4px; white-space: nowrap; }
+.rt-badge.live { background: #fdf3f3; color: var(--red); border-color: var(--red); }
+.rt-badge.on { background: #eef6ee; color: #1f7a3a; border-color: #8cc79d; }
+.rt-chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
+.rt-chip { background: var(--gray-1); border-radius: 10px; padding: 10px 16px; min-width: 96px; text-align: center; font-size: 0.85rem; color: var(--gray-5); }
+.rt-chip span { display: block; font-size: 0.76rem; }
+.rt-chip strong { font-size: 1.4rem; color: var(--navy); }
+.rt-chip.big { background: var(--navy); color: #efe7d8; }
+.rt-chip.big strong { color: #fff; }
+.rt-card { background: #fff; border: 1px solid var(--gray-3); border-radius: 12px; padding: 20px 22px; margin-bottom: 16px; }
+.rt-card h3 { font-size: 1.08rem; margin: 0 0 10px; color: var(--navy); }
+.rt-card h3 .rt-badge { margin-left: 8px; vertical-align: middle; }
+.rt-card p.body { white-space: pre-line; line-height: 1.7; margin: 0 0 10px; }
+.rt-person { border-top: 1px dashed var(--gray-3); padding-top: 12px; margin-top: 12px; }
+.rt-person:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+.rt-person .who { font-weight: 700; margin-bottom: 6px; }
+.rt-choice { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.rt-choice select, .rt-choice input { font-size: 0.95rem; padding: 8px 10px; border: 1px solid var(--gray-3); border-radius: 8px; background: #fff; }
+.rt-choice select.menu { flex: 1 1 260px; min-width: 200px; }
+.rt-choice .cur { font-size: 0.86rem; color: var(--gray-5); flex-basis: 100%; }
+.rt-day { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.rt-day button { border: 1px solid var(--gray-3); background: #fff; color: var(--gray-7); border-radius: 99px; padding: 7px 16px; font-size: 0.9rem; }
+.rt-day button.active { background: var(--navy); border-color: var(--navy); color: #fff; font-weight: 700; }
+.rt-stop { display: grid; grid-template-columns: 58px 1fr; gap: 6px 12px; padding: 12px 0; border-bottom: 1px solid var(--gray-2); }
+.rt-stop .t { font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; }
+.rt-stop .h { font-weight: 700; }
+.rt-stop .d { font-size: 0.86rem; color: var(--gray-7); white-space: pre-line; margin-top: 2px; }
+.rt-stop .m { font-size: 0.8rem; color: var(--gray-5); margin-top: 4px; }
+.rt-stop.now { background: #fbf6ea; margin: 0 -10px; padding-left: 10px; padding-right: 10px; border-radius: 8px; }
+.rt-stop.done { opacity: 0.55; }
+.rt-stop .st { grid-column: 2; margin-top: 6px; }
+.rt-stop .st select { font-size: 0.8rem; padding: 3px 6px; border: 1px solid var(--gray-3); border-radius: 6px; }
+.rt-ment { margin-top: 14px; }
+.rt-ment details { border: 1px solid var(--gray-2); border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; background: var(--paper, #fff); }
+.rt-ment summary { cursor: pointer; font-weight: 700; color: var(--gray-7); font-size: 0.92rem; }
+.rt-ment .body { white-space: pre-line; line-height: 1.75; font-size: 0.9rem; margin-top: 8px; color: var(--ink); }
+.rt-muted { color: var(--gray-5); font-size: 0.86rem; }
+.rt-count { font-size: 0.8rem; color: var(--gray-5); }
+@media (max-width: 640px) {
+  .rt-stop { grid-template-columns: 50px 1fr; }
+  .rt-card { padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <div class="container">
+    <h1 id="rt-title">수양회</h1>
+    <div class="crumb">홈 &gt; 조직 &gt; <a href="dashboard.html">상비부 대시보드</a> &gt; <a id="rt-crumb-com" href="committee.html?c=%EA%B5%90%EC%9C%A1%EC%B9%9C%EA%B5%90%EB%B6%80">교육친교부</a> &gt; <span id="rt-crumb">수양회</span></div>
+  </div>
+</div>
+
+<main class="page-body container" id="main">
+  <div id="rt-area"><p style="color:var(--gray-5)">불러오는 중...</p></div>
+</main>
+
+<script src="js/auth.js?v=20260921j"></script>
+<script src="js/data.js"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/supabase-auth.js?v=20261020za"></script>
+<script src="js/main.js?v=20261022n"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+ SHS.getUser().then(function (user) {
+  var area = document.getElementById('rt-area');
+  var e = SHS.esc;
+
+  /* ?id=수양회번호 — 없으면 서버가 오늘·다가오는·최근 순으로 고른다 */
+  var RID = Number((location.search.match(/[?&]id=(\d+)/) || [])[1]) || null;
+
+  var gate = SHS.memberGate(user, '수양회');
+  if (gate) { area.innerHTML = gate; return; }
+  if (!user.cloud) {
+    area.innerHTML = '<div class="notice-banner">수양회 화면은 서버 로그인 후 이용할 수 있습니다. ' +
+      '<a class="btn sm" style="margin-left:10px" href="login.html">로그인 화면으로</a></div>';
+    return;
+  }
+
+  var S = null;            /* retreat_state 결과 */
+  var R = null;            /* S.retreat */
+  var isOfficer = false;
+  var tab = (location.hash || '').replace('#', '') || '';
+  var day = 1;             /* 일정 탭에서 보는 날 */
+
+  function db() { return SHSCloud.init(); }
+  function msgBox(id) { return document.getElementById(id); }
+
+  function load() {
+    db().then(function (c) { return c.rpc('retreat_state', { p_retreat: RID }); })
+      .then(function (r) {
+        if (r.error) {
+          area.innerHTML = '<div class="notice-banner">수양회 정보를 불러오지 못했습니다: ' + e(r.error.message) +
+            ' (140 수양회 등록이 필요할 수 있습니다)</div>';
+          return;
+        }
+        S = r.data || {};
+        if (S.login === false) { location.href = 'login.html'; return; }
+        if (S.member === false) {
+          area.innerHTML = '<div class="notice-banner">정회원 승인 뒤에 보실 수 있습니다.</div>';
+          return;
+        }
+        R = S.retreat;
+        if (!R) {
+          area.innerHTML = '<div class="notice-banner">등록된 수양회가 없습니다. (교육친교부 임원이 140 sql 로 등록합니다)</div>';
+          return;
+        }
+        isOfficer = !!S.officer;
+        document.getElementById('rt-title').textContent = R.title;
+        document.getElementById('rt-crumb').textContent = R.title;
+        document.title = R.title + ' - 시화산노회';
+        var cl = document.getElementById('rt-crumb-com');
+        cl.textContent = R.committee; cl.href = 'committee.html?c=' + encodeURIComponent(R.committee);
+        if (!tab) tab = S.me ? 'me' : 'prog';
+        if (tab === 'ops' && !isOfficer) tab = 'prog';
+        /* 수양회 기간이면 오늘 날짜의 날을 먼저 편다 */
+        var dn = dayNo(S.today);
+        if (dn >= 1 && dn <= totalDays()) day = dn;
+        draw();
+        SHS.logAction('view', '수양회 열람', R.title);
+      });
+  }
+
+  /* ---------- 날짜 도우미 ---------- */
+  function totalDays() {
+    if (!R.end_date || R.end_date <= R.start_date) return 1;
+    return Math.round((new Date(R.end_date + 'T00:00:00') - new Date(R.start_date + 'T00:00:00')) / 86400000) + 1;
+  }
+  function dayNo(ymd) {
+    if (!ymd) return 0;
+    return Math.round((new Date(ymd + 'T00:00:00') - new Date(R.start_date + 'T00:00:00')) / 86400000) + 1;
+  }
+  function rangeText(from, to) {
+    if (!from) return '';
+    if (!to || to <= from) return from;
+    var n = Math.round((new Date(to + 'T00:00:00') - new Date(from + 'T00:00:00')) / 86400000);
+    return from + ' ~ ' + (to.slice(0, 4) === from.slice(0, 4) ? to.slice(5) : to) + ' (' + n + '박 ' + (n + 1) + '일)';
+  }
+  function kdate(ymd) {
+    if (!ymd) return '';
+    var d = new Date(ymd + 'T00:00:00');
+    return (d.getMonth() + 1) + '/' + d.getDate() + ' (' + ['일', '월', '화', '수', '목', '금', '토'][d.getDay()] + ')';
+  }
+  /* 날짜를 YYYY-MM-DD 로 (toISOString 은 UTC 라 자정 날짜가 하루 밀린다) */
+  function ymd(d) {
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') +
+           '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function won(n) { return Number(n || 0).toLocaleString('ko-KR') + '원'; }
+  function personLabel(p) { return p.name + (p.role ? ' ' + p.role : '') + (p.church ? ' (' + p.church + ')' : ''); }
+  function byId(list, id) { return (list || []).filter(function (x) { return String(x.id) === String(id); })[0]; }
+  function choiceOf(stepId, pid) {
+    return (S.choices || []).filter(function (c) {
+      return String(c.step_id) === String(stepId) && String(c.participant_id) === String(pid);
+    })[0];
+  }
+
+  /* ---------- 머리 ---------- */
+  function headHtml() {
+    var dn = dayNo(S.today), n = totalDays();
+    var badge = '';
+    if (R.status === 'closed') badge = '<span class="rt-badge">닫힘</span>';
+    else if (R.stage === '마침') badge = '<span class="rt-badge">마침</span>';
+    else if (dn >= 1 && dn <= n) badge = '<span class="rt-badge live">오늘 ' + dn + '일차</span>';
+    else if (dn < 1) badge = '<span class="rt-badge on">D-' + (1 - dn) + '</span>';
+    else badge = '<span class="rt-badge">다녀왔습니다</span>';
+
+    var links = '';
+    if (R.chat_url) links += '<a class="btn ghost sm" href="' + e(R.chat_url) + '" target="_blank" rel="noopener">💬 단톡방</a>';
+    if (R.guide_url) links += '<a class="btn ghost sm" href="' + e(R.guide_url) + '" target="_blank" rel="noopener">📖 가이드북</a>';
+    if (R.survey_url) links += '<a class="btn ghost sm" href="' + e(R.survey_url) + '" target="_blank" rel="noopener">📝 설문·자료</a>';
+
+    var st = R.settings || {};
+    return '<div class="rt-head">' +
+      '<div class="rt-kicker">' + e(R.committee) + ' · ' + e(R.stage) + '</div>' +
+      '<h2>' + e(R.title) + ' ' + badge + '</h2>' +
+      '<div class="rt-meta">' + e(rangeText(R.start_date, R.end_date)) +
+      (R.place ? ' · ' + e(R.place) : '') +
+      (st.flight_out ? '<br>✈ ' + e(st.flight_out) : '') +
+      (st.hotel ? '<br>🏨 ' + e(st.hotel) : '') + '</div>' +
+      (R.verse ? '<div class="rt-verse">' + e(R.verse) + '</div>' : '') +
+      (links ? '<div class="rt-links">' + links + '</div>' : '') +
+      '</div>';
+  }
+
+  function draw() {
+    var h = headHtml();
+    h += '<div class="notice-banner">' +
+      (isOfficer
+        ? '<strong>' + e(SHS.honorific(user)) + '</strong>은 ' + e(R.committee) + ' 임원이시므로 단계를 열고 명단·일정을 고치실 수 있습니다.'
+        : (S.me
+            ? '<strong>' + e(SHS.honorific(user)) + '</strong>의 좌석·숙소와 골라야 할 것이 「내 안내」에 있습니다. ' +
+              '열린 단계가 생기면 알림함으로 알려 드립니다.'
+            : '참가자 명단에서 회원님을 찾지 못했습니다. 참가하시는데 보이지 않으면 ' + e(R.committee) + ' 임원에게 말씀해 주세요.')) +
+      '</div>';
+
+    h += '<div class="tabs" id="rt-tabs">' +
+      '<button class="' + (tab === 'me' ? 'active' : '') + '" data-t="me">내 안내' + openCountBadge() + '</button>' +
+      '<button class="' + (tab === 'prog' ? 'active' : '') + '" data-t="prog">일정</button>' +
+      '<button class="' + (tab === 'list' ? 'active' : '') + '" data-t="list">명단</button>' +
+      (isOfficer ? '<button class="' + (tab === 'ops' ? 'active' : '') + '" data-t="ops">진행 관리</button>' : '') +
+      '</div><div id="rt-body"></div>';
+    area.innerHTML = h;
+    area.querySelectorAll('#rt-tabs button').forEach(function (b) {
+      b.addEventListener('click', function () { tab = b.dataset.t; history.replaceState(null, '', '#' + tab); draw(); });
+    });
+    if (tab === 'me') drawMe();
+    else if (tab === 'prog') drawProg();
+    else if (tab === 'list') drawList();
+    else drawOps();
+  }
+
+  /* 내가 아직 안 고른 열린 선택 단계 수 */
+  function openCountBadge() {
+    if (!S.me) return '';
+    var people = [S.me].concat(S.companions || []);
+    var n = 0;
+    (S.steps || []).forEach(function (s) {
+      if (s.kind !== '선택' || s.status !== '열림') return;
+      people.forEach(function (p) { if (!choiceOf(s.id, p.id)) n++; });
+    });
+    return n ? ' <span class="rt-badge live">' + n + '</span>' : '';
+  }
+
+  /* ---------- 내 안내 ---------- */
+  function drawMe() {
+    var box = document.getElementById('rt-body');
+    if (!S.me) {
+      box.innerHTML = '<div class="rt-card"><h3>참가자 명단에 없습니다</h3>' +
+        '<p class="rt-muted">홈페이지 이름과 명단 이름이 다르면 찾지 못합니다. ' + e(R.committee) + ' 임원이 명단에서 회원님을 이어 드립니다.</p>' +
+        '<p><button class="btn ghost sm" id="go-prog">일정 보기</button></p></div>';
+      box.querySelector('#go-prog').addEventListener('click', function () { tab = 'prog'; draw(); });
+      return;
+    }
+    var me = S.me, people = [me].concat(S.companions || []);
+    var h = '';
+
+    /* 내 자리 */
+    h += '<div class="rt-card"><h3>내 자리</h3><div class="rt-chips">' +
+      people.map(function (p) {
+        return '<div class="rt-chip' + (p.id === me.id ? ' big' : '') + '"><span>' + e(p.name) + ' ' + e(p.role || '') + '</span>' +
+          '<strong>' + (p.bus_seat ? '버스 ' + p.bus_seat : (p.van_seat ? '쏠라티 ' + p.van_seat : '-')) + '</strong>' +
+          '<span>명단 ' + p.seq + '번</span></div>';
+      }).join('') +
+      '<div class="rt-chip"><span>숙소</span><strong>' + (me.room_no ? e(me.room_no) + '호' : (me.room_group ? me.room_group + '번 방' : '-')) + '</strong>' +
+      '<span>' + ((S.roommates || []).length ? '함께: ' + S.roommates.map(function (q) { return e(q.name); }).join(', ') : '호수는 체크인 뒤') + '</span></div>' +
+      '<div class="rt-chip"><span>회비</span><strong>' + e(won(people.reduce(function (a, p) { return a + Number(p.paid || 0); }, 0))) + '</strong><span>납부 확인</span></div>' +
+      '</div>' +
+      '<p class="rt-muted">좌석·방이 다르면 ' + e(R.committee) + ' 임원에게 말씀해 주세요. 방 번호는 호텔 체크인 뒤에 적힙니다.</p></div>';
+
+    /* 단계 */
+    var steps = (S.steps || []).filter(function (s) { return s.status !== '닫힘'; });
+    if (!steps.length) h += '<div class="rt-card"><h3>안내</h3><p class="rt-muted">아직 열린 안내가 없습니다. 임원이 열면 알림으로 알려 드립니다.</p></div>';
+    steps.forEach(function (s) { h += stepCard(s, people); });
+    box.innerHTML = h;
+    bindChoices(box);
+  }
+
+  function stepCard(s, people) {
+    var badge = s.status === '열림' ? '<span class="rt-badge on">열림</span>' : '<span class="rt-badge">마감</span>';
+    var h = '<div class="rt-card" data-step="' + s.id + '"><h3>' + e(s.title) + badge +
+      (s.due ? ' <span class="rt-count">' + e(kdate(s.due)) + '까지</span>' : '') + '</h3>';
+    if (s.body) h += '<p class="body">' + e(s.body) + '</p>';
+    if (s.kind === '선택') {
+      people.forEach(function (p) {
+        var cur = choiceOf(s.id, p.id);
+        var canEdit = s.status === '열림' || isOfficer;
+        h += '<div class="rt-person"><div class="who">' + e(p.name) + ' ' + e(p.role || '') + '</div>' +
+          '<div class="rt-choice" data-p="' + p.id + '">' +
+          '<select class="menu"' + (canEdit ? '' : ' disabled') + '><option value="">— 고르세요 —</option>' +
+          (s.options || []).map(function (o) {
+            return '<option value="' + o.id + '"' + (cur && String(cur.option_id) === String(o.id) ? ' selected' : '') + '>' + e(o.label) + '</option>';
+          }).join('') + '</select>' +
+          (s.variants && s.variants.length
+            ? '<select class="var"' + (canEdit ? '' : ' disabled') + '><option value="">갈래</option>' +
+              s.variants.map(function (v) { return '<option' + (cur && cur.variant === v ? ' selected' : '') + '>' + e(v) + '</option>'; }).join('') + '</select>'
+            : '') +
+          '<input type="text" class="note" placeholder="요청 (선택)" value="' + e(cur && cur.note || '') + '"' + (canEdit ? '' : ' disabled') + '>' +
+          (canEdit ? '<button class="btn sm save">저장</button>' : '') +
+          '<div class="cur">' + (cur ? '지금 선택: ' + e(cur.option_label || '') + (cur.variant ? ' · ' + e(cur.variant) : '') + (cur.note ? ' · ' + e(cur.note) : '')
+                                     : (s.status === '열림' ? '아직 고르지 않았습니다.' : '고르지 않은 채 마감되었습니다.')) + '</div>' +
+          '</div></div>';
+      });
+    } else if (s.kind === '배정') {
+      h += '<p class="rt-muted">위 「내 자리」에 적혀 있습니다.</p>';
+    }
+    return h + '</div>';
+  }
+
+  function bindChoices(box) {
+    box.querySelectorAll('.rt-choice .save').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var wrap = b.closest('.rt-choice'), card = b.closest('[data-step]');
+        var opt = wrap.querySelector('.menu').value;
+        var vEl = wrap.querySelector('.var'), nEl = wrap.querySelector('.note');
+        var cur = wrap.querySelector('.cur');
+        b.disabled = true; cur.textContent = '저장 중입니다...';
+        db().then(function (c) {
+          return c.rpc('retreat_choose', {
+            p_step: Number(card.dataset.step), p_participant: Number(wrap.dataset.p),
+            p_option: opt ? Number(opt) : null,
+            p_variant: vEl && vEl.value ? vEl.value : null,
+            p_note: nEl.value.trim() || null
+          });
+        }).then(function (r) {
+          b.disabled = false;
+          if (r.error) { cur.textContent = r.error.message; cur.style.color = 'var(--red)'; return; }
+          SHSCloud.log(opt ? 'update' : 'delete', '수양회 선택', R.title + ' / 단계 ' + card.dataset.step);
+          load();
+        });
+      });
+    });
+  }
+
+  /* ---------- 일정 ---------- */
+  function drawProg() {
+    var box = document.getElementById('rt-body');
+    var n = totalDays();
+    var prog = S.program || [];
+    var h = '<div class="rt-day">';
+    for (var i = 1; i <= n; i++) {
+      var d = new Date(R.start_date + 'T00:00:00'); d.setDate(d.getDate() + i - 1);
+      h += '<button class="' + (day === i ? 'active' : '') + '" data-d="' + i + '">' + i + '일차 <span style="font-weight:400;font-size:0.8rem">' +
+        e(kdate(ymd(d))) + '</span></button>';
+    }
+    h += '</div>';
+
+    var stops = prog.filter(function (g) { return g.day_no === day && g.kind !== 'ment'; });
+    var ments = prog.filter(function (g) { return g.day_no === day && g.kind === 'ment'; });
+    var isToday = dayNo(S.today) === day;
+    if (!stops.length) h += '<p class="rt-muted">이 날의 일정이 아직 없습니다.</p>';
+    var ICON = { move: '🚌', meal: '🍽', sight: '🌿', rest: '🏨', wor: '🙏' };
+    stops.forEach(function (g) {
+      var cls = 'rt-stop' + (g.status === '진행' ? ' now' : '') + (g.status === '끝' ? ' done' : '');
+      h += '<div class="' + cls + '" data-g="' + g.id + '"><div class="t">' + e(g.time || '') + '</div>' +
+        '<div><div class="h">' + (ICON[g.kind] || '') + ' ' + e(g.title) +
+        (g.status === '변경' ? ' <span class="rt-badge live">변경</span>' : '') +
+        (g.status === '진행' ? ' <span class="rt-badge on">지금</span>' : '') + '</div>' +
+        (g.body ? '<div class="d">' + e(g.body) + '</div>' : '') +
+        ((g.place || g.depart || g.move)
+          ? '<div class="m">' + (g.place ? '📍 ' + e(g.place) : '') + (g.depart ? ' · ' + e(g.depart) + ' 출발' : '') + (g.move ? ' · ' + e(g.move) : '') + '</div>'
+          : '') + '</div>' +
+        (isOfficer
+          ? '<div class="st"><select data-st="' + g.id + '">' +
+            ['예정', '진행', '끝', '변경'].map(function (v) { return '<option' + (g.status === v ? ' selected' : '') + '>' + v + '</option>'; }).join('') +
+            '</select> <span class="rt-count">' + (isToday ? '당일 진행 표시' : '진행 표시') + '</span></div>'
+          : '') +
+        '</div>';
+    });
+    if (ments.length) {
+      h += '<div class="rt-ment"><h3 style="font-size:1rem;color:var(--navy);margin:18px 0 8px">안내 멘트 (진행자용)</h3>' +
+        ments.map(function (g) {
+          return '<details><summary>' + e(g.title) + '</summary><div class="body">' + e(g.body || '') + '</div></details>';
+        }).join('') + '</div>';
+    }
+    box.innerHTML = h;
+    box.querySelectorAll('.rt-day button').forEach(function (b) {
+      b.addEventListener('click', function () { day = Number(b.dataset.d); drawProg(); });
+    });
+    box.querySelectorAll('select[data-st]').forEach(function (sel) {
+      sel.addEventListener('change', function () {
+        var id = sel.dataset.st, v = sel.value;
+        db().then(function (c) {
+          return c.from('retreat_program').update({ status: v, updated_at: new Date().toISOString() }).eq('id', id);
+        }).then(function (r) {
+          if (r.error) { alert(r.error.message); return; }
+          var g = byId(S.program, id); if (g) g.status = v;
+          SHSCloud.log('update', '수양회 일정 진행', R.title + ' / ' + (g ? g.title : id) + ' → ' + v);
+          drawProg();
+        });
+      });
+    });
+  }
+
+  /* ---------- 명단 ---------- */
+  function drawList() {
+    var box = document.getElementById('rt-body');
+    var ps = S.participants || [];
+    var h = '<p class="rt-muted">' + ps.length + '명' +
+      (isOfficer ? ' · 납부 합계 ' + e(won(ps.reduce(function (a, p) { return a + Number(p.paid || 0); }, 0))) : '') + '</p>';
+    h += '<table class="tbl"><thead><tr><th style="width:50px">번호</th><th>성명</th><th style="width:70px">직분</th><th style="width:110px">교회</th>' +
+      '<th style="width:70px">버스</th><th style="width:70px">쏠라티</th><th style="width:80px">방</th>' +
+      (isOfficer ? '<th style="width:100px">납부</th><th style="width:70px">회원</th><th style="width:80px">관리</th>' : '') +
+      '</tr></thead><tbody>';
+    ps.forEach(function (p) {
+      h += '<tr' + (S.me && p.id === S.me.id ? ' style="background:var(--gray-1)"' : '') + '><td>' + p.seq + '</td>' +
+        '<td class="left"><strong>' + e(p.name) + '</strong>' + (p.companion_of ? ' <span class="rt-count">배우자</span>' : '') +
+        (isOfficer && p.note ? '<div class="rt-count">' + e(p.note) + '</div>' : '') + '</td>' +
+        '<td>' + e(p.role || '') + '</td><td>' + e(p.church || '-') + '</td>' +
+        '<td>' + (p.bus_seat || '-') + '</td><td>' + (p.van_seat || '-') + '</td>' +
+        '<td>' + (p.room_no ? e(p.room_no) : (p.room_group ? p.room_group + '번' : '-')) + '</td>' +
+        (isOfficer
+          ? '<td>' + e(won(p.paid)) + '</td><td>' + (p.linked ? '연결' : (p.companion_of ? '-' : '<span style="color:var(--red)">없음</span>')) + '</td>' +
+            '<td><button class="btn ghost sm" data-edit="' + p.id + '">수정</button></td>'
+          : '') + '</tr>';
+    });
+    h += '</tbody></table>';
+    if (isOfficer) h += editorHtml();
+    box.innerHTML = h;
+    if (isOfficer) {
+      bindEditor();
+      box.querySelectorAll('button[data-edit]').forEach(function (b) {
+        b.addEventListener('click', function () { fillEditor(byId(ps, b.dataset.edit)); });
+      });
+    }
+  }
+
+  function editorHtml() {
+    return '<div class="admin-card" id="rt-form" style="margin-top:18px">' +
+      '<h3 style="margin-top:0" id="pf-title">참가자 등록</h3>' +
+      '<input type="hidden" id="pf-id">' +
+      '<div class="inline-form" style="margin-bottom:8px">' +
+      '<div class="field" style="flex:0 0 80px"><label>번호</label><input type="number" id="pf-seq"></div>' +
+      '<div class="field"><label>성명</label><input type="text" id="pf-name"></div>' +
+      '<div class="field" style="flex:0 0 120px"><label>직분</label><select id="pf-role">' +
+      ['목사', '장로', '원로목사', '사모', '배우자'].map(function (v) { return '<option>' + v + '</option>'; }).join('') + '</select></div>' +
+      '<div class="field" style="flex:0 0 160px"><label>교회</label><input type="text" id="pf-church"></div>' +
+      '</div>' +
+      '<div class="inline-form" style="margin-bottom:8px">' +
+      '<div class="field" style="flex:0 0 90px"><label>버스</label><input type="number" id="pf-bus"></div>' +
+      '<div class="field" style="flex:0 0 90px"><label>쏠라티</label><input type="number" id="pf-van"></div>' +
+      '<div class="field" style="flex:0 0 90px"><label>방(번)</label><input type="number" id="pf-rg"></div>' +
+      '<div class="field" style="flex:0 0 110px"><label>호수</label><input type="text" id="pf-rno"></div>' +
+      '<div class="field" style="flex:0 0 130px"><label>납부액</label><input type="number" id="pf-paid"></div>' +
+      '<div class="field" style="flex:0 0 160px"><label>배우자가 묶일 회원</label><select id="pf-comp"><option value="">(회원 본인)</option>' +
+      (S.participants || []).filter(function (p) { return !p.companion_of; }).map(function (p) {
+        return '<option value="' + p.id + '">' + e(p.seq + '. ' + p.name) + '</option>';
+      }).join('') + '</select></div>' +
+      '</div>' +
+      '<div class="field"><label>메모 (임원만 봄)</label><input type="text" id="pf-note"></div>' +
+      '<label style="display:flex;gap:8px;align-items:center;margin:2px 0 12px;font-size:0.92rem;cursor:pointer">' +
+      '<input type="checkbox" id="pf-present" style="width:auto"> 도착 확인</label>' +
+      '<button class="btn" id="pf-save">저장</button> ' +
+      '<button class="btn ghost hidden" id="pf-new">새로 쓰기</button> ' +
+      '<button class="btn danger hidden" id="pf-del">삭제</button>' +
+      '<div class="form-msg" id="pf-msg"></div>' +
+      '<p class="rt-muted" style="margin-top:10px">회원 연결은 이름이 같은 가입 회원에게 저절로 됩니다. 동명이인이거나 이름이 다르면 서기가 SQL로 잇습니다.</p></div>';
+  }
+
+  function fillEditor(p) {
+    if (!p) return;
+    document.getElementById('pf-id').value = p.id;
+    document.getElementById('pf-seq').value = p.seq;
+    document.getElementById('pf-name').value = p.name || '';
+    document.getElementById('pf-role').value = p.role || '목사';
+    document.getElementById('pf-church').value = p.church || '';
+    document.getElementById('pf-bus').value = p.bus_seat || '';
+    document.getElementById('pf-van').value = p.van_seat || '';
+    document.getElementById('pf-rg').value = p.room_group || '';
+    document.getElementById('pf-rno').value = p.room_no || '';
+    document.getElementById('pf-paid').value = p.paid || 0;
+    document.getElementById('pf-comp').value = p.companion_of || '';
+    document.getElementById('pf-note').value = p.note || '';
+    document.getElementById('pf-present').checked = !!p.present;
+    document.getElementById('pf-title').textContent = '수정 : ' + p.seq + '. ' + p.name;
+    document.getElementById('pf-new').classList.remove('hidden');
+    document.getElementById('pf-del').classList.remove('hidden');
+    document.getElementById('rt-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function bindEditor() {
+    var msg = msgBox('pf-msg');
+    function num(id) { var v = document.getElementById(id).value; return v === '' ? null : Number(v); }
+    document.getElementById('pf-save').addEventListener('click', function () {
+      var id = document.getElementById('pf-id').value;
+      var d = {
+        retreat_id: R.id,
+        seq: num('pf-seq'),
+        name: document.getElementById('pf-name').value.trim(),
+        role: document.getElementById('pf-role').value,
+        church: document.getElementById('pf-church').value.trim() || null,
+        bus_seat: num('pf-bus'), van_seat: num('pf-van'),
+        room_group: num('pf-rg'), room_no: document.getElementById('pf-rno').value.trim() || null,
+        paid: num('pf-paid') || 0,
+        companion_of: num('pf-comp'),
+        note: document.getElementById('pf-note').value.trim() || null,
+        present: document.getElementById('pf-present').checked,
+        updated_at: new Date().toISOString()
+      };
+      if (!d.seq || !d.name) { msg.className = 'form-msg err'; msg.textContent = '번호와 성명을 적어 주세요.'; return; }
+      msg.className = 'form-msg'; msg.textContent = '저장 중입니다...';
+      db().then(function (c) {
+        return id ? c.from('retreat_participants').update(d).eq('id', id)
+                  : c.from('retreat_participants').insert(d);
+      }).then(function (r) {
+        if (r.error) { msg.className = 'form-msg err'; msg.textContent = r.error.message; return; }
+        SHSCloud.log(id ? 'update' : 'create', '수양회 참가자 ' + (id ? '수정' : '등록'), R.title + ' / ' + d.seq + '. ' + d.name);
+        load();
+      });
+    });
+    document.getElementById('pf-new').addEventListener('click', function () {
+      ['pf-id', 'pf-seq', 'pf-name', 'pf-church', 'pf-bus', 'pf-van', 'pf-rg', 'pf-rno', 'pf-note'].forEach(function (i) {
+        document.getElementById(i).value = '';
+      });
+      document.getElementById('pf-paid').value = 0;
+      document.getElementById('pf-comp').value = '';
+      document.getElementById('pf-present').checked = false;
+      document.getElementById('pf-title').textContent = '참가자 등록';
+      this.classList.add('hidden');
+      document.getElementById('pf-del').classList.add('hidden');
+    });
+    document.getElementById('pf-del').addEventListener('click', function () {
+      var id = document.getElementById('pf-id').value;
+      if (!id) return;
+      var nm = document.getElementById('pf-name').value;
+      if (!confirm('"' + nm + '" 님을 명단에서 지우시겠습니까? (선택 기록도 함께 지워집니다)')) return;
+      db().then(function (c) { return c.from('retreat_participants').delete().eq('id', id); })
+        .then(function (r) {
+          if (r.error) { alert(r.error.message); return; }
+          SHSCloud.log('delete', '수양회 참가자 삭제', R.title + ' / ' + nm);
+          load();
+        });
+    });
+  }
+
+  /* ---------- 진행 관리 (임원) ---------- */
+  function drawOps() {
+    var box = document.getElementById('rt-body');
+    var steps = S.steps || [], ps = S.participants || [];
+    var h = '<div class="notice-banner">단계를 <strong>열면</strong> 참가자 「내 안내」에 나타나고, 「알림」을 켜 두면 참가자 회원에게 알림함으로 갑니다. ' +
+      '<strong>마감</strong>하면 보이되 더 못 고치고, <strong>닫기</strong>는 다시 감춥니다.</div>';
+
+    h += '<table class="tbl"><thead><tr><th style="width:50px">순서</th><th>단계</th><th style="width:70px">종류</th>' +
+      '<th style="width:70px">상태</th><th style="width:100px">기한</th><th style="width:120px">응답</th><th style="width:230px">처리</th></tr></thead><tbody>';
+    steps.forEach(function (s) {
+      var resp = '';
+      if (s.kind === '선택') {
+        var answered = ps.filter(function (p) { return choiceOf(s.id, p.id); }).length;
+        resp = answered + ' / ' + ps.length;
+      }
+      h += '<tr><td>' + s.seq + '</td><td class="left"><strong>' + e(s.title) + '</strong>' +
+        (s.body ? '<div class="rt-count" style="white-space:pre-line">' + e(s.body) + '</div>' : '') +
+        (s.notify ? '<div class="rt-count">알림 보냄</div>' : '') + '</td>' +
+        '<td>' + e(s.kind) + '</td>' +
+        '<td><span class="rt-badge' + (s.status === '열림' ? ' on' : '') + '">' + e(s.status) + '</span></td>' +
+        '<td>' + (s.due ? e(kdate(s.due)) : '-') + '</td><td>' + resp + '</td>' +
+        '<td>' +
+        (s.status !== '열림' ? '<button class="btn sm" data-open="' + s.id + '">열기</button> ' : '') +
+        (s.status === '열림' ? '<button class="btn ghost sm" data-close="' + s.id + '">마감</button> ' : '') +
+        (s.status !== '닫힘' ? '<button class="btn ghost sm" data-hide="' + s.id + '">닫기</button> ' : '') +
+        (s.kind === '선택' ? '<button class="btn ghost sm" data-sum="' + s.id + '">현황</button>' : '') +
+        '</td></tr>';
+    });
+    h += '</tbody></table>';
+    h += '<label style="display:flex;gap:8px;align-items:center;margin:-10px 0 18px;font-size:0.9rem;cursor:pointer">' +
+      '<input type="checkbox" id="op-notify" checked style="width:auto"> 열 때 참가자 회원에게 알림 보내기</label>';
+    h += '<div id="op-sum"></div>';
+
+    /* 공지 */
+    h += '<div class="admin-card" style="margin-top:8px"><h3 style="margin-top:0">참가자에게 공지</h3>' +
+      '<div class="field"><label>제목</label><input type="text" id="nt-title" placeholder="예: 내일 집결 05:30 · 신분증 꼭 챙기세요"></div>' +
+      '<div class="field"><label>내용 (선택)</label><textarea id="nt-body" rows="3"></textarea></div>' +
+      '<button class="btn" id="nt-send">알림 보내기</button><div class="form-msg" id="nt-msg"></div>' +
+      '<p class="rt-muted">홈페이지에 가입한 참가자(배우자는 묶인 회원)에게 알림함으로 갑니다. 같은 글은 한 번만 갑니다.</p></div>';
+
+    /* 새 단계 */
+    h += '<div class="admin-card" style="margin-top:16px"><h3 style="margin-top:0">단계 추가</h3>' +
+      '<div class="inline-form" style="margin-bottom:8px">' +
+      '<div class="field" style="flex:0 0 80px"><label>순서</label><input type="number" id="st-seq" value="' + (steps.length ? Math.max.apply(null, steps.map(function (s) { return s.seq; })) + 1 : 1) + '"></div>' +
+      '<div class="field"><label>제목</label><input type="text" id="st-title" placeholder="예: 식당 메뉴 · 2일차 저녁 통갈치"></div>' +
+      '<div class="field" style="flex:0 0 110px"><label>종류</label><select id="st-kind"><option>안내</option><option>선택</option><option>배정</option></select></div>' +
+      '<div class="field" style="flex:0 0 160px"><label>기한 (선택)</label><input type="date" id="st-due"></div>' +
+      '</div>' +
+      '<div class="field"><label>안내 글</label><textarea id="st-body" rows="2"></textarea></div>' +
+      '<div class="field"><label>선택지 (한 줄에 하나 · 종류가 선택일 때)</label><textarea id="st-opts" rows="4" placeholder="아메리카노 HOT 5,000 / ICE 5,500&#10;카페라떼 HOT 5,500 / ICE 6,000"></textarea></div>' +
+      '<div class="field"><label>갈래 (쉼표로 · 선택)</label><input type="text" id="st-vars" placeholder="차갑게 (ICE), 따뜻하게 (HOT), 상관없음"></div>' +
+      '<button class="btn" id="st-save">단계 만들기 (닫힌 상태로)</button><div class="form-msg" id="st-msg"></div></div>';
+
+    /* 수양회 상태 */
+    h += '<div class="admin-card" style="margin-top:16px"><h3 style="margin-top:0">수양회 상태</h3>' +
+      '<div class="inline-form"><div class="field" style="flex:0 0 140px"><label>단계</label><select id="rt-stage">' +
+      ['준비', '진행', '마침'].map(function (v) { return '<option' + (R.stage === v ? ' selected' : '') + '>' + v + '</option>'; }).join('') + '</select></div>' +
+      '<div class="field" style="flex:0 0 auto;align-self:flex-end"><button class="btn ghost" id="rt-stage-save">바꾸기</button></div></div>' +
+      '<p class="rt-muted">「진행」은 수양회 기간 중 메인 화면 히어로에 띄우는 기준이고, 「마침」이면 띄우지 않습니다.</p></div>';
+
+    box.innerHTML = h;
+
+    function setStep(id, status) {
+      var notify = status === '열림' && document.getElementById('op-notify').checked;
+      if (status === '열림' && notify && !confirm('이 단계를 열고 참가자 회원에게 알림을 보내시겠습니까?')) return;
+      db().then(function (c) { return c.rpc('retreat_set_step', { p_step: Number(id), p_status: status, p_notify: notify }); })
+        .then(function (r) {
+          if (r.error) { alert(r.error.message); return; }
+          var s = byId(steps, id);
+          SHSCloud.log('update', '수양회 단계 ' + status, R.title + ' / ' + (s ? s.title : id) + (notify ? ' · 알림 ' + (r.data || 0) + '명' : ''));
+          if (status === '열림' && notify) alert((r.data || 0) + '명에게 알림을 보냈습니다.');
+          load();
+        });
+    }
+    box.querySelectorAll('button[data-open]').forEach(function (b) { b.addEventListener('click', function () { setStep(b.dataset.open, '열림'); }); });
+    box.querySelectorAll('button[data-close]').forEach(function (b) { b.addEventListener('click', function () { setStep(b.dataset.close, '마감'); }); });
+    box.querySelectorAll('button[data-hide]').forEach(function (b) { b.addEventListener('click', function () { setStep(b.dataset.hide, '닫힘'); }); });
+    box.querySelectorAll('button[data-sum]').forEach(function (b) {
+      b.addEventListener('click', function () { drawSummary(byId(steps, b.dataset.sum)); });
+    });
+
+    document.getElementById('nt-send').addEventListener('click', function () {
+      var msg = msgBox('nt-msg');
+      var t = document.getElementById('nt-title').value.trim(), bd = document.getElementById('nt-body').value.trim() || null;
+      if (!t) { msg.className = 'form-msg err'; msg.textContent = '제목을 적어 주세요.'; return; }
+      if (!confirm('참가자 전원에게 알림을 보내시겠습니까?')) return;
+      msg.className = 'form-msg'; msg.textContent = '보내는 중입니다...';
+      db().then(function (c) { return c.rpc('retreat_notify', { p_retreat: R.id, p_title: t, p_body: bd }); })
+        .then(function (r) {
+          if (r.error) { msg.className = 'form-msg err'; msg.textContent = r.error.message; return; }
+          msg.className = 'form-msg ok';
+          msg.textContent = (r.data || 0) > 0 ? r.data + '명에게 알림을 보냈습니다.' : '새로 보낼 대상이 없습니다. (같은 글을 이미 보냈거나 가입 회원이 없습니다)';
+          SHSCloud.log('create', '수양회 공지 발송', R.title + ' / ' + t);
+        });
+    });
+
+    document.getElementById('st-save').addEventListener('click', function () {
+      var msg = msgBox('st-msg');
+      var kind = document.getElementById('st-kind').value;
+      var title = document.getElementById('st-title').value.trim();
+      var opts = document.getElementById('st-opts').value.split('\n').map(function (x) { return x.trim(); }).filter(Boolean);
+      var vars = document.getElementById('st-vars').value.split(',').map(function (x) { return x.trim(); }).filter(Boolean);
+      if (!title) { msg.className = 'form-msg err'; msg.textContent = '제목을 적어 주세요.'; return; }
+      if (kind === '선택' && !opts.length) { msg.className = 'form-msg err'; msg.textContent = '선택지를 한 줄에 하나씩 적어 주세요.'; return; }
+      var d = {
+        retreat_id: R.id, seq: Number(document.getElementById('st-seq').value) || 0,
+        key: 'step-' + Date.now().toString(36), title: title, kind: kind,
+        body: document.getElementById('st-body').value.trim() || null,
+        due: document.getElementById('st-due').value || null,
+        variants: vars.length ? vars : null, created_by: user.name
+      };
+      msg.className = 'form-msg'; msg.textContent = '만드는 중입니다...';
+      db().then(function (c) {
+        return c.from('retreat_steps').insert(d).select('id').single().then(function (r) {
+          if (r.error || !opts.length) return r;
+          return c.from('retreat_options').insert(opts.map(function (o, i) { return { step_id: r.data.id, seq: i + 1, label: o }; }));
+        });
+      }).then(function (r) {
+        if (r.error) { msg.className = 'form-msg err'; msg.textContent = r.error.message; return; }
+        SHSCloud.log('create', '수양회 단계 추가', R.title + ' / ' + title);
+        load();
+      });
+    });
+
+    document.getElementById('rt-stage-save').addEventListener('click', function () {
+      var v = document.getElementById('rt-stage').value;
+      db().then(function (c) { return c.from('retreats').update({ stage: v, updated_at: new Date().toISOString() }).eq('id', R.id); })
+        .then(function (r) {
+          if (r.error) { alert(r.error.message); return; }
+          SHSCloud.log('update', '수양회 상태', R.title + ' → ' + v);
+          load();
+        });
+    });
+  }
+
+  /* 선택 단계의 현황 — 선택지별 수와 아직 안 고른 분 */
+  function drawSummary(s) {
+    if (!s) return;
+    var box = document.getElementById('op-sum');
+    var ps = S.participants || [];
+    var byOpt = {}, none = [];
+    ps.forEach(function (p) {
+      var c = choiceOf(s.id, p.id);
+      if (!c) { none.push(p); return; }
+      var k = (c.option_label || '(메모만)') + (c.variant ? ' · ' + c.variant : '');
+      (byOpt[k] = byOpt[k] || []).push(p.name + (c.note ? '(' + c.note + ')' : ''));
+    });
+    var keys = Object.keys(byOpt).sort(function (a, b) { return byOpt[b].length - byOpt[a].length; });
+    var h = '<div class="rt-card"><h3>' + e(s.title) + ' · 현황 <span class="rt-count">' + (ps.length - none.length) + ' / ' + ps.length + '</span></h3>';
+    if (!keys.length) h += '<p class="rt-muted">아직 고른 분이 없습니다.</p>';
+    else {
+      h += '<table class="tbl" style="max-width:760px"><thead><tr><th>선택</th><th style="width:60px">수</th><th>이름</th></tr></thead><tbody>' +
+        keys.map(function (k) {
+          return '<tr><td class="left">' + e(k) + '</td><td>' + byOpt[k].length + '</td><td class="left" style="font-size:0.86rem">' + e(byOpt[k].join(', ')) + '</td></tr>';
+        }).join('') + '</tbody></table>';
+    }
+    if (none.length) h += '<p class="rt-muted">아직 안 고른 분 (' + none.length + '): ' + e(none.map(function (p) { return p.name; }).join(', ')) + '</p>';
+    h += '<p class="rt-muted">주문서로 쓰시려면 이 표를 그대로 캡처하시면 됩니다.</p></div>';
+    box.innerHTML = h;
+    box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  load();
+ });
+});
+</script>
+</body>
+</html>
