@@ -116,6 +116,7 @@ var SHSRetreat = (function () {
 
     h += '<a class="btn" href="' + base + '#me">내 안내</a> ' +
       '<a class="btn ghost" href="' + base + '#prog">일정</a> ' +
+      (R.guide_url ? '<a class="btn ghost" href="' + esc(R.guide_url) + '" target="_blank" rel="noopener">가이드북</a> ' : '') +
       (d.officer ? '<a class="btn ghost" href="' + base + '#ops">진행 관리</a> ' : '') +
       (!d.inDays ? '<button type="button" class="btn ghost sm" data-rt-hide>그만 보기</button>' : '') +
       '</div>';
@@ -142,7 +143,11 @@ var SHSRetreat = (function () {
       var t = card.querySelector('.ht-title'), n = card.querySelector('.ht-name');
       if (t) t.textContent = d.title || '수양회';
       if (n) n.textContent = (d.day_no ? d.day_no + '일차' : '') + (d.place ? ' · ' + d.place : '');
-      card.href = 'retreat.html?id=' + d.id + '#me';
+      var go = document.getElementById('hero-retreat-go');
+      if (go) go.href = 'retreat.html?id=' + d.id + '#me';
+      /* 가이드북 — 교육친교부가 적어 둔 주소를 그대로 연다 (가이드북을 고치면 이 단추도 고친 것을 연다) */
+      var gb = document.getElementById('hero-retreat-guide');
+      if (gb && d.guide_url) { gb.href = d.guide_url; gb.classList.remove('hidden'); }
       card.classList.remove('hidden');
     }, function () {});
   }

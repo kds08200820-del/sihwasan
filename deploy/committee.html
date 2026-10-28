@@ -575,9 +575,10 @@ document.addEventListener('DOMContentLoaded', function () {
         ? '단계를 열고 명단·일정을 고치는 일은 수양회 화면의 <strong>진행 관리</strong>에서 합니다. ' +
           '단계를 열면 참가자 「내 안내」에 나타나고 알림이 갑니다.'
         : '좌석·숙소와 골라야 할 것(카페 메뉴 등)은 수양회 화면의 <strong>내 안내</strong>에 있습니다.') +
+      ' 사진과 유튜브 영상은 <strong>사진·영상</strong>에 모읍니다.' +
       '</div>';
     h += '<table class="tbl"><thead><tr><th>수양회</th><th style="width:220px">기간</th>' +
-      '<th style="width:160px">장소</th><th style="width:80px">상태</th><th style="width:250px">열기</th></tr></thead><tbody>';
+      '<th style="width:160px">장소</th><th style="width:80px">상태</th><th style="width:320px">열기</th></tr></thead><tbody>';
     retreats.forEach(function (r) {
       var base = 'retreat.html?id=' + r.id;
       h += '<tr><td class="left"><strong>' + e(r.title) + '</strong></td>' +
@@ -586,6 +587,7 @@ document.addEventListener('DOMContentLoaded', function () {
         '<td><span class="role-badge">' + e(r.stage) + '</span></td>' +
         '<td><a class="btn sm" href="' + base + '#me">내 안내</a> ' +
         '<a class="btn ghost sm" href="' + base + '#prog">일정</a> ' +
+        '<a class="btn ghost sm" href="' + base + '#media">사진·영상</a> ' +
         (isOfficer ? '<a class="btn ghost sm" href="' + base + '#ops">진행 관리</a>' : '') + '</td></tr>';
     });
     h += '</tbody></table>';

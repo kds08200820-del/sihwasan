@@ -73,12 +73,14 @@
       <span class="ht-go">들어가기 &rarr;</span>
     </a>
     <!-- 수양회 기간에는 로그인한 회원에게 이 창이 보인다 (js/retreat-card.js 가 켠다) -->
-    <a class="hero-today-card hidden" id="hero-retreat" href="retreat.html" style="margin:22px auto 10px">
+    <div class="hero-today-card hidden" id="hero-retreat" style="margin:22px auto 10px">
       <span class="ht-kicker">RETREAT</span>
       <span class="ht-title">수양회</span>
       <span class="ht-name"></span>
-      <span class="ht-go">내 안내 보기 &rarr;</span>
-    </a>
+      <a class="ht-go" id="hero-retreat-go" href="retreat.html">내 안내 보기 &rarr;</a>
+      <a class="ht-go hidden" id="hero-retreat-guide" href="#" target="_blank" rel="noopener"
+         style="margin-top:0;background:#fff;color:var(--navy);border:1px solid var(--navy)">가이드북 보기</a>
+    </div>
     <!-- AI 자료 검색 — 로그인한 정회원 이상에게만 보인다 (js/ai-chat.js) -->
     <div id="ai-hero" class="ai-hero hidden" aria-label="AI 자료 검색"></div>
   </div>

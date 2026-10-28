@@ -55,6 +55,25 @@
 .rt-preview .rt-card { margin-bottom: 0; }
 .rt-sum-people { margin: 6px 0 12px; }
 .rt-sum-people summary { cursor: pointer; font-weight: 700; color: var(--navy); padding: 8px 0; }
+.rt-sum-bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 0 0 12px; }
+.rt-sum-bar .rt-count { margin-left: 6px; }
+.rt-new { display: inline-block; margin-left: 4px; padding: 0 6px; border-radius: 9px; font-size: 0.7rem; font-weight: 700;
+  background: #fdf3f3; color: var(--red); border: 1px solid var(--red); vertical-align: middle; }
+.rt-fresh { font-weight: 700; }
+/* 주문서 — 카페에 그대로 보여 줄 수 있게 크게 */
+.rt-order { background: #fff; border: 2px solid var(--navy); border-radius: 12px; padding: 20px 22px; margin-bottom: 12px; }
+.rt-order-h { font-family: 'Noto Serif KR', serif; font-size: 1.5rem; font-weight: 700; color: var(--navy); }
+.rt-order-sub { color: var(--gray-5); margin: 2px 0 10px; }
+.rt-order-row { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 12px 0;
+  border-bottom: 1px solid var(--gray-2); font-size: 1.2rem; }
+.rt-order-row em { font-style: normal; color: var(--gray-7); }
+.rt-order-row strong { font-size: 1.5rem; color: var(--navy); white-space: nowrap; }
+.rt-order-notes { margin-top: 12px; font-size: 1.05rem; line-height: 1.7; }
+@media (max-width: 640px) {
+  .rt-order { padding: 16px; }
+  .rt-order-row { font-size: 1.05rem; }
+  .rt-order-row strong { font-size: 1.3rem; }
+}
 .rt-count { font-size: 0.8rem; color: var(--gray-5); }
 @media (max-width: 640px) {
   .rt-stop { grid-template-columns: 50px 1fr; }
@@ -80,6 +99,8 @@
 <script src="js/supabase-config.js"></script>
 <script src="js/supabase-auth.js?v=20261020za"></script>
 <script src="js/main.js?v=20261022n"></script>
+<script src="js/photos-config.js"></script>
+<script src="js/photos.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
  SHS.getUser().then(function (user) {
@@ -108,6 +129,9 @@ document.addEventListener('DOMContentLoaded', function () {
   var day = 1;             /* 일정 탭에서 보는 날 */
   var editStepId = null;   /* 진행 관리에서 펼쳐 둔 단계 — 저장 뒤 다시 읽어도 그대로 펼친다 */
   var editFlash = '';
+  var sumStepId = null;    /* 펼쳐 둔 현황 — 다시 그려도 그대로 펼친다 */
+  var sumView = 'table';   /* 현황표 / 주문서 */
+  var sumTimer = null, sumFresh = {}, sumSeen = null, sumVisBound = false;
 
   function db() { return SHSCloud.init(); }
   function msgBox(id) { return document.getElementById(id); }
@@ -238,6 +262,7 @@ document.addEventListener('DOMContentLoaded', function () {
     h += '<div class="tabs" id="rt-tabs">' +
       '<button class="' + (tab === 'me' ? 'active' : '') + '" data-t="me">내 안내' + openCountBadge() + '</button>' +
       '<button class="' + (tab === 'prog' ? 'active' : '') + '" data-t="prog">일정</button>' +
+      '<button class="' + (tab === 'media' ? 'active' : '') + '" data-t="media">사진·영상</button>' +
       /* 참가자 전체 명단은 정회원에게만 */
       (S.member === false ? '' : '<button class="' + (tab === 'list' ? 'active' : '') + '" data-t="list">명단</button>') +
       (isOfficer ? '<button class="' + (tab === 'ops' ? 'active' : '') + '" data-t="ops">진행 관리</button>' : '') +
@@ -248,6 +273,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     if (tab === 'me') drawMe();
     else if (tab === 'prog') drawProg();
+    else if (tab === 'media') drawMedia();
     else if (tab === 'list') drawList();
     else drawOps();
   }
@@ -465,6 +491,273 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       });
     });
+  }
+
+  /* ---------- 사진·영상 (143 sql) ----------
+   * 시찰 사진첩·노회 갤러리와 같은 방식: 사진은 웹 크기로 줄여 Cloudflare R2 에(js/photos.js),
+   * 영상은 유튜브 주소로. 날짜별(준비·답사 / n일차)로 나누어 보여 준다.
+   * 올리기는 그 부서 임원과 정회원 참가자 — 사진 보관소가 정회원만 받는다. */
+  var MEDIA = null, mediaDay = 'all';
+  var FULL_W = 1400, FULL_Q = 0.8, THUMB_W = 640, THUMB_Q = 0.72;   /* 노회 갤러리와 같은 크기 */
+
+  function ytId(u) {
+    var m = String(u || '').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/))([A-Za-z0-9_-]{6,})/);
+    return m ? m[1] : null;
+  }
+  function dayName(n) { return n === 0 ? '준비·답사' : (n ? n + '일차' : '기타'); }
+  function canUpload() { return S.member !== false && (isOfficer || !!S.me); }
+  function canEditMedia(m) { return isOfficer || (m.author_id && m.author_id === user.id); }
+
+  /* 웹 크기로 줄이기 — 원본을 그대로 올리지 않는다 (시찰 사진첩과 같은 방식) */
+  function shrink(file, maxW, quality) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image(), url = URL.createObjectURL(file);
+      img.onload = function () {
+        URL.revokeObjectURL(url);
+        var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+        if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+        var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+        var cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, w, h); cx.drawImage(img, 0, 0, w, h);
+        cv.toBlob(function (b) { b ? resolve(b) : reject(new Error('사진을 줄이지 못했습니다.')); }, 'image/jpeg', quality);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('사진을 읽지 못했습니다: ' + file.name)); };
+      img.src = url;
+    });
+  }
+
+  function drawMedia() {
+    var box = document.getElementById('rt-body');
+    box.innerHTML = '<p class="rt-muted">불러오는 중...</p>';
+    db().then(function (c) {
+      return c.from('retreat_media').select('*').eq('retreat_id', R.id)
+        .order('day_no', { ascending: true, nullsFirst: false }).order('sort').order('id');
+    }).then(function (r) {
+      if (r.error) {
+        box.innerHTML = '<div class="notice-banner">사진·영상을 불러오지 못했습니다: ' + e(r.error.message) +
+          ' (143 sql 실행이 필요할 수 있습니다)</div>';
+        return;
+      }
+      MEDIA = r.data || [];
+      paintMedia();
+    });
+  }
+
+  function paintMedia() {
+    var box = document.getElementById('rt-body');
+    if (!box) return;
+    var days = [];
+    MEDIA.forEach(function (m) { var k = m.day_no == null ? 'x' : String(m.day_no); if (days.indexOf(k) < 0) days.push(k); });
+    var shown = MEDIA.filter(function (m) { return mediaDay === 'all' || (m.day_no == null ? 'x' : String(m.day_no)) === mediaDay; });
+    var vids = shown.filter(function (m) { return m.kind === 'video'; });
+    var pics = shown.filter(function (m) { return m.kind === 'photo'; });
+
+    var h = '<div class="rt-day">' +
+      '<button class="' + (mediaDay === 'all' ? 'active' : '') + '" data-md="all">전체 ' + MEDIA.length + '</button>' +
+      days.sort(function (a, b) { return (a === 'x' ? 99 : +a) - (b === 'x' ? 99 : +b); }).map(function (k) {
+        var n = MEDIA.filter(function (m) { return (m.day_no == null ? 'x' : String(m.day_no)) === k; }).length;
+        return '<button class="' + (mediaDay === k ? 'active' : '') + '" data-md="' + k + '">' +
+          e(dayName(k === 'x' ? null : +k)) + ' ' + n + '</button>';
+      }).join('') + '</div>';
+
+    if (!MEDIA.length) h += '<p class="rt-muted">아직 올린 사진·영상이 없습니다.</p>';
+
+    if (vids.length) {
+      h += '<h3 class="mn-sub" style="margin:4px 0 10px">영상 ' + vids.length + '</h3><div class="vid-grid">' +
+        vids.map(function (v) {
+          var id = ytId(v.image_url);
+          var th = v.thumb_url || (id ? 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg' : '');
+          return '<div class="vid-card"><a href="#" class="vid-thumb" data-play="' + v.id + '">' +
+            (th ? '<img src="' + e(th) + '" alt="" loading="lazy">' : '') + '<span class="vid-play">&#9654;</span></a>' +
+            '<span class="vid-cap"><span class="t">' + e(v.title || '영상') + '</span>' +
+            '<span class="d">' + e(dayName(v.day_no)) + (v.author_name ? ' · ' + e(v.author_name) : '') + '</span></span>' +
+            (canEditMedia(v) ? '<button class="vid-del" data-mdel="' + v.id + '">지우기</button>' : '') + '</div>';
+        }).join('') + '</div>';
+    }
+    if (pics.length) {
+      h += '<h3 class="mn-sub" style="margin:4px 0 10px">사진 ' + pics.length + '</h3><div class="alb-photos">' +
+        pics.map(function (p, i) {
+          return '<img src="' + e(p.thumb_url || p.image_url) + '" alt="' + e(p.title || '') + '" loading="lazy" data-pic="' + i + '">';
+        }).join('') + '</div>';
+    }
+
+    if (canUpload()) h += uploadHtml();
+    else if (S.member === false) h += '<p class="rt-muted" style="margin-top:18px">사진 올리기는 정회원만 할 수 있습니다. 올리실 사진은 남편 목사님·장로님께 부탁해 주세요.</p>';
+    box.innerHTML = h;
+
+    box.querySelectorAll('[data-md]').forEach(function (b) {
+      b.addEventListener('click', function () { mediaDay = b.dataset.md; paintMedia(); });
+    });
+    box.querySelectorAll('[data-play]').forEach(function (a) {
+      a.addEventListener('click', function (ev) { ev.preventDefault(); openVideo(byId(MEDIA, a.dataset.play)); });
+    });
+    box.querySelectorAll('[data-pic]').forEach(function (img) {
+      img.addEventListener('click', function () { openPhoto(pics, Number(img.dataset.pic)); });
+    });
+    box.querySelectorAll('[data-mdel]').forEach(function (b) {
+      b.addEventListener('click', function () { removeMedia(byId(MEDIA, b.dataset.mdel)); });
+    });
+    if (canUpload()) bindUpload();
+  }
+
+  function uploadHtml() {
+    var n = totalDays(), opts = '<option value="0">준비·답사</option>';
+    for (var i = 1; i <= n; i++) opts += '<option value="' + i + '">' + i + '일차</option>';
+    opts += '<option value="">기타</option>';
+    var dn = dayNo(S.today), cur = dn >= 1 && dn <= n ? dn : (dn < 1 ? 0 : '');
+    var sel = function (id) { return '<select id="' + id + '">' + opts.replace('value="' + cur + '"', 'value="' + cur + '" selected') + '</select>'; };
+    return '<div class="admin-card" style="margin-top:22px"><h3 style="margin-top:0">사진 올리기</h3>' +
+      '<div class="inline-form" style="margin-bottom:8px">' +
+      '<div class="field" style="flex:0 0 150px"><label>날</label>' + sel('mu-day') + '</div>' +
+      '<div class="field"><label>설명 (여러 장이면 모두 같은 설명)</label><input type="text" id="mu-cap" placeholder="예: 9/21 사전답사"></div>' +
+      '</div>' +
+      '<div class="field"><label>사진 고르기 (여러 장 한꺼번에)</label><input type="file" id="mu-files" accept="image/*" multiple></div>' +
+      '<button class="btn" id="mu-go">올리기</button><div class="form-msg" id="mu-msg"></div>' +
+      '<p class="rt-muted">사진은 노회 갤러리와 같은 크기로 줄여서 올라갑니다. 휴대폰 사진도 그대로 고르시면 됩니다.</p></div>' +
+      '<div class="admin-card" style="margin-top:16px"><h3 style="margin-top:0">유튜브 영상 올리기</h3>' +
+      '<div class="inline-form" style="margin-bottom:8px">' +
+      '<div class="field" style="flex:0 0 150px"><label>날</label>' + sel('mv-day') + '</div>' +
+      '<div class="field"><label>제목</label><input type="text" id="mv-title"></div>' +
+      '</div>' +
+      '<div class="field"><label>유튜브 주소</label><input type="url" id="mv-url" placeholder="https://youtu.be/..."></div>' +
+      '<button class="btn" id="mv-go">영상 올리기</button><div class="form-msg" id="mv-msg"></div></div>';
+  }
+
+  function dayVal(id) { var v = document.getElementById(id).value; return v === '' ? null : Number(v); }
+
+  function bindUpload() {
+    document.getElementById('mu-go').addEventListener('click', function () {
+      var btn = this, msg = msgBox('mu-msg');
+      var files = Array.prototype.slice.call(document.getElementById('mu-files').files || []);
+      if (!files.length) { msg.className = 'form-msg err'; msg.textContent = '사진을 골라 주세요.'; return; }
+      if (!window.SHSPhotos) { msg.className = 'form-msg err'; msg.textContent = '사진 도구를 불러오지 못했습니다. 화면을 새로 고쳐 주세요.'; return; }
+      var day = dayVal('mu-day'), cap = document.getElementById('mu-cap').value.trim() || null;
+      var base = MEDIA.filter(function (m) { return m.kind === 'photo'; }).reduce(function (a, m) { return Math.max(a, m.sort || 0); }, 0);
+      var done = 0, failed = [];
+      btn.disabled = true;
+      var chain = Promise.resolve();
+      files.forEach(function (f, i) {
+        chain = chain.then(function () {
+          msg.className = 'form-msg'; msg.textContent = (i + 1) + ' / ' + files.length + ' 올리는 중...';
+          return Promise.all([shrink(f, FULL_W, FULL_Q), shrink(f, THUMB_W, THUMB_Q)])
+            .then(function (pair) { return SHSPhotos.putPair(pair[0], pair[1]); })
+            .then(function (u) {
+              return db().then(function (c) {
+                return c.from('retreat_media').insert({
+                  retreat_id: R.id, kind: 'photo', day_no: day, title: cap,
+                  image_url: u.full, thumb_url: u.thumb, sort: base + i + 1,
+                  author_id: user.id, author_name: user.name
+                });
+              });
+            })
+            .then(function (r) { if (r && r.error) throw r.error; done++; })
+            .catch(function (err) { failed.push(f.name + ' (' + (err && err.message || err) + ')'); });
+        });
+      });
+      chain.then(function () {
+        btn.disabled = false;
+        SHSCloud.log('create', '수양회 사진 올림', R.title + ' / ' + dayName(day) + ' ' + done + '장');
+        if (failed.length) {
+          alert(done + '장을 올렸습니다. 올리지 못한 사진 ' + failed.length + '장:\n' + failed.slice(0, 10).join('\n'));
+        }
+        mediaDay = day == null ? 'x' : String(day);
+        drawMedia();
+      });
+    });
+
+    document.getElementById('mv-go').addEventListener('click', function () {
+      var msg = msgBox('mv-msg');
+      var url = document.getElementById('mv-url').value.trim(), title = document.getElementById('mv-title').value.trim();
+      if (!ytId(url)) { msg.className = 'form-msg err'; msg.textContent = '유튜브 주소를 확인해 주세요. (youtu.be/… 또는 youtube.com/watch?v=…)'; return; }
+      var day = dayVal('mv-day');
+      msg.className = 'form-msg'; msg.textContent = '올리는 중입니다...';
+      db().then(function (c) {
+        return c.from('retreat_media').insert({
+          retreat_id: R.id, kind: 'video', day_no: day, title: title || null, image_url: url,
+          sort: MEDIA.filter(function (m) { return m.kind === 'video'; }).length + 1,
+          author_id: user.id, author_name: user.name
+        });
+      }).then(function (r) {
+        if (r.error) { msg.className = 'form-msg err'; msg.textContent = r.error.message; return; }
+        SHSCloud.log('create', '수양회 영상 올림', R.title + ' / ' + (title || url));
+        mediaDay = day == null ? 'x' : String(day);
+        drawMedia();
+      });
+    });
+  }
+
+  function removeMedia(m) {
+    if (!m || !confirm((m.kind === 'video' ? '이 영상을' : '이 사진을') + ' 지우시겠습니까?')) return false;
+    db().then(function (c) { return c.from('retreat_media').delete().eq('id', m.id); }).then(function (r) {
+      if (r.error) { alert(r.error.message); return; }
+      /* 사진 파일도 보관소에서 지운다 (영상은 유튜브 주소라 지울 파일이 없다) */
+      if (m.kind === 'photo' && window.SHSPhotos && SHSPhotos.remove) {
+        [m.image_url, m.thumb_url].forEach(function (u) { if (u) Promise.resolve(SHSPhotos.remove(u)).catch(function () {}); });
+      }
+      SHSCloud.log('delete', '수양회 ' + (m.kind === 'video' ? '영상' : '사진') + ' 지움', R.title + ' / ' + (m.title || m.id));
+      closeViewer();
+      drawMedia();
+    });
+    return true;
+  }
+
+  /* 크게 보기 — 사진은 좌우로 넘기고, 영상은 그 자리에서 재생한다 (닫으면 소리도 멈춘다) */
+  var viewer = null, vList = [], vIdx = 0;
+  function viewerEl() {
+    if (viewer) return viewer;
+    viewer = document.createElement('div');
+    viewer.className = 'lightbox';
+    viewer.innerHTML = '<button class="lb-close" aria-label="닫기">&times;</button>' +
+      '<button class="lb-nav prev" data-d="-1" aria-label="이전">&lsaquo;</button>' +
+      '<button class="lb-nav next" data-d="1" aria-label="다음">&rsaquo;</button>' +
+      '<div class="rt-view" style="width:min(1000px,94vw);text-align:center"></div>';
+    document.body.appendChild(viewer);
+    viewer.querySelector('.lb-close').addEventListener('click', closeViewer);
+    viewer.addEventListener('click', function (ev) { if (ev.target === viewer) closeViewer(); });
+    viewer.querySelectorAll('.lb-nav').forEach(function (b) {
+      b.addEventListener('click', function () { if (vList.length) { vIdx = (vIdx + Number(b.dataset.d) + vList.length) % vList.length; showPhoto(); } });
+    });
+    document.addEventListener('keydown', function (ev) {
+      if (!viewer.classList.contains('open')) return;
+      if (ev.key === 'Escape') closeViewer();
+      if (vList.length && ev.key === 'ArrowLeft') { vIdx = (vIdx - 1 + vList.length) % vList.length; showPhoto(); }
+      if (vList.length && ev.key === 'ArrowRight') { vIdx = (vIdx + 1) % vList.length; showPhoto(); }
+    });
+    return viewer;
+  }
+  function closeViewer() {
+    if (!viewer) return;
+    viewer.classList.remove('open');
+    viewer.querySelector('.rt-view').innerHTML = '';
+  }
+  function showPhoto() {
+    var p = vList[vIdx] || {};
+    viewer.querySelector('.rt-view').innerHTML =
+      '<img src="' + e(p.image_url) + '" alt="" style="max-width:100%;max-height:80vh">' +
+      '<div style="color:#dfe4ee;font-size:0.88rem;margin-top:10px">' + e(p.title || '') + ' · ' + e(dayName(p.day_no)) +
+      (vList.length > 1 ? '   (' + (vIdx + 1) + ' / ' + vList.length + ')' : '') + '</div>' +
+      (canEditMedia(p) ? '<button class="btn ghost sm" style="margin-top:10px;color:#fff;border-color:#fff" id="rt-view-del">이 사진 지우기</button>' : '');
+    var d = document.getElementById('rt-view-del');
+    if (d) d.addEventListener('click', function () { removeMedia(p); });
+  }
+  function openPhoto(list, i) {
+    vList = list; vIdx = i;
+    var v = viewerEl();
+    v.querySelectorAll('.lb-nav').forEach(function (b) { b.style.display = list.length > 1 ? '' : 'none'; });
+    v.classList.add('open');
+    showPhoto();
+  }
+  function openVideo(m) {
+    var id = m && ytId(m.image_url);
+    if (!id) return;
+    vList = [];
+    var v = viewerEl();
+    v.querySelectorAll('.lb-nav').forEach(function (b) { b.style.display = 'none'; });
+    v.querySelector('.rt-view').innerHTML =
+      '<div class="feed-vid"><iframe src="https://www.youtube.com/embed/' + e(id) + '?autoplay=1&rel=0" ' +
+      'allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="' + e(m.title || '영상') + '"></iframe></div>' +
+      '<div style="color:#dfe4ee;font-size:0.92rem;margin-top:10px">' + e(m.title || '') + '</div>' +
+      '<a href="' + e(m.image_url) + '" target="_blank" rel="noopener" style="color:#dfe4ee;font-size:0.82rem;text-decoration:underline">유튜브에서 보기</a>';
+    v.classList.add('open');
   }
 
   /* ---------- 명단 ---------- */
@@ -704,12 +997,16 @@ document.addEventListener('DOMContentLoaded', function () {
       '<div class="field"><label>갈래 (쉼표로 · 선택)</label><input type="text" id="st-vars" placeholder="차갑게 (ICE), 따뜻하게 (HOT), 상관없음"></div>' +
       '<button class="btn" id="st-save">단계 만들기 (닫힌 상태로)</button><div class="form-msg" id="st-msg"></div></div>';
 
-    /* 수양회 상태 */
-    h += '<div class="admin-card" style="margin-top:16px"><h3 style="margin-top:0">수양회 상태</h3>' +
+    /* 수양회 상태 · 바로 가기 주소 (단톡방·설문 주소는 공개 저장소의 SQL 에 두지 않고 여기서 적는다) */
+    h += '<div class="admin-card" style="margin-top:16px"><h3 style="margin-top:0">수양회 상태 · 바로 가기</h3>' +
       '<div class="inline-form"><div class="field" style="flex:0 0 140px"><label>단계</label><select id="rt-stage">' +
-      ['준비', '진행', '마침'].map(function (v) { return '<option' + (R.stage === v ? ' selected' : '') + '>' + v + '</option>'; }).join('') + '</select></div>' +
-      '<div class="field" style="flex:0 0 auto;align-self:flex-end"><button class="btn ghost" id="rt-stage-save">바꾸기</button></div></div>' +
-      '<p class="rt-muted">「진행」은 수양회 기간 중 메인 화면 히어로에 띄우는 기준이고, 「마침」이면 띄우지 않습니다.</p></div>';
+      ['준비', '진행', '마침'].map(function (v) { return '<option' + (R.stage === v ? ' selected' : '') + '>' + v + '</option>'; }).join('') + '</select></div></div>' +
+      '<div class="field"><label>단톡방 주소</label><input type="url" id="rt-chat" value="' + e(R.chat_url || '') + '" placeholder="https://open.kakao.com/..."></div>' +
+      '<div class="field"><label>가이드북 주소</label><input type="url" id="rt-guide" value="' + e(R.guide_url || '') + '"></div>' +
+      '<div class="field"><label>설문·자료 주소</label><input type="url" id="rt-survey" value="' + e(R.survey_url || '') + '"></div>' +
+      '<button class="btn" id="rt-stage-save">저장</button>' +
+      '<p class="rt-muted">「진행」은 수양회 기간 중 메인 화면 히어로에 띄우는 기준이고, 「마침」이면 띄우지 않습니다. ' +
+      '주소는 화면 맨 위 단추로 나옵니다 (참가자에게만 보입니다).</p></div>';
 
     box.innerHTML = h;
 
@@ -729,7 +1026,7 @@ document.addEventListener('DOMContentLoaded', function () {
     box.querySelectorAll('button[data-close]').forEach(function (b) { b.addEventListener('click', function () { setStep(b.dataset.close, '마감'); }); });
     box.querySelectorAll('button[data-hide]').forEach(function (b) { b.addEventListener('click', function () { setStep(b.dataset.hide, '닫힘'); }); });
     box.querySelectorAll('button[data-sum]').forEach(function (b) {
-      b.addEventListener('click', function () { drawSummary(byId(steps, b.dataset.sum)); });
+      b.addEventListener('click', function () { drawSummary(byId(steps, b.dataset.sum), true); });
     });
     box.querySelectorAll('button[data-edit-step]').forEach(function (b) {
       b.addEventListener('click', function () { editStepId = Number(b.dataset.editStep); drawStepEdit(byId(steps, b.dataset.editStep), ''); });
@@ -793,7 +1090,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('rt-stage-save').addEventListener('click', function () {
       var v = document.getElementById('rt-stage').value;
-      db().then(function (c) { return c.from('retreats').update({ stage: v, updated_at: new Date().toISOString() }).eq('id', R.id); })
+      function u(id) { return document.getElementById(id).value.trim() || null; }
+      var d = { stage: v, chat_url: u('rt-chat'), guide_url: u('rt-guide'), survey_url: u('rt-survey'), updated_at: new Date().toISOString() };
+      db().then(function (c) { return c.from('retreats').update(d).eq('id', R.id); })
         .then(function (r) {
           if (r.error) { alert(r.error.message); return; }
           SHSCloud.log('update', '수양회 상태', R.title + ' → ' + v);
@@ -803,6 +1102,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /* 저장한 뒤 다시 읽었으면 고치던 단계를 그대로 펼쳐 둔다 */
     if (editStepId && byId(steps, editStepId)) { drawStepEdit(byId(steps, editStepId), editFlash); editFlash = ''; }
+    if (sumStepId && byId(steps, sumStepId)) drawSummary(byId(steps, sumStepId), false);
   }
 
   /* ---------- 단계 보기·수정 (임원) ----------
@@ -923,27 +1223,76 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   /* 선택 단계의 현황 — 선택지별 수와 아직 안 고른 분, 그리고 사람별로 임원이 대신 고르기
-   * (홈페이지를 쓰지 않는 분·배우자 몫을 전화로 받아 넣을 때) */
-  function drawSummary(s) {
+   * (홈페이지를 쓰지 않는 분·배우자 몫을 전화로 받아 넣을 때)
+   *
+   * 열어 두면 30초마다 저절로 다시 읽는다 (홈페이지의 다른 화면처럼 시간마다 확인하는 방식 —
+   * 휴대폰으로 카페 앞에서 열어 두고 기다리면 된다). 화면을 내려 두거나 다른 탭으로 가면 쉰다.
+   * 지난번에 읽은 뒤 새로 고르거나 바꾼 분은 「새로」로 표시한다.
+   * 「주문서」는 카페에 그대로 보여 줄 수 있게 메뉴별 잔 수만 크게 보여 준다. */
+  var SUM_EVERY = 30000;
+  function sumSig(c) { return c ? [c.option_id || '', c.variant || '', c.note || ''].join('|') : ''; }
+  function sumStop() { if (sumTimer) { clearInterval(sumTimer); sumTimer = null; } }
+
+  function drawSummary(s, byClick) {
+    sumStop();
     if (!s) return;
     var box = document.getElementById('op-sum');
+    if (!box) return;
+    if (sumStepId !== s.id) { sumFresh = {}; sumSeen = null; }
+    sumStepId = s.id;
+    box.dataset.step = s.id;
     var ps = S.participants || [];
+
+    function hhmmss(d) { return [d.getHours(), d.getMinutes(), d.getSeconds()].map(function (n) { return (n < 10 ? '0' : '') + n; }).join(':'); }
+    function rememberSeen() {
+      sumSeen = {};
+      ps.forEach(function (p) { sumSeen[p.id] = sumSig(choiceOf(s.id, p.id)); });
+    }
+    if (!sumSeen) rememberSeen();
+    else ps.forEach(function (p) {   /* 화면을 다시 그리는 사이에 들어온 것도 「새로」로 */
+      if (sumSig(choiceOf(s.id, p.id)) !== sumSeen[p.id]) sumFresh[p.id] = 1;
+    });
+
     box.innerHTML = '<div class="rt-card"><h3>' + e(s.title) + ' · 현황 <span class="rt-count" id="sum-n"></span></h3>' +
+      '<div class="rt-sum-bar">' +
+      '<button class="btn sm' + (sumView === 'order' ? ' ghost' : '') + '" data-sv="table">현황표</button>' +
+      '<button class="btn sm' + (sumView === 'order' ? '' : ' ghost') + '" data-sv="order">주문서</button>' +
+      '<button class="btn ghost sm" id="sum-now">지금 새로 고침</button>' +
+      '<button class="btn ghost sm" id="sum-close">접기</button>' +
+      '<span class="rt-count" id="sum-stamp"></span></div>' +
+      '<div id="sum-fresh"></div>' +
       '<div id="sum-counts"></div>' +
-      '<details class="rt-sum-people"><summary>사람별로 보기 · 임원이 대신 고르기 (' + ps.length + '명)</summary>' +
+      '<details class="rt-sum-people"' + (sumView === 'order' ? ' style="display:none"' : '') + '>' +
+      '<summary>사람별로 보기 · 임원이 대신 고르기 (' + ps.length + '명)</summary>' +
       '<p class="rt-muted">부부도 한 분씩 따로 고릅니다. 홈페이지를 쓰지 않는 분은 전화로 여쭈어 여기서 넣어 주세요. ' +
-      '마감된 단계도 임원은 고칠 수 있습니다.</p>' +
+      '마감된 단계도 임원은 고칠 수 있습니다. 고치는 중인 줄은 저절로 새로 고칠 때 건드리지 않습니다.</p>' +
       '<div data-step="' + s.id + '">' + personRows(s, ps, function (p) {
         return p.seq + '번' + (p.church ? ' · ' + p.church : '') + (p.companion_of ? ' · 배우자' : '');
-      }) + '</div></details>' +
-      '<p class="rt-muted">주문서로 쓰시려면 위 표를 그대로 캡처하시면 됩니다.</p></div>';
-    function paintCounts() {
-      var byOpt = {}, none = [];
+      }) + '</div></details></div>';
+
+    /* 현황표 또는 주문서 */
+    function paint() {
+      var none = ps.filter(function (p) { return !choiceOf(s.id, p.id); });
+      document.getElementById('sum-n').textContent = (ps.length - none.length) + ' / ' + ps.length;
+      document.getElementById('sum-counts').innerHTML = sumView === 'order' ? orderHtml(none) : tableHtml(none);
+      var fresh = ps.filter(function (p) { return sumFresh[p.id]; });
+      document.getElementById('sum-fresh').innerHTML = fresh.length
+        ? '<div class="dash-alert"><strong>새로 고르거나 바꾼 분 ' + fresh.length + '명</strong> — ' +
+          e(fresh.map(function (p) { return p.name; }).join(', ')) +
+          ' <a href="#" id="sum-fresh-clear">표시 지우기</a></div>'
+        : '';
+      var fc = document.getElementById('sum-fresh-clear');
+      if (fc) fc.addEventListener('click', function (ev) { ev.preventDefault(); sumFresh = {}; paint(); });
+      rememberSeen();
+    }
+    function tableHtml(none) {
+      var byOpt = {};
       ps.forEach(function (p) {
         var c = choiceOf(s.id, p.id);
-        if (!c) { none.push(p); return; }
+        if (!c) return;
         var k = (c.option_label || '(메모만)') + (c.variant ? ' · ' + c.variant : '');
-        (byOpt[k] = byOpt[k] || []).push(p.name + (c.note ? '(' + c.note + ')' : ''));
+        (byOpt[k] = byOpt[k] || []).push('<span' + (sumFresh[p.id] ? ' class="rt-fresh"' : '') + '>' + e(p.name) +
+          (c.note ? '(' + e(c.note) + ')' : '') + (sumFresh[p.id] ? '<span class="rt-new">새로</span>' : '') + '</span>');
       });
       var keys = Object.keys(byOpt).sort(function (a, b) { return byOpt[b].length - byOpt[a].length; });
       var h = '';
@@ -951,16 +1300,121 @@ document.addEventListener('DOMContentLoaded', function () {
       else {
         h += '<table class="tbl" style="max-width:760px"><thead><tr><th>선택</th><th style="width:60px">수</th><th>이름</th></tr></thead><tbody>' +
           keys.map(function (k) {
-            return '<tr><td class="left">' + e(k) + '</td><td>' + byOpt[k].length + '</td><td class="left" style="font-size:0.86rem">' + e(byOpt[k].join(', ')) + '</td></tr>';
+            return '<tr><td class="left">' + e(k) + '</td><td>' + byOpt[k].length + '</td><td class="left" style="font-size:0.86rem">' + byOpt[k].join(', ') + '</td></tr>';
           }).join('') + '</tbody></table>';
       }
       if (none.length) h += '<p class="rt-muted">아직 안 고른 분 (' + none.length + '): ' + e(none.map(function (p) { return p.name; }).join(', ')) + '</p>';
-      document.getElementById('sum-counts').innerHTML = h;
-      document.getElementById('sum-n').textContent = (ps.length - none.length) + ' / ' + ps.length;
+      return h;
     }
-    paintCounts();
-    bindChoices(box, paintCounts);
-    box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    /* 주문서 — 메뉴판 순서대로 「메뉴 · 갈래 — N잔」, 요청은 따로 모아서 */
+    function orderHtml(none) {
+      var seqOf = {};
+      (s.options || []).forEach(function (o) { seqOf[o.id] = o.seq; });
+      var rows = {}, notes = {}, total = 0;
+      ps.forEach(function (p) {
+        var c = choiceOf(s.id, p.id);
+        if (!c) return;
+        if (c.option_label) {
+          var k = c.option_label + '|' + (c.variant || '');
+          if (!rows[k]) rows[k] = { label: c.option_label, variant: c.variant || '', n: 0, seq: seqOf[c.option_id] || 9999 };
+          rows[k].n++; total++;
+        }
+        if (c.note) notes[c.note] = (notes[c.note] || 0) + 1;
+      });
+      var list = Object.keys(rows).map(function (k) { return rows[k]; })
+        .sort(function (a, b) { return a.seq - b.seq || (a.variant < b.variant ? -1 : a.variant > b.variant ? 1 : 0); });
+      var h = '<div class="rt-order"><div class="rt-order-h">' + e(s.title.replace(/^카페 주문 · /, '')) + '</div>' +
+        '<div class="rt-order-sub">' + e(R.title) + ' · 모두 ' + total + '잔</div>';
+      if (!list.length) h += '<p class="rt-muted">아직 고른 분이 없습니다.</p>';
+      list.forEach(function (r) {
+        h += '<div class="rt-order-row"><span>' + e(r.label) + (r.variant ? ' <em>· ' + e(r.variant) + '</em>' : '') + '</span>' +
+          '<strong>' + r.n + '잔</strong></div>';
+      });
+      var nk = Object.keys(notes);
+      if (nk.length) {
+        h += '<div class="rt-order-notes"><strong>요청</strong> ' + nk.map(function (k) {
+          return e(k) + (notes[k] > 1 ? ' ×' + notes[k] : '');
+        }).join(' · ') + '</div>';
+      }
+      h += '</div>';
+      if (none.length) h += '<p class="rt-muted">아직 안 고른 분 ' + none.length + '명 — 이분들 몫은 주문서에 들어 있지 않습니다.</p>';
+      return h;
+    }
+
+    /* 사람별 줄 — 고치기 시작한 줄은 저절로 새로 고칠 때 덮어쓰지 않는다 */
+    var rowsBox = box.querySelector('.rt-sum-people');
+    rowsBox.querySelectorAll('.rt-choice').forEach(function (w) {
+      ['input', 'change'].forEach(function (ev) { w.addEventListener(ev, function () { w.dataset.dirty = '1'; }); });
+    });
+    function syncRows() {
+      rowsBox.querySelectorAll('.rt-choice').forEach(function (w) {
+        if (w.dataset.dirty) return;
+        var c = choiceOf(s.id, w.dataset.p);
+        var m = w.querySelector('.menu'), v = w.querySelector('.var'), n = w.querySelector('.note');
+        if (m) m.value = c && c.option_id ? String(c.option_id) : '';
+        if (v) v.value = (c && c.variant) || '';
+        if (n) n.value = (c && c.note) || '';
+        var cur = w.querySelector('.cur');
+        if (cur) {
+          cur.style.color = '';
+          cur.textContent = c ? '지금 선택: ' + (c.option_label || '') + (c.variant ? ' · ' + c.variant : '') + (c.note ? ' · ' + c.note : '')
+                              : '아직 고르지 않았습니다.';
+        }
+      });
+    }
+
+    /* 다시 읽기 */
+    var busy = false;
+    function refresh() {
+      if (busy) return;
+      var here = document.getElementById('op-sum');
+      if (!here || String(here.dataset.step) !== String(s.id) || !document.body.contains(here)) { sumStop(); return; }
+      busy = true;
+      document.getElementById('sum-stamp').textContent = '확인 중...';
+      db().then(function (c) { return c.rpc('retreat_state', { p_retreat: R.id }); }).then(function (r) {
+        busy = false;
+        var st = document.getElementById('sum-stamp');
+        if (!st) return;
+        if (r.error || !r.data) { st.textContent = '확인하지 못했습니다 — 잠시 뒤 다시 합니다'; return; }
+        S.choices = r.data.choices || [];
+        if (r.data.participants && r.data.participants.length) S.participants = r.data.participants;
+        ps.forEach(function (p) {
+          if (sumSeen && sumSig(choiceOf(s.id, p.id)) !== sumSeen[p.id]) sumFresh[p.id] = 1;
+        });
+        paint();
+        syncRows();
+        st.textContent = '마지막 확인 ' + hhmmss(new Date()) + ' · 30초마다 저절로';
+      }, function () {
+        busy = false;
+        var st = document.getElementById('sum-stamp');
+        if (st) st.textContent = '확인하지 못했습니다 — 잠시 뒤 다시 합니다';
+      });
+    }
+
+    box.querySelectorAll('button[data-sv]').forEach(function (b) {
+      b.addEventListener('click', function () { sumView = b.dataset.sv; drawSummary(s, false); });
+    });
+    document.getElementById('sum-now').addEventListener('click', refresh);
+    document.getElementById('sum-close').addEventListener('click', function () {
+      sumStop(); sumStepId = null; sumFresh = {}; sumSeen = null; box.innerHTML = ''; delete box.dataset.step;
+    });
+
+    paint();
+    document.getElementById('sum-stamp').textContent = '마지막 확인 ' + hhmmss(new Date()) + ' · 30초마다 저절로';
+    bindChoices(rowsBox, function (pay) {
+      var w = rowsBox.querySelector('.rt-choice[data-p="' + pay.participant_id + '"]');
+      if (w) delete w.dataset.dirty;
+      paint();
+    });
+    sumTimer = setInterval(function () { if (!document.hidden) refresh(); }, SUM_EVERY);
+    if (!sumVisBound) {
+      sumVisBound = true;
+      document.addEventListener('visibilitychange', function () {
+        /* 휴대폰 화면을 다시 켜면 곧바로 한 번 확인한다 */
+        if (!document.hidden && sumTimer) { var b = document.getElementById('sum-now'); if (b) b.click(); }
+      });
+    }
+    if (byClick) box.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   load();

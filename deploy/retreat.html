@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>수양회 - 시화산노회</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="css/style.css?v=20261021w">
+<style>
+/* 수양회 — 휴대전화에서 한 손으로 보기 좋게. 색은 모두 홈페이지 변수만 쓴다 */
+.rt-head { background: #fff; border: 1px solid var(--gray-3); border-radius: 12px; padding: 22px; margin-bottom: 20px; }
+.rt-head h2 { font-family: 'Noto Serif KR', serif; font-size: 1.5rem; margin: 0 0 6px; color: var(--navy); }
+.rt-kicker { font-size: 0.8rem; letter-spacing: 3px; color: var(--accent); margin-bottom: 4px; }
+.rt-meta { color: var(--gray-5); font-size: 0.9rem; line-height: 1.7; }
+.rt-verse { margin-top: 10px; padding: 10px 14px; background: var(--gray-1); border-radius: 8px; font-size: 0.9rem; color: var(--gray-7); white-space: pre-line; }
+.rt-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.rt-badge { display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 0.78rem; background: var(--gray-1); color: var(--gray-5); border: 1px solid var(--gray-3); margin-right: 4px; white-space: nowrap; }
+.rt-badge.live { background: #fdf3f3; color: var(--red); border-color: var(--red); }
+.rt-badge.on { background: #eef6ee; color: #1f7a3a; border-color: #8cc79d; }
+.rt-chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
+.rt-chip { background: var(--gray-1); border-radius: 10px; padding: 10px 16px; min-width: 96px; text-align: center; font-size: 0.85rem; color: var(--gray-5); }
+.rt-chip span { display: block; font-size: 0.76rem; }
+.rt-chip strong { font-size: 1.4rem; color: var(--navy); }
+.rt-chip.big { background: var(--navy); color: #efe7d8; }
+.rt-chip.big strong { color: #fff; }
+.rt-card { background: #fff; border: 1px solid var(--gray-3); border-radius: 12px; padding: 20px 22px; margin-bottom: 16px; }
+.rt-card h3 { font-size: 1.08rem; margin: 0 0 10px; color: var(--navy); }
+.rt-card h3 .rt-badge { margin-left: 8px; vertical-align: middle; }
+.rt-card p.body { white-space: pre-line; line-height: 1.7; margin: 0 0 10px; }
+.rt-person { border-top: 1px dashed var(--gray-3); padding-top: 12px; margin-top: 12px; }
+.rt-person:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+.rt-person .who { font-weight: 700; margin-bottom: 6px; }
+.rt-choice { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.rt-choice select, .rt-choice input { font-size: 0.95rem; padding: 8px 10px; border: 1px solid var(--gray-3); border-radius: 8px; background: #fff; }
+.rt-choice select.menu { flex: 1 1 260px; min-width: 200px; }
+.rt-choice .cur { font-size: 0.86rem; color: var(--gray-5); flex-basis: 100%; }
+.rt-day { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.rt-day button { border: 1px solid var(--gray-3); background: #fff; color: var(--gray-7); border-radius: 99px; padding: 7px 16px; font-size: 0.9rem; }
+.rt-day button.active { background: var(--navy); border-color: var(--navy); color: #fff; font-weight: 700; }
+.rt-stop { display: grid; grid-template-columns: 58px 1fr; gap: 6px 12px; padding: 12px 0; border-bottom: 1px solid var(--gray-2); }
+.rt-stop .t { font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; }
+.rt-stop .h { font-weight: 700; }
+.rt-stop .d { font-size: 0.86rem; color: var(--gray-7); white-space: pre-line; margin-top: 2px; }
+.rt-stop .m { font-size: 0.8rem; color: var(--gray-5); margin-top: 4px; }
+.rt-stop.now { background: #fbf6ea; margin: 0 -10px; padding-left: 10px; padding-right: 10px; border-radius: 8px; }
+.rt-stop.done { opacity: 0.55; }
+.rt-stop .st { grid-column: 2; margin-top: 6px; }
+.rt-stop .st select { font-size: 0.8rem; padding: 3px 6px; border: 1px solid var(--gray-3); border-radius: 6px; }
+.rt-ment { margin-top: 14px; }
+.rt-ment details { border: 1px solid var(--gray-2); border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; background: var(--paper, #fff); }
+.rt-ment summary { cursor: pointer; font-weight: 700; color: var(--gray-7); font-size: 0.92rem; }
+.rt-ment .body { white-space: pre-line; line-height: 1.75; font-size: 0.9rem; margin-top: 8px; color: var(--ink); }
+.rt-muted { color: var(--gray-5); font-size: 0.86rem; }
+.rt-preview { border: 1px dashed var(--gray-3); border-radius: 12px; padding: 14px; background: var(--gray-1); }
+.rt-preview .rt-card { margin-bottom: 0; }
+.rt-sum-people { margin: 6px 0 12px; }
+.rt-sum-people summary { cursor: pointer; font-weight: 700; color: var(--navy); padding: 8px 0; }
+.rt-sum-bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 0 0 12px; }
+.rt-sum-bar .rt-count { margin-left: 6px; }
+.rt-new { display: inline-block; margin-left: 4px; padding: 0 6px; border-radius: 9px; font-size: 0.7rem; font-weight: 700;
+  background: #fdf3f3; color: var(--red); border: 1px solid var(--red); vertical-align: middle; }
+.rt-fresh { font-weight: 700; }
+/* 주문서 — 카페에 그대로 보여 줄 수 있게 크게 */
+.rt-order { background: #fff; border: 2px solid var(--navy); border-radius: 12px; padding: 20px 22px; margin-bottom: 12px; }
+.rt-order-h { font-family: 'Noto Serif KR', serif; font-size: 1.5rem; font-weight: 700; color: var(--navy); }
+.rt-order-sub { color: var(--gray-5); margin: 2px 0 10px; }
+.rt-order-row { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 12px 0;
+  border-bottom: 1px solid var(--gray-2); font-size: 1.2rem; }
+.rt-order-row em { font-style: normal; color: var(--gray-7); }
+.rt-order-row strong { font-size: 1.5rem; color: var(--navy); white-space: nowrap; }
+.rt-order-notes { margin-top: 12px; font-size: 1.05rem; line-height: 1.7; }
+@media (max-width: 640px) {
+  .rt-order { padding: 16px; }
+  .rt-order-row { font-size: 1.05rem; }
+  .rt-order-row strong { font-size: 1.3rem; }
+}
+.rt-count { font-size: 0.8rem; color: var(--gray-5); }
+@media (max-width: 640px) {
+  .rt-stop { grid-template-columns: 50px 1fr; }
+  .rt-card { padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <div class="container">
+    <h1 id="rt-title">수양회</h1>
+    <div class="crumb">홈 &gt; 조직 &gt; <a href="dashboard.html">상비부 대시보드</a> &gt; <a id="rt-crumb-com" href="committee.html?c=%EA%B5%90%EC%9C%A1%EC%B9%9C%EA%B5%90%EB%B6%80">교육친교부</a> &gt; <span id="rt-crumb">수양회</span></div>
+  </div>
+</div>
+
+<main class="page-body container" id="main">
+  <div id="rt-area"><p style="color:var(--gray-5)">불러오는 중...</p></div>
+</main>
+
+<script src="js/auth.js?v=20260921j"></script>
+<script src="js/data.js"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/supabase-auth.js?v=20261020za"></script>
+<script src="js/main.js?v=20261022n"></script>
+<script src="js/photos-config.js"></script>
+<script src="js/photos.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+ SHS.getUser().then(function (user) {
+  var area = document.getElementById('rt-area');
+  var e = SHS.esc;
+
+  /* ?id=수양회번호 — 없으면 서버가 오늘·다가오는·최근 순으로 고른다 */
+  var RID = Number((location.search.match(/[?&]id=(\d+)/) || [])[1]) || null;
+
+  /* 정회원이 아니어도 수양회 참가자(사모님 등)면 들어온다 — 누구인지는 서버(retreat_state)가 가린다 */
+  if (!user) {
+    area.innerHTML = '<div class="notice-banner">수양회 화면은 로그인 후 이용할 수 있습니다. ' +
+      '<a class="btn sm" style="margin-left:10px" href="login.html">로그인</a></div>';
+    return;
+  }
+  if (!user.cloud) {
+    area.innerHTML = '<div class="notice-banner">수양회 화면은 서버 로그인 후 이용할 수 있습니다. ' +
+      '<a class="btn sm" style="margin-left:10px" href="login.html">로그인 화면으로</a></div>';
+    return;
+  }
+
+  var S = null;            /* retreat_state 결과 */
+  var R = null;            /* S.retreat */
+  var isOfficer = false;
+  var tab = (location.hash || '').replace('#', '') || '';
+  var day = 1;             /* 일정 탭에서 보는 날 */
+  var editStepId = null;   /* 진행 관리에서 펼쳐 둔 단계 — 저장 뒤 다시 읽어도 그대로 펼친다 */
+  var editFlash = '';
+  var sumStepId = null;    /* 펼쳐 둔 현황 — 다시 그려도 그대로 펼친다 */
+  var sumView = 'table';   /* 현황표 / 주문서 */
+  var sumTimer = null, sumFresh = {}, sumSeen = null, sumVisBound = false;
+
+  function db() { return SHSCloud.init(); }
+  function msgBox(id) { return document.getElementById(id); }
+
+  function load() {
+    db().then(function (c) { return c.rpc('retreat_state', { p_retreat: RID }); })
+      .then(function (r) {
+        if (r.error) {
+          area.innerHTML = '<div class="notice-banner">수양회 정보를 불러오지 못했습니다: ' + e(r.error.message) +
+            ' (140 수양회 등록이 필요할 수 있습니다)</div>';
+          return;
+        }
+        S = r.data || {};
+        if (S.login === false) { location.href = 'login.html'; return; }
+        R = S.retreat;
+        if (!R && S.member === false) {
+          area.innerHTML = '<div class="notice-banner">수양회 화면은 정회원과 <strong>수양회 참가자</strong>가 보실 수 있습니다.<br>' +
+            '함께 가시는 사모님은 홈페이지에 가입하실 때 <strong>명단과 같은 이름·생년월일</strong>을 적으시면 이 화면이 열립니다. ' +
+            '그래도 열리지 않으면 교육친교부 임원에게 생년월일 등록을 부탁해 주세요.</div>';
+          return;
+        }
+        if (!R) {
+          area.innerHTML = '<div class="notice-banner">등록된 수양회가 없습니다. (교육친교부 임원이 140 sql 로 등록합니다)</div>';
+          return;
+        }
+        /* 이름·생년월일로 알아본 사모님(또는 아직 잇지 않은 회원)이면 계정을 명단 줄에 잇는다 —
+         * 그래야 알림이 이 계정으로 간다. 한 번만 하면 되고, 실패해도 화면은 그대로 쓴다. */
+        if (S.me && !S.me.user_id) {
+          db().then(function (c) { return c.rpc('retreat_link_me', { p_retreat: R.id }); })
+            .then(function (x) {
+              if (x && !x.error && x.data && x.data.linked) {
+                S.me.user_id = user.id;
+                SHS.logAction('update', '수양회 참가자 연결', R.title + (x.data.general ? ' · 일반회원' : ''));
+              }
+            }, function () {});
+        }
+        isOfficer = !!S.officer;
+        document.getElementById('rt-title').textContent = R.title;
+        document.getElementById('rt-crumb').textContent = R.title;
+        document.title = R.title + ' - 시화산노회';
+        var cl = document.getElementById('rt-crumb-com');
+        cl.textContent = R.committee; cl.href = 'committee.html?c=' + encodeURIComponent(R.committee);
+        if (!tab) tab = S.me ? 'me' : 'prog';
+        if (tab === 'ops' && !isOfficer) tab = 'prog';
+        if (tab === 'list' && S.member === false) tab = 'me';
+        /* 수양회 기간이면 오늘 날짜의 날을 먼저 편다 */
+        var dn = dayNo(S.today);
+        if (dn >= 1 && dn <= totalDays()) day = dn;
+        draw();
+        SHS.logAction('view', '수양회 열람', R.title);
+      });
+  }
+
+  /* ---------- 날짜 도우미 ---------- */
+  function totalDays() {
+    if (!R.end_date || R.end_date <= R.start_date) return 1;
+    return Math.round((new Date(R.end_date + 'T00:00:00') - new Date(R.start_date + 'T00:00:00')) / 86400000) + 1;
+  }
+  function dayNo(ymd) {
+    if (!ymd) return 0;
+    return Math.round((new Date(ymd + 'T00:00:00') - new Date(R.start_date + 'T00:00:00')) / 86400000) + 1;
+  }
+  function rangeText(from, to) {
+    if (!from) return '';
+    if (!to || to <= from) return from;
+    var n = Math.round((new Date(to + 'T00:00:00') - new Date(from + 'T00:00:00')) / 86400000);
+    return from + ' ~ ' + (to.slice(0, 4) === from.slice(0, 4) ? to.slice(5) : to) + ' (' + n + '박 ' + (n + 1) + '일)';
+  }
+  function kdate(ymd) {
+    if (!ymd) return '';
+    var d = new Date(ymd + 'T00:00:00');
+    return (d.getMonth() + 1) + '/' + d.getDate() + ' (' + ['일', '월', '화', '수', '목', '금', '토'][d.getDay()] + ')';
+  }
+  /* 날짜를 YYYY-MM-DD 로 (toISOString 은 UTC 라 자정 날짜가 하루 밀린다) */
+  function ymd(d) {
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') +
+           '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function won(n) { return Number(n || 0).toLocaleString('ko-KR') + '원'; }
+  function personLabel(p) { return p.name + (p.role ? ' ' + p.role : '') + (p.church ? ' (' + p.church + ')' : ''); }
+  function byId(list, id) { return (list || []).filter(function (x) { return String(x.id) === String(id); })[0]; }
+  function choiceOf(stepId, pid) {
+    return (S.choices || []).filter(function (c) {
+      return String(c.step_id) === String(stepId) && String(c.participant_id) === String(pid);
+    })[0];
+  }
+
+  /* ---------- 머리 ---------- */
+  function headHtml() {
+    var dn = dayNo(S.today), n = totalDays();
+    var badge = '';
+    if (R.status === 'closed') badge = '<span class="rt-badge">닫힘</span>';
+    else if (R.stage === '마침') badge = '<span class="rt-badge">마침</span>';
+    else if (dn >= 1 && dn <= n) badge = '<span class="rt-badge live">오늘 ' + dn + '일차</span>';
+    else if (dn < 1) badge = '<span class="rt-badge on">D-' + (1 - dn) + '</span>';
+    else badge = '<span class="rt-badge">다녀왔습니다</span>';
+
+    var links = '';
+    if (R.chat_url) links += '<a class="btn ghost sm" href="' + e(R.chat_url) + '" target="_blank" rel="noopener">단톡방</a>';
+    if (R.guide_url) links += '<a class="btn ghost sm" href="' + e(R.guide_url) + '" target="_blank" rel="noopener">가이드북</a>';
+    if (R.survey_url) links += '<a class="btn ghost sm" href="' + e(R.survey_url) + '" target="_blank" rel="noopener">설문·자료</a>';
+
+    var st = R.settings || {};
+    return '<div class="rt-head">' +
+      '<div class="rt-kicker">' + e(R.committee) + ' · ' + e(R.stage) + '</div>' +
+      '<h2>' + e(R.title) + ' ' + badge + '</h2>' +
+      '<div class="rt-meta">' + e(rangeText(R.start_date, R.end_date)) +
+      (R.place ? ' · ' + e(R.place) : '') +
+      (st.flight_out ? '<br><strong>항공</strong> ' + e(st.flight_out) : '') +
+      (st.hotel ? '<br><strong>숙소</strong> ' + e(st.hotel) : '') + '</div>' +
+      (R.verse ? '<div class="rt-verse">' + e(R.verse) + '</div>' : '') +
+      (links ? '<div class="rt-links">' + links + '</div>' : '') +
+      '</div>';
+  }
+
+  function draw() {
+    var h = headHtml();
+    h += '<div class="notice-banner">' +
+      (isOfficer
+        ? '<strong>' + e(SHS.honorific(user)) + '</strong>은 ' + e(R.committee) + ' 임원이시므로 단계를 열고 명단·일정을 고치실 수 있습니다.'
+        : (S.me
+            ? '<strong>' + e(S.member === false ? S.me.name + ' ' + (S.me.role || '') + '님' : SHS.honorific(user)) +
+              '</strong>의 좌석·숙소와 골라야 할 것이 「내 안내」에 있습니다. ' +
+              '열린 단계가 생기면 알림함으로 알려 드립니다.'
+            : '참가자 명단에서 회원님을 찾지 못했습니다. 참가하시는데 보이지 않으면 ' + e(R.committee) + ' 임원에게 말씀해 주세요.')) +
+      '</div>';
+
+    h += '<div class="tabs" id="rt-tabs">' +
+      '<button class="' + (tab === 'me' ? 'active' : '') + '" data-t="me">내 안내' + openCountBadge() + '</button>' +
+      '<button class="' + (tab === 'prog' ? 'active' : '') + '" data-t="prog">일정</button>' +
+      '<button class="' + (tab === 'media' ? 'active' : '') + '" data-t="media">사진·영상</button>' +
+      /* 참가자 전체 명단은 정회원에게만 */
+      (S.member === false ? '' : '<button class="' + (tab === 'list' ? 'active' : '') + '" data-t="list">명단</button>') +
+      (isOfficer ? '<button class="' + (tab === 'ops' ? 'active' : '') + '" data-t="ops">진행 관리</button>' : '') +
+      '</div><div id="rt-body"></div>';
+    area.innerHTML = h;
+    area.querySelectorAll('#rt-tabs button').forEach(function (b) {
+      b.addEventListener('click', function () { tab = b.dataset.t; history.replaceState(null, '', '#' + tab); draw(); });
+    });
+    if (tab === 'me') drawMe();
+    else if (tab === 'prog') drawProg();
+    else if (tab === 'media') drawMedia();
+    else if (tab === 'list') drawList();
+    else drawOps();
+  }
+
+  /* 내가 아직 안 고른 열린 선택 단계 수 */
+  function openCountBadge() {
+    if (!S.me) return '';
+    var people = [S.me].concat(S.companions || []);
+    var n = 0;
+    (S.steps || []).forEach(function (s) {
+      if (s.kind !== '선택' || s.status !== '열림') return;
+      people.forEach(function (p) { if (!choiceOf(s.id, p.id)) n++; });
+    });
+    return n ? ' <span class="rt-badge live">' + n + '</span>' : '';
+  }
+
+  /* ---------- 내 안내 ---------- */
+  function drawMe() {
+    var box = document.getElementById('rt-body');
+    if (!S.me) {
+      box.innerHTML = '<div class="rt-card"><h3>참가자 명단에 없습니다</h3>' +
+        '<p class="rt-muted">홈페이지 이름과 명단 이름이 다르면 찾지 못합니다. ' + e(R.committee) + ' 임원이 명단에서 회원님을 이어 드립니다.</p>' +
+        '<p><button class="btn ghost sm" id="go-prog">일정 보기</button></p></div>';
+      box.querySelector('#go-prog').addEventListener('click', function () { tab = 'prog'; draw(); });
+      return;
+    }
+    box.innerHTML = meHtml(S.me, S.companions || [], S.roommates || [], false);
+    bindChoices(box);
+  }
+
+  /* 「내 안내」 화면 — 참가자 본인 화면과 진행 관리의 미리 보기가 함께 쓴다.
+   * withClosed 면 닫힌 단계도 「열면 이렇게 보입니다」로 함께 보여 준다 (미리 보기 전용). */
+  function meHtml(me, companions, roommates, withClosed) {
+    var people = [me].concat(companions);
+    var h = '';
+
+    /* 내 자리 */
+    h += '<div class="rt-card"><h3>내 자리</h3><div class="rt-chips">' +
+      people.map(function (p) {
+        return '<div class="rt-chip' + (p.id === me.id ? ' big' : '') + '"><span>' + e(p.name) + ' ' + e(p.role || '') + '</span>' +
+          '<strong>' + (p.bus_seat ? '버스 ' + p.bus_seat : (p.van_seat ? '쏠라티 ' + p.van_seat : '-')) + '</strong>' +
+          '<span>명단 ' + p.seq + '번</span></div>';
+      }).join('') +
+      '<div class="rt-chip"><span>숙소</span><strong>' + (me.room_no ? e(me.room_no) + '호' : (me.room_group ? me.room_group + '번 방' : '-')) + '</strong>' +
+      '<span>' + (roommates.length ? '함께: ' + roommates.map(function (q) { return e(q.name); }).join(', ') : '호수는 체크인 뒤') + '</span></div>' +
+      '<div class="rt-chip"><span>회비</span><strong>' + e(won(people.reduce(function (a, p) { return a + Number(p.paid || 0); }, 0))) + '</strong><span>납부 확인</span></div>' +
+      '</div>' +
+      '<p class="rt-muted">좌석·방이 다르면 ' + e(R.committee) + ' 임원에게 말씀해 주세요. 방 번호는 호텔 체크인 뒤에 적힙니다.</p></div>';
+
+    /* 단계 */
+    var steps = (S.steps || []).filter(function (s) { return withClosed || s.status !== '닫힘'; });
+    if (!steps.length) h += '<div class="rt-card"><h3>안내</h3><p class="rt-muted">아직 열린 안내가 없습니다. 임원이 열면 알림으로 알려 드립니다.</p></div>';
+    steps.forEach(function (s) {
+      if (s.status === '닫힘') {
+        h += '<p class="rt-count" style="margin:0 0 6px">지금 닫혀 있음 — 「' + e(s.title) + '」를 열면 이렇게 보입니다</p>';
+        h += stepCard(Object.assign({}, s, { status: '열림' }), people);
+      } else {
+        h += stepCard(s, people);
+      }
+    });
+    return h;
+  }
+
+  /* 미리 보기 상자 — 누를 수 없게 (저장 단추를 빼고 칸을 잠근다) */
+  function freeze(el) {
+    el.querySelectorAll('.save').forEach(function (b) { b.remove(); });
+    el.querySelectorAll('select, input, textarea, button').forEach(function (x) { x.disabled = true; });
+  }
+
+  /* 단계를 열 때 참가자 알림함에 가는 글 — 서버(retreat_set_step)가 만드는 글과 같은 모양 */
+  function noticeText(s) {
+    var body = (s.body || '') +
+      (s.kind === '선택' ? '\n홈페이지 → 수양회 → 내 안내에서 골라 주세요.' : '') +
+      (s.due ? '\n기한 : ' + Number(s.due.slice(5, 7)) + '월 ' + Number(s.due.slice(8, 10)) + '일' : '');
+    return { title: '[' + R.title + '] ' + s.title, body: body.replace(/^\n/, '') };
+  }
+
+  function stepCard(s, people) {
+    var badge = s.status === '열림' ? '<span class="rt-badge on">열림</span>' : '<span class="rt-badge">마감</span>';
+    var h = '<div class="rt-card" data-step="' + s.id + '"><h3>' + e(s.title) + badge +
+      (s.due ? ' <span class="rt-count">' + e(kdate(s.due)) + '까지</span>' : '') + '</h3>';
+    if (s.body) h += '<p class="body">' + e(s.body) + '</p>';
+    if (s.kind === '선택') {
+      if (people.length > 1) h += '<p class="rt-muted">부부가 한 분씩 따로 고르십니다. 각자 고르고 「저장」을 눌러 주세요.</p>';
+      h += personRows(s, people, people.length > 1 ? function (p, i) { return i === 0 ? '본인' : '배우자'; } : null);
+    } else if (s.kind === '배정') {
+      h += '<p class="rt-muted">위 「내 자리」에 적혀 있습니다.</p>';
+    }
+    return h + '</div>';
+  }
+
+  /* 사람마다 따로 고르는 줄 — 부부도 한 사람씩 각각 고른다.
+   * tagOf(사람, 순번) 가 주는 글은 이름 옆 꼬리표로 붙는다 (본인 / 배우자 / 명단 번호). */
+  function personRows(s, people, tagOf) {
+    var canEdit = s.status === '열림' || isOfficer;
+    var h = '';
+    people.forEach(function (p, i) {
+        var cur = choiceOf(s.id, p.id);
+        var tag = tagOf ? tagOf(p, i) : '';
+        h += '<div class="rt-person"><div class="who">' + e(p.name) + ' ' + e(p.role || '') +
+          (tag ? ' <span class="rt-badge">' + e(tag) + '</span>' : '') + '</div>' +
+          '<div class="rt-choice" data-p="' + p.id + '">' +
+          '<select class="menu"' + (canEdit ? '' : ' disabled') + '><option value="">— 고르세요 —</option>' +
+          (s.options || []).map(function (o) {
+            return '<option value="' + o.id + '"' + (cur && String(cur.option_id) === String(o.id) ? ' selected' : '') + '>' + e(o.label) + '</option>';
+          }).join('') + '</select>' +
+          (s.variants && s.variants.length
+            ? '<select class="var"' + (canEdit ? '' : ' disabled') + '><option value="">갈래</option>' +
+              s.variants.map(function (v) { return '<option' + (cur && cur.variant === v ? ' selected' : '') + '>' + e(v) + '</option>'; }).join('') + '</select>'
+            : '') +
+          '<input type="text" class="note" placeholder="요청 (선택)" value="' + e(cur && cur.note || '') + '"' + (canEdit ? '' : ' disabled') + '>' +
+          (canEdit ? '<button class="btn sm save">저장</button>' : '') +
+          '<div class="cur">' + (cur ? '지금 선택: ' + e(cur.option_label || '') + (cur.variant ? ' · ' + e(cur.variant) : '') + (cur.note ? ' · ' + e(cur.note) : '')
+                                     : (s.status === '열림' ? '아직 고르지 않았습니다.' : '고르지 않은 채 마감되었습니다.')) + '</div>' +
+          '</div></div>';
+    });
+    return h;
+  }
+
+  /* 고른 것 저장. onDone 이 있으면 화면 전체를 다시 읽지 않고 그 자리만 고친다
+   * (현황에서 임원이 여러 분을 잇달아 대신 고를 때 목록이 닫히지 않도록). */
+  function bindChoices(box, onDone) {
+    box.querySelectorAll('.rt-choice .save').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var wrap = b.closest('.rt-choice'), card = b.closest('[data-step]');
+        var mEl = wrap.querySelector('.menu'), opt = mEl.value;
+        var vEl = wrap.querySelector('.var'), nEl = wrap.querySelector('.note');
+        var cur = wrap.querySelector('.cur');
+        var pay = {
+          step_id: Number(card.dataset.step), participant_id: Number(wrap.dataset.p),
+          option_id: opt ? Number(opt) : null,
+          option_label: opt ? mEl.options[mEl.selectedIndex].text : null,
+          variant: vEl && vEl.value ? vEl.value : null,
+          note: nEl.value.trim() || null
+        };
+        b.disabled = true; cur.textContent = '저장 중입니다...'; cur.style.color = '';
+        db().then(function (c) {
+          return c.rpc('retreat_choose', {
+            p_step: pay.step_id, p_participant: pay.participant_id,
+            p_option: pay.option_id, p_variant: pay.variant, p_note: pay.note
+          });
+        }).then(function (r) {
+          b.disabled = false;
+          if (r.error) { cur.textContent = r.error.message; cur.style.color = 'var(--red)'; return; }
+          SHSCloud.log(opt ? 'update' : 'delete', '수양회 선택', R.title + ' / 단계 ' + card.dataset.step);
+          if (!onDone) { load(); return; }
+          /* 내려받은 상태(S.choices)도 맞춰 둔다 */
+          S.choices = (S.choices || []).filter(function (x) {
+            return !(String(x.step_id) === String(pay.step_id) && String(x.participant_id) === String(pay.participant_id));
+          });
+          if (pay.option_id || pay.note) S.choices.push(pay);
+          cur.textContent = (pay.option_id || pay.note)
+            ? '저장했습니다: ' + (pay.option_label || '') + (pay.variant ? ' · ' + pay.variant : '') + (pay.note ? ' · ' + pay.note : '')
+            : '선택을 거두었습니다.';
+          onDone(pay);
+        });
+      });
+    });
+  }
+
+  /* ---------- 일정 ---------- */
+  function drawProg() {
+    var box = document.getElementById('rt-body');
+    var n = totalDays();
+    var prog = S.program || [];
+    var h = '<div class="rt-day">';
+    for (var i = 1; i <= n; i++) {
+      var d = new Date(R.start_date + 'T00:00:00'); d.setDate(d.getDate() + i - 1);
+      h += '<button class="' + (day === i ? 'active' : '') + '" data-d="' + i + '">' + i + '일차 <span style="font-weight:400;font-size:0.8rem">' +
+        e(kdate(ymd(d))) + '</span></button>';
+    }
+    h += '</div>';
+
+    var stops = prog.filter(function (g) { return g.day_no === day && g.kind !== 'ment'; });
+    var ments = prog.filter(function (g) { return g.day_no === day && g.kind === 'ment'; });
+    var isToday = dayNo(S.today) === day;
+    if (!stops.length) h += '<p class="rt-muted">이 날의 일정이 아직 없습니다.</p>';
+    stops.forEach(function (g) {
+      var cls = 'rt-stop' + (g.status === '진행' ? ' now' : '') + (g.status === '끝' ? ' done' : '');
+      h += '<div class="' + cls + '" data-g="' + g.id + '"><div class="t">' + e(g.time || '') + '</div>' +
+        '<div><div class="h">' + e(g.title) +
+        (g.status === '변경' ? ' <span class="rt-badge live">변경</span>' : '') +
+        (g.status === '진행' ? ' <span class="rt-badge on">지금</span>' : '') + '</div>' +
+        (g.body ? '<div class="d">' + e(g.body) + '</div>' : '') +
+        ((g.place || g.depart || g.move)
+          ? '<div class="m">' + [g.place, g.depart ? g.depart + ' 출발' : '', g.move].filter(Boolean).map(e).join(' · ') + '</div>'
+          : '') + '</div>' +
+        (isOfficer
+          ? '<div class="st"><select data-st="' + g.id + '">' +
+            ['예정', '진행', '끝', '변경'].map(function (v) { return '<option' + (g.status === v ? ' selected' : '') + '>' + v + '</option>'; }).join('') +
+            '</select> <span class="rt-count">' + (isToday ? '당일 진행 표시' : '진행 표시') + '</span></div>'
+          : '') +
+        '</div>';
+    });
+    if (ments.length) {
+      h += '<div class="rt-ment"><h3 style="font-size:1rem;color:var(--navy);margin:18px 0 8px">안내 멘트 (진행자용)</h3>' +
+        ments.map(function (g) {
+          return '<details><summary>' + e(g.title) + '</summary><div class="body">' + e(g.body || '') + '</div></details>';
+        }).join('') + '</div>';
+    }
+    box.innerHTML = h;
+    box.querySelectorAll('.rt-day button').forEach(function (b) {
+      b.addEventListener('click', function () { day = Number(b.dataset.d); drawProg(); });
+    });
+    box.querySelectorAll('select[data-st]').forEach(function (sel) {
+      sel.addEventListener('change', function () {
+        var id = sel.dataset.st, v = sel.value;
+        db().then(function (c) {
+          return c.from('retreat_program').update({ status: v, updated_at: new Date().toISOString() }).eq('id', id);
+        }).then(function (r) {
+          if (r.error) { alert(r.error.message); return; }
+          var g = byId(S.program, id); if (g) g.status = v;
+          SHSCloud.log('update', '수양회 일정 진행', R.title + ' / ' + (g ? g.title : id) + ' → ' + v);
+          drawProg();
+        });
+      });
+    });
+  }
+
+  /* ---------- 사진·영상 (143 sql) ----------
+   * 시찰 사진첩·노회 갤러리와 같은 방식: 사진은 웹 크기로 줄여 Cloudflare R2 에(js/photos.js),
+   * 영상은 유튜브 주소로. 날짜별(준비·답사 / n일차)로 나누어 보여 준다.
+   * 올리기는 그 부서 임원과 정회원 참가자 — 사진 보관소가 정회원만 받는다. */
+  var MEDIA = null, mediaDay = 'all';
+  var FULL_W = 1400, FULL_Q = 0.8, THUMB_W = 640, THUMB_Q = 0.72;   /* 노회 갤러리와 같은 크기 */
+
+  function ytId(u) {
+    var m = String(u || '').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/))([A-Za-z0-9_-]{6,})/);
+    return m ? m[1] : null;
+  }
+  function dayName(n) { return n === 0 ? '준비·답사' : (n ? n + '일차' : '기타'); }
+  function canUpload() { return S.member !== false && (isOfficer || !!S.me); }
+  function canEditMedia(m) { return isOfficer || (m.author_id && m.author_id === user.id); }
+
+  /* 웹 크기로 줄이기 — 원본을 그대로 올리지 않는다 (시찰 사진첩과 같은 방식) */
+  function shrink(file, maxW, quality) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image(), url = URL.createObjectURL(file);
+      img.onload = function () {
+        URL.revokeObjectURL(url);
+        var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+        if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+        var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+        var cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, w, h); cx.drawImage(img, 0, 0, w, h);
+        cv.toBlob(function (b) { b ? resolve(b) : reject(new Error('사진을 줄이지 못했습니다.')); }, 'image/jpeg', quality);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('사진을 읽지 못했습니다: ' + file.name)); };
+      img.src = url;
+    });
+  }
+
+  function drawMedia() {
+    var box = document.getElementById('rt-body');
+    box.innerHTML = '<p class="rt-muted">불러오는 중...</p>';
+    db().then(function (c) {
+      return c.from('retreat_media').select('*').eq('retreat_id', R.id)
+        .order('day_no', { ascending: true, nullsFirst: false }).order('sort').order('id');
+    }).then(function (r) {
+      if (r.error) {
+        box.innerHTML = '<div class="notice-banner">사진·영상을 불러오지 못했습니다: ' + e(r.error.message) +
+          ' (143 sql 실행이 필요할 수 있습니다)</div>';
+        return;
+      }
+      MEDIA = r.data || [];
+      paintMedia();
+    });
+  }
+
+  function paintMedia() {
+    var box = document.getElementById('rt-body');
+    if (!box) return;
+    var days = [];
+    MEDIA.forEach(function (m) { var k = m.day_no == null ? 'x' : String(m.day_no); if (days.indexOf(k) < 0) days.push(k); });
+    var shown = MEDIA.filter(function (m) { return mediaDay === 'all' || (m.day_no == null ? 'x' : String(m.day_no)) === mediaDay; });
+    var vids = shown.filter(function (m) { return m.kind === 'video'; });
+    var pics = shown.filter(function (m) { return m.kind === 'photo'; });
+
+    var h = '<div class="rt-day">' +
+      '<button class="' + (mediaDay === 'all' ? 'active' : '') + '" data-md="all">전체 ' + MEDIA.length + '</button>' +
+      days.sort(function (a, b) { return (a === 'x' ? 99 : +a) - (b === 'x' ? 99 : +b); }).map(function (k) {
+        var n = MEDIA.filter(function (m) { return (m.day_no == null ? 'x' : String(m.day_no)) === k; }).length;
+        return '<button class="' + (mediaDay === k ? 'active' : '') + '" data-md="' + k + '">' +
+          e(dayName(k === 'x' ? null : +k)) + ' ' + n + '</button>';
+      }).join('') + '</div>';
+
+    if (!MEDIA.length) h += '<p class="rt-muted">아직 올린 사진·영상이 없습니다.</p>';
+
+    if (vids.length) {
+      h += '<h3 class="mn-sub" style="margin:4px 0 10px">영상 ' + vids.length + '</h3><div class="vid-grid">' +
+        vids.map(function (v) {
+          var id = ytId(v.image_url);
+          var th = v.thumb_url || (id ? 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg' : '');
+          return '<div class="vid-card"><a href="#" class="vid-thumb" data-play="' + v.id + '">' +
+            (th ? '<img src="' + e(th) + '" alt="" loading="lazy">' : '') + '<span class="vid-play">&#9654;</span></a>' +
+            '<span class="vid-cap"><span class="t">' + e(v.title || '영상') + '</span>' +
+            '<span class="d">' + e(dayName(v.day_no)) + (v.author_name ? ' · ' + e(v.author_name) : '') + '</span></span>' +
+            (canEditMedia(v) ? '<button class="vid-del" data-mdel="' + v.id + '">지우기</button>' : '') + '</div>';
+        }).join('') + '</div>';
+    }
+    if (pics.length) {
+      h += '<h3 class="mn-sub" style="margin:4px 0 10px">사진 ' + pics.length + '</h3><div class="alb-photos">' +
+        pics.map(function (p, i) {
+          return '<img src="' + e(p.thumb_url || p.image_url) + '" alt="' + e(p.title || '') + '" loading="lazy" data-pic="' + i + '">';
+        }).join('') + '</div>';
+    }
+
+    if (canUpload()) h += uploadHtml();
+    else if (S.member === false) h += '<p class="rt-muted" style="margin-top:18px">사진 올리기는 정회원만 할 수 있습니다. 올리실 사진은 남편 목사님·장로님께 부탁해 주세요.</p>';
+    box.innerHTML = h;
+
+    box.querySelectorAll('[data-md]').forEach(function (b) {
+      b.addEventListener('click', function () { mediaDay = b.dataset.md; paintMedia(); });
+    });
+    box.querySelectorAll('[data-play]').forEach(function (a) {
+      a.addEventListener('click', function (ev) { ev.preventDefault(); openVideo(byId(MEDIA, a.dataset.play)); });
+    });
+    box.querySelectorAll('[data-pic]').forEach(function (img) {
+      img.addEventListener('click', function () { openPhoto(pics, Number(img.dataset.pic)); });
+    });
+    box.querySelectorAll('[data-mdel]').forEach(function (b) {
+      b.addEventListener('click', function () { removeMedia(byId(MEDIA, b.dataset.mdel)); });
+    });
+    if (canUpload()) bindUpload();
+  }
+
+  function uploadHtml() {
+    var n = totalDays(), opts = '<option value="0">준비·답사</option>';
+    for (var i = 1; i <= n; i++) opts += '<option value="' + i + '">' + i + '일차</option>';
+    opts += '<option value="">기타</option>';
+    var dn = dayNo(S.today), cur = dn >= 1 && dn <= n ? dn : (dn < 1 ? 0 : '');
+    var sel = function (id) { return '<select id="' + id + '">' + opts.replace('value="' + cur + '"', 'value="' + cur + '" selected') + '</select>'; };
+    return '<div class="admin-card" style="margin-top:22px"><h3 style="margin-top:0">사진 올리기</h3>' +
+      '<div class="inline-form" style="margin-bottom:8px">' +
+      '<div class="field" style="flex:0 0 150px"><label>날</label>' + sel('mu-day') + '</div>' +
+      '<div class="field"><label>설명 (여러 장이면 모두 같은 설명)</label><input type="text" id="mu-cap" placeholder="예: 9/21 사전답사"></div>' +
+      '</div>' +
+      '<div class="field"><label>사진 고르기 (여러 장 한꺼번에)</label><input type="file" id="mu-files" accept="image/*" multiple></div>' +
+      '<button class="btn" id="mu-go">올리기</button><div class="form-msg" id="mu-msg"></div>' +
+      '<p class="rt-muted">사진은 노회 갤러리와 같은 크기로 줄여서 올라갑니다. 휴대폰 사진도 그대로 고르시면 됩니다.</p></div>' +
+      '<div class="admin-card" style="margin-top:16px"><h3 style="margin-top:0">유튜브 영상 올리기</h3>' +
+      '<div class="inline-form" style="margin-bottom:8px">' +
+      '<div class="field" style="flex:0 0 150px"><label>날</label>' + sel('mv-day') + '</div>' +
+      '<div class="field"><label>제목</label><input type="text" id="mv-title"></div>' +
+      '</div>' +
+      '<div class="field"><label>유튜브 주소</label><input type="url" id="mv-url" placeholder="https://youtu.be/..."></div>' +
+      '<button class="btn" id="mv-go">영상 올리기</button><div class="form-msg" id="mv-msg"></div></div>';
+  }
+
+  function dayVal(id) { var v = document.getElementById(id).value; return v === '' ? null : Number(v); }
+
+  function bindUpload() {
+    document.getElementById('mu-go').addEventListener('click', function () {
+      var btn = this, msg = msgBox('mu-msg');
+      var files = Array.prototype.slice.call(document.getElementById('mu-files').files || []);
+      if (!files.length) { msg.className = 'form-msg err'; msg.textContent = '사진을 골라 주세요.'; return; }
+      if (!window.SHSPhotos) { msg.className = 'form-msg err'; msg.textContent = '사진 도구를 불러오지 못했습니다. 화면을 새로 고쳐 주세요.'; return; }
+      var day = dayVal('mu-day'), cap = document.getElementById('mu-cap').value.trim() || null;
+      var base = MEDIA.filter(function (m) { return m.kind === 'photo'; }).reduce(function (a, m) { return Math.max(a, m.sort || 0); }, 0);
+      var done = 0, failed = [];
+      btn.disabled = true;
+      var chain = Promise.resolve();
+      files.forEach(function (f, i) {
+        chain = chain.then(function () {
+          msg.className = 'form-msg'; msg.textContent = (i + 1) + ' / ' + files.length + ' 올리는 중...';
+          return Promise.all([shrink(f, FULL_W, FULL_Q), shrink(f, THUMB_W, THUMB_Q)])
+            .then(function (pair) { return SHSPhotos.putPair(pair[0], pair[1]); })
+            .then(function (u) {
+              return db().then(function (c) {
+                return c.from('retreat_media').insert({
+                  retreat_id: R.id, kind: 'photo', day_no: day, title: cap,
+                  image_url: u.full, thumb_url: u.thumb, sort: base + i + 1,
+                  author_id: user.id, author_name: user.name
+                });
+              });
+            })
+            .then(function (r) { if (r && r.error) throw r.error; done++; })
+            .catch(function (err) { failed.push(f.name + ' (' + (err && err.message || err) + ')'); });
+        });
+      });
+      chain.then(function () {
+        btn.disabled = false;
+        SHSCloud.log('create', '수양회 사진 올림', R.title + ' / ' + dayName(day) + ' ' + done + '장');
+        if (failed.length) {
+          alert(done + '장을 올렸습니다. 올리지 못한 사진 ' + failed.length + '장:\n' + failed.slice(0, 10).join('\n'));
+        }
+        mediaDay = day == null ? 'x' : String(day);
+        drawMedia();
+      });
+    });
+
+    document.getElementById('mv-go').addEventListener('click', function () {
+      var msg = msgBox('mv-msg');
+      var url = document.getElementById('mv-url').value.trim(), title = document.getElementById('mv-title').value.trim();
+      if (!ytId(url)) { msg.className = 'form-msg err'; msg.textContent = '유튜브 주소를 확인해 주세요. (youtu.be/… 또는 youtube.com/watch?v=…)'; return; }
+      var day = dayVal('mv-day');
+      msg.className = 'form-msg'; msg.textContent = '올리는 중입니다...';
+      db().then(function (c) {
+        return c.from('retreat_media').insert({
+          retreat_id: R.id, kind: 'video', day_no: day, title: title || null, image_url: url,
+          sort: MEDIA.filter(function (m) { return m.kind === 'video'; }).length + 1,
+          author_id: user.id, author_name: user.name
+        });
+      }).then(function (r) {
+        if (r.error) { msg.className = 'form-msg err'; msg.textContent = r.error.message; return; }
+        SHSCloud.log('create', '수양회 영상 올림', R.title + ' / ' + (title || url));
+        mediaDay = day == null ? 'x' : String(day);
+        drawMedia();
+      });
+    });
+  }
+
+  function removeMedia(m) {
+    if (!m || !confirm((m.kind === 'video' ? '이 영상을' : '이 사진을') + ' 지우시겠습니까?')) return false;
+    db().then(function (c) { return c.from('retreat_media').delete().eq('id', m.id); }).then(function (r) {
+      if (r.error) { alert(r.error.message); return; }
+      /* 사진 파일도 보관소에서 지운다 (영상은 유튜브 주소라 지울 파일이 없다) */
+      if (m.kind === 'photo' && window.SHSPhotos && SHSPhotos.remove) {
+        [m.image_url, m.thumb_url].forEach(function (u) { if (u) Promise.resolve(SHSPhotos.remove(u)).catch(function () {}); });
+      }
+      SHSCloud.log('delete', '수양회 ' + (m.kind === 'video' ? '영상' : '사진') + ' 지움', R.title + ' / ' + (m.title || m.id));
+      closeViewer();
+      drawMedia();
+    });
+    return true;
+  }
+
+  /* 크게 보기 — 사진은 좌우로 넘기고, 영상은 그 자리에서 재생한다 (닫으면 소리도 멈춘다) */
+  var viewer = null, vList = [], vIdx = 0;
+  function viewerEl() {
+    if (viewer) return viewer;
+    viewer = document.createElement('div');
+    viewer.className = 'lightbox';
+    viewer.innerHTML = '<button class="lb-close" aria-label="닫기">&times;</button>' +
+      '<button class="lb-nav prev" data-d="-1" aria-label="이전">&lsaquo;</button>' +
+      '<button class="lb-nav next" data-d="1" aria-label="다음">&rsaquo;</button>' +
+      '<div class="rt-view" style="width:min(1000px,94vw);text-align:center"></div>';
+    document.body.appendChild(viewer);
+    viewer.querySelector('.lb-close').addEventListener('click', closeViewer);
+    viewer.addEventListener('click', function (ev) { if (ev.target === viewer) closeViewer(); });
+    viewer.querySelectorAll('.lb-nav').forEach(function (b) {
+      b.addEventListener('click', function () { if (vList.length) { vIdx = (vIdx + Number(b.dataset.d) + vList.length) % vList.length; showPhoto(); } });
+    });
+    document.addEventListener('keydown', function (ev) {
+      if (!viewer.classList.contains('open')) return;
+      if (ev.key === 'Escape') closeViewer();
+      if (vList.length && ev.key === 'ArrowLeft') { vIdx = (vIdx - 1 + vList.length) % vList.length; showPhoto(); }
+      if (vList.length && ev.key === 'ArrowRight') { vIdx = (vIdx + 1) % vList.length; showPhoto(); }
+    });
+    return viewer;
+  }
+  function closeViewer() {
+    if (!viewer) return;
+    viewer.classList.remove('open');
+    viewer.querySelector('.rt-view').innerHTML = '';
+  }
+  function showPhoto() {
+    var p = vList[vIdx] || {};
+    viewer.querySelector('.rt-view').innerHTML =
+      '<img src="' + e(p.image_url) + '" alt="" style="max-width:100%;max-height:80vh">' +
+      '<div style="color:#dfe4ee;font-size:0.88rem;margin-top:10px">' + e(p.title || '') + ' · ' + e(dayName(p.day_no)) +
+      (vList.length > 1 ? '   (' + (vIdx + 1) + ' / ' + vList.length + ')' : '') + '</div>' +
+      (canEditMedia(p) ? '<button class="btn ghost sm" style="margin-top:10px;color:#fff;border-color:#fff" id="rt-view-del">이 사진 지우기</button>' : '');
+    var d = document.getElementById('rt-view-del');
+    if (d) d.addEventListener('click', function () { removeMedia(p); });
+  }
+  function openPhoto(list, i) {
+    vList = list; vIdx = i;
+    var v = viewerEl();
+    v.querySelectorAll('.lb-nav').forEach(function (b) { b.style.display = list.length > 1 ? '' : 'none'; });
+    v.classList.add('open');
+    showPhoto();
+  }
+  function openVideo(m) {
+    var id = m && ytId(m.image_url);
+    if (!id) return;
+    vList = [];
+    var v = viewerEl();
+    v.querySelectorAll('.lb-nav').forEach(function (b) { b.style.display = 'none'; });
+    v.querySelector('.rt-view').innerHTML =
+      '<div class="feed-vid"><iframe src="https://www.youtube.com/embed/' + e(id) + '?autoplay=1&rel=0" ' +
+      'allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="' + e(m.title || '영상') + '"></iframe></div>' +
+      '<div style="color:#dfe4ee;font-size:0.92rem;margin-top:10px">' + e(m.title || '') + '</div>' +
+      '<a href="' + e(m.image_url) + '" target="_blank" rel="noopener" style="color:#dfe4ee;font-size:0.82rem;text-decoration:underline">유튜브에서 보기</a>';
+    v.classList.add('open');
+  }
+
+  /* ---------- 명단 ---------- */
+  function drawList() {
+    var box = document.getElementById('rt-body');
+    var ps = S.participants || [];
+    var h = '<p class="rt-muted">' + ps.length + '명' +
+      (isOfficer ? ' · 납부 합계 ' + e(won(ps.reduce(function (a, p) { return a + Number(p.paid || 0); }, 0))) : '') + '</p>';
+    h += '<table class="tbl"><thead><tr><th style="width:50px">번호</th><th>성명</th><th style="width:70px">직분</th><th style="width:110px">교회</th>' +
+      '<th style="width:70px">버스</th><th style="width:70px">쏠라티</th><th style="width:80px">방</th>' +
+      (isOfficer ? '<th style="width:100px">납부</th><th style="width:70px">회원</th><th style="width:80px">관리</th>' : '') +
+      '</tr></thead><tbody>';
+    ps.forEach(function (p) {
+      h += '<tr' + (S.me && p.id === S.me.id ? ' style="background:var(--gray-1)"' : '') + '><td>' + p.seq + '</td>' +
+        '<td class="left"><strong>' + e(p.name) + '</strong>' + (p.companion_of ? ' <span class="rt-count">배우자</span>' : '') +
+        (isOfficer && p.note ? '<div class="rt-count">' + e(p.note) + '</div>' : '') + '</td>' +
+        '<td>' + e(p.role || '') + '</td><td>' + e(p.church || '-') + '</td>' +
+        '<td>' + (p.bus_seat || '-') + '</td><td>' + (p.van_seat || '-') + '</td>' +
+        '<td>' + (p.room_no ? e(p.room_no) : (p.room_group ? p.room_group + '번' : '-')) + '</td>' +
+        (isOfficer
+          ? '<td>' + e(won(p.paid)) + '</td><td>' + (p.linked ? '연결'
+              : (p.role === '사모' || p.role === '배우자'
+                  ? (p.birth_date ? '<span class="rt-count">생일 있음</span>' : '<span class="rt-count">생일 없음</span>')
+                  : '<span style="color:var(--red)">없음</span>')) + '</td>' +
+            '<td><button class="btn ghost sm" data-edit="' + p.id + '">수정</button></td>'
+          : '') + '</tr>';
+    });
+    h += '</tbody></table>';
+    if (isOfficer) h += editorHtml();
+    box.innerHTML = h;
+    if (isOfficer) {
+      bindEditor();
+      box.querySelectorAll('button[data-edit]').forEach(function (b) {
+        b.addEventListener('click', function () { fillEditor(byId(ps, b.dataset.edit)); });
+      });
+    }
+  }
+
+  function editorHtml() {
+    return '<div class="admin-card" id="rt-form" style="margin-top:18px">' +
+      '<h3 style="margin-top:0" id="pf-title">참가자 등록</h3>' +
+      '<input type="hidden" id="pf-id">' +
+      '<div class="inline-form" style="margin-bottom:8px">' +
+      '<div class="field" style="flex:0 0 80px"><label>번호</label><input type="number" id="pf-seq"></div>' +
+      '<div class="field"><label>성명</label><input type="text" id="pf-name"></div>' +
+      '<div class="field" style="flex:0 0 120px"><label>직분</label><select id="pf-role">' +
+      ['목사', '장로', '원로목사', '사모', '배우자'].map(function (v) { return '<option>' + v + '</option>'; }).join('') + '</select></div>' +
+      '<div class="field" style="flex:0 0 160px"><label>교회</label><input type="text" id="pf-church"></div>' +
+      '</div>' +
+      '<div class="inline-form" style="margin-bottom:8px">' +
+      '<div class="field" style="flex:0 0 90px"><label>버스</label><input type="number" id="pf-bus"></div>' +
+      '<div class="field" style="flex:0 0 90px"><label>쏠라티</label><input type="number" id="pf-van"></div>' +
+      '<div class="field" style="flex:0 0 90px"><label>방(번)</label><input type="number" id="pf-rg"></div>' +
+      '<div class="field" style="flex:0 0 110px"><label>호수</label><input type="text" id="pf-rno"></div>' +
+      '<div class="field" style="flex:0 0 130px"><label>납부액</label><input type="number" id="pf-paid"></div>' +
+      '<div class="field" style="flex:0 0 160px"><label>배우자가 묶일 회원</label><select id="pf-comp"><option value="">(회원 본인)</option>' +
+      (S.participants || []).filter(function (p) { return !p.companion_of; }).map(function (p) {
+        return '<option value="' + p.id + '">' + e(p.seq + '. ' + p.name) + '</option>';
+      }).join('') + '</select></div>' +
+      '</div>' +
+      '<div class="inline-form" style="margin-bottom:8px">' +
+      '<div class="field" style="flex:0 0 190px"><label>생년월일 (사모님 · 임원만 봄)</label><input type="date" id="pf-birth"></div>' +
+      '<div class="field"><label>메모 (임원만 봄)</label><input type="text" id="pf-note"></div>' +
+      '</div>' +
+      '<label style="display:flex;gap:8px;align-items:center;margin:2px 0 12px;font-size:0.92rem;cursor:pointer">' +
+      '<input type="checkbox" id="pf-present" style="width:auto"> 도착 확인</label>' +
+      '<button class="btn" id="pf-save">저장</button> ' +
+      '<button class="btn ghost hidden" id="pf-new">새로 쓰기</button> ' +
+      '<button class="btn danger hidden" id="pf-del">삭제</button>' +
+      '<div class="form-msg" id="pf-msg"></div>' +
+      '<p class="rt-muted" style="margin-top:10px">회원(목사·장로)은 이름이 같은 정회원 계정에 저절로 이어집니다. ' +
+      '<strong>사모님</strong>은 생년월일을 적어 두시면, 사모님이 홈페이지에 가입할 때 같은 이름·생년월일을 적었을 때 ' +
+      '수양회 화면이 열리고 일반회원이 됩니다. 동명이인이거나 이름이 다르면 서기가 SQL로 잇습니다.</p></div>';
+  }
+
+  function fillEditor(p) {
+    if (!p) return;
+    document.getElementById('pf-id').value = p.id;
+    document.getElementById('pf-seq').value = p.seq;
+    document.getElementById('pf-name').value = p.name || '';
+    document.getElementById('pf-role').value = p.role || '목사';
+    document.getElementById('pf-church').value = p.church || '';
+    document.getElementById('pf-bus').value = p.bus_seat || '';
+    document.getElementById('pf-van').value = p.van_seat || '';
+    document.getElementById('pf-rg').value = p.room_group || '';
+    document.getElementById('pf-rno').value = p.room_no || '';
+    document.getElementById('pf-paid').value = p.paid || 0;
+    document.getElementById('pf-comp').value = p.companion_of || '';
+    document.getElementById('pf-note').value = p.note || '';
+    document.getElementById('pf-birth').value = p.birth_date || '';
+    document.getElementById('pf-present').checked = !!p.present;
+    document.getElementById('pf-title').textContent = '수정 : ' + p.seq + '. ' + p.name;
+    document.getElementById('pf-new').classList.remove('hidden');
+    document.getElementById('pf-del').classList.remove('hidden');
+    document.getElementById('rt-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function bindEditor() {
+    var msg = msgBox('pf-msg');
+    function num(id) { var v = document.getElementById(id).value; return v === '' ? null : Number(v); }
+    document.getElementById('pf-save').addEventListener('click', function () {
+      var id = document.getElementById('pf-id').value;
+      var d = {
+        retreat_id: R.id,
+        seq: num('pf-seq'),
+        name: document.getElementById('pf-name').value.trim(),
+        role: document.getElementById('pf-role').value,
+        church: document.getElementById('pf-church').value.trim() || null,
+        bus_seat: num('pf-bus'), van_seat: num('pf-van'),
+        room_group: num('pf-rg'), room_no: document.getElementById('pf-rno').value.trim() || null,
+        paid: num('pf-paid') || 0,
+        companion_of: num('pf-comp'),
+        note: document.getElementById('pf-note').value.trim() || null,
+        present: document.getElementById('pf-present').checked,
+        updated_at: new Date().toISOString()
+      };
+      if (!d.seq || !d.name) { msg.className = 'form-msg err'; msg.textContent = '번호와 성명을 적어 주세요.'; return; }
+      var birth = document.getElementById('pf-birth').value || null;
+      var before = id ? byId(S.participants, id) : null;
+      var birthChanged = (birth || null) !== ((before && before.birth_date) || null);
+      msg.className = 'form-msg'; msg.textContent = '저장 중입니다...';
+      db().then(function (c) {
+        var save = id ? c.from('retreat_participants').update(d).eq('id', id).select('id').single()
+                      : c.from('retreat_participants').insert(d).select('id').single();
+        return save.then(function (r) {
+          if (r.error || !birthChanged) return r;
+          /* 생년월일은 임원만 보는 표(retreat_births)에 따로 둔다 (142 sql) */
+          var pid = r.data.id;
+          return birth
+            ? c.from('retreat_births').upsert({ participant_id: pid, birth_date: birth, updated_at: new Date().toISOString() })
+            : c.from('retreat_births').delete().eq('participant_id', pid);
+        });
+      }).then(function (r) {
+        if (r.error) { msg.className = 'form-msg err'; msg.textContent = r.error.message; return; }
+        SHSCloud.log(id ? 'update' : 'create', '수양회 참가자 ' + (id ? '수정' : '등록'), R.title + ' / ' + d.seq + '. ' + d.name);
+        load();
+      });
+    });
+    document.getElementById('pf-new').addEventListener('click', function () {
+      ['pf-id', 'pf-seq', 'pf-name', 'pf-church', 'pf-bus', 'pf-van', 'pf-rg', 'pf-rno', 'pf-note', 'pf-birth'].forEach(function (i) {
+        document.getElementById(i).value = '';
+      });
+      document.getElementById('pf-paid').value = 0;
+      document.getElementById('pf-comp').value = '';
+      document.getElementById('pf-present').checked = false;
+      document.getElementById('pf-title').textContent = '참가자 등록';
+      this.classList.add('hidden');
+      document.getElementById('pf-del').classList.add('hidden');
+    });
+    document.getElementById('pf-del').addEventListener('click', function () {
+      var id = document.getElementById('pf-id').value;
+      if (!id) return;
+      var nm = document.getElementById('pf-name').value;
+      if (!confirm('"' + nm + '" 님을 명단에서 지우시겠습니까? (선택 기록도 함께 지워집니다)')) return;
+      db().then(function (c) { return c.from('retreat_participants').delete().eq('id', id); })
+        .then(function (r) {
+          if (r.error) { alert(r.error.message); return; }
+          SHSCloud.log('delete', '수양회 참가자 삭제', R.title + ' / ' + nm);
+          load();
+        });
+    });
+  }
+
+  /* ---------- 진행 관리 (임원) ---------- */
+  function drawOps() {
+    var box = document.getElementById('rt-body');
+    var steps = S.steps || [], ps = S.participants || [];
+    var h = '<div class="notice-banner">단계를 <strong>열면</strong> 참가자 「내 안내」에 나타나고, 「알림」을 켜 두면 참가자 회원에게 알림함으로 갑니다. ' +
+      '<strong>마감</strong>하면 보이되 더 못 고치고, <strong>닫기</strong>는 다시 감춥니다.</div>';
+
+    h += '<table class="tbl"><thead><tr><th style="width:50px">순서</th><th>단계</th><th style="width:70px">종류</th>' +
+      '<th style="width:70px">상태</th><th style="width:100px">기한</th><th style="width:100px">응답</th><th style="width:320px">처리</th></tr></thead><tbody>';
+    steps.forEach(function (s) {
+      var resp = '';
+      if (s.kind === '선택') {
+        var answered = ps.filter(function (p) { return choiceOf(s.id, p.id); }).length;
+        resp = answered + ' / ' + ps.length;
+      }
+      h += '<tr><td>' + s.seq + '</td><td class="left"><strong>' + e(s.title) + '</strong>' +
+        (s.body ? '<div class="rt-count" style="white-space:pre-line">' + e(s.body) + '</div>' : '') +
+        (s.kind === '선택'
+          ? '<div class="rt-count">선택지 ' + (s.options || []).length + '개' +
+            (s.variants && s.variants.length ? ' · ' + e(s.variants.join(' / ')) : '') + '</div>'
+          : '') +
+        (s.notify ? '<div class="rt-count">알림 보냄</div>' : '') + '</td>' +
+        '<td>' + e(s.kind) + '</td>' +
+        '<td><span class="rt-badge' + (s.status === '열림' ? ' on' : '') + '">' + e(s.status) + '</span></td>' +
+        '<td>' + (s.due ? e(kdate(s.due)) : '-') + '</td><td>' + resp + '</td>' +
+        '<td>' +
+        (s.status !== '열림' ? '<button class="btn sm" data-open="' + s.id + '">열기</button> ' : '') +
+        (s.status === '열림' ? '<button class="btn ghost sm" data-close="' + s.id + '">마감</button> ' : '') +
+        (s.status !== '닫힘' ? '<button class="btn ghost sm" data-hide="' + s.id + '">닫기</button> ' : '') +
+        (s.kind === '선택' ? '<button class="btn ghost sm" data-sum="' + s.id + '">현황</button> ' : '') +
+        '<button class="btn ghost sm" data-edit-step="' + s.id + '">보기·수정</button>' +
+        '</td></tr>';
+    });
+    h += '</tbody></table>';
+    h += '<label style="display:flex;gap:8px;align-items:center;margin:-10px 0 18px;font-size:0.9rem;cursor:pointer">' +
+      '<input type="checkbox" id="op-notify" checked style="width:auto"> 열 때 참가자 회원에게 알림 보내기</label>';
+    h += '<div id="op-edit"></div><div id="op-sum"></div>';
+
+    /* 참가자 화면 미리 보기 — 고른 참가자의 「내 안내」를 그대로 (부부는 함께) */
+    var heads = ps.filter(function (p) { return !p.companion_of; });
+    var pick0 = S.me && !S.me.companion_of ? S.me.id : (heads[0] && heads[0].id);
+    h += '<div class="admin-card" style="margin-top:8px"><h3 style="margin-top:0">참가자 화면 미리 보기</h3>' +
+      '<p class="rt-muted" style="margin-top:0">참가자가 「내 안내」에서 보는 화면입니다. 배우자가 있으면 함께 나오고, 각자 따로 고릅니다. ' +
+      '미리 보기는 누를 수 없습니다.</p>' +
+      '<div class="inline-form" style="margin-bottom:10px">' +
+      '<div class="field" style="flex:0 0 260px"><label>참가자</label><select id="pv-who">' +
+      heads.map(function (p) {
+        var sp = ps.filter(function (q) { return q.companion_of === p.id; }).map(function (q) { return q.name; });
+        return '<option value="' + p.id + '"' + (p.id === pick0 ? ' selected' : '') + '>' +
+          e(p.seq + '. ' + p.name + ' ' + (p.role || '') + (sp.length ? ' + ' + sp.join(', ') : '')) + '</option>';
+      }).join('') + '</select></div>' +
+      '<div class="field" style="flex:0 0 auto;align-self:flex-end;margin-bottom:10px">' +
+      '<label style="display:flex;gap:8px;align-items:center;cursor:pointer;font-weight:400">' +
+      '<input type="checkbox" id="pv-closed" style="width:auto"> 닫힌 단계도 (열면 어떻게 보이는지)</label></div>' +
+      '</div><div class="rt-preview" id="pv-box"></div></div>';
+
+    /* 공지 */
+    h += '<div class="admin-card" style="margin-top:8px"><h3 style="margin-top:0">참가자에게 공지</h3>' +
+      '<div class="field"><label>제목</label><input type="text" id="nt-title" placeholder="예: 내일 집결 05:30 · 신분증 꼭 챙기세요"></div>' +
+      '<div class="field"><label>내용 (선택)</label><textarea id="nt-body" rows="3"></textarea></div>' +
+      '<button class="btn" id="nt-send">알림 보내기</button><div class="form-msg" id="nt-msg"></div>' +
+      '<p class="rt-muted">홈페이지에 가입한 참가자(배우자는 묶인 회원)에게 알림함으로 갑니다. 같은 글은 한 번만 갑니다.</p></div>';
+
+    /* 새 단계 */
+    h += '<div class="admin-card" style="margin-top:16px"><h3 style="margin-top:0">단계 추가</h3>' +
+      '<div class="inline-form" style="margin-bottom:8px">' +
+      '<div class="field" style="flex:0 0 80px"><label>순서</label><input type="number" id="st-seq" value="' + (steps.length ? Math.max.apply(null, steps.map(function (s) { return s.seq; })) + 1 : 1) + '"></div>' +
+      '<div class="field"><label>제목</label><input type="text" id="st-title" placeholder="예: 식당 메뉴 · 2일차 저녁 통갈치"></div>' +
+      '<div class="field" style="flex:0 0 110px"><label>종류</label><select id="st-kind"><option>안내</option><option>선택</option><option>배정</option></select></div>' +
+      '<div class="field" style="flex:0 0 160px"><label>기한 (선택)</label><input type="date" id="st-due"></div>' +
+      '</div>' +
+      '<div class="field"><label>안내 글</label><textarea id="st-body" rows="2"></textarea></div>' +
+      '<div class="field"><label>선택지 (한 줄에 하나 · 종류가 선택일 때)</label><textarea id="st-opts" rows="4" placeholder="아메리카노 HOT 5,000 / ICE 5,500&#10;카페라떼 HOT 5,500 / ICE 6,000"></textarea></div>' +
+      '<div class="field"><label>갈래 (쉼표로 · 선택)</label><input type="text" id="st-vars" placeholder="차갑게 (ICE), 따뜻하게 (HOT), 상관없음"></div>' +
+      '<button class="btn" id="st-save">단계 만들기 (닫힌 상태로)</button><div class="form-msg" id="st-msg"></div></div>';
+
+    /* 수양회 상태 · 바로 가기 주소 (단톡방·설문 주소는 공개 저장소의 SQL 에 두지 않고 여기서 적는다) */
+    h += '<div class="admin-card" style="margin-top:16px"><h3 style="margin-top:0">수양회 상태 · 바로 가기</h3>' +
+      '<div class="inline-form"><div class="field" style="flex:0 0 140px"><label>단계</label><select id="rt-stage">' +
+      ['준비', '진행', '마침'].map(function (v) { return '<option' + (R.stage === v ? ' selected' : '') + '>' + v + '</option>'; }).join('') + '</select></div></div>' +
+      '<div class="field"><label>단톡방 주소</label><input type="url" id="rt-chat" value="' + e(R.chat_url || '') + '" placeholder="https://open.kakao.com/..."></div>' +
+      '<div class="field"><label>가이드북 주소</label><input type="url" id="rt-guide" value="' + e(R.guide_url || '') + '"></div>' +
+      '<div class="field"><label>설문·자료 주소</label><input type="url" id="rt-survey" value="' + e(R.survey_url || '') + '"></div>' +
+      '<button class="btn" id="rt-stage-save">저장</button>' +
+      '<p class="rt-muted">「진행」은 수양회 기간 중 메인 화면 히어로에 띄우는 기준이고, 「마침」이면 띄우지 않습니다. ' +
+      '주소는 화면 맨 위 단추로 나옵니다 (참가자에게만 보입니다).</p></div>';
+
+    box.innerHTML = h;
+
+    function setStep(id, status) {
+      var notify = status === '열림' && document.getElementById('op-notify').checked;
+      if (status === '열림' && notify && !confirm('이 단계를 열고 참가자 회원에게 알림을 보내시겠습니까?')) return;
+      db().then(function (c) { return c.rpc('retreat_set_step', { p_step: Number(id), p_status: status, p_notify: notify }); })
+        .then(function (r) {
+          if (r.error) { alert(r.error.message); return; }
+          var s = byId(steps, id);
+          SHSCloud.log('update', '수양회 단계 ' + status, R.title + ' / ' + (s ? s.title : id) + (notify ? ' · 알림 ' + (r.data || 0) + '명' : ''));
+          if (status === '열림' && notify) alert((r.data || 0) + '명에게 알림을 보냈습니다.');
+          load();
+        });
+    }
+    box.querySelectorAll('button[data-open]').forEach(function (b) { b.addEventListener('click', function () { setStep(b.dataset.open, '열림'); }); });
+    box.querySelectorAll('button[data-close]').forEach(function (b) { b.addEventListener('click', function () { setStep(b.dataset.close, '마감'); }); });
+    box.querySelectorAll('button[data-hide]').forEach(function (b) { b.addEventListener('click', function () { setStep(b.dataset.hide, '닫힘'); }); });
+    box.querySelectorAll('button[data-sum]').forEach(function (b) {
+      b.addEventListener('click', function () { drawSummary(byId(steps, b.dataset.sum), true); });
+    });
+    box.querySelectorAll('button[data-edit-step]').forEach(function (b) {
+      b.addEventListener('click', function () { editStepId = Number(b.dataset.editStep); drawStepEdit(byId(steps, b.dataset.editStep), ''); });
+    });
+
+    function drawPreview() {
+      var pv = document.getElementById('pv-box');
+      var who = byId(ps, document.getElementById('pv-who').value);
+      if (!pv || !who) { if (pv) pv.innerHTML = '<p class="rt-muted">참가자가 없습니다.</p>'; return; }
+      var comps = ps.filter(function (q) { return q.companion_of === who.id; });
+      var mates = ps.filter(function (q) { return who.room_group && q.room_group === who.room_group && q.id !== who.id; });
+      pv.innerHTML = meHtml(who, comps, mates, document.getElementById('pv-closed').checked);
+      freeze(pv);
+    }
+    document.getElementById('pv-who').addEventListener('change', drawPreview);
+    document.getElementById('pv-closed').addEventListener('change', drawPreview);
+    drawPreview();
+
+    document.getElementById('nt-send').addEventListener('click', function () {
+      var msg = msgBox('nt-msg');
+      var t = document.getElementById('nt-title').value.trim(), bd = document.getElementById('nt-body').value.trim() || null;
+      if (!t) { msg.className = 'form-msg err'; msg.textContent = '제목을 적어 주세요.'; return; }
+      if (!confirm('참가자 전원에게 알림을 보내시겠습니까?')) return;
+      msg.className = 'form-msg'; msg.textContent = '보내는 중입니다...';
+      db().then(function (c) { return c.rpc('retreat_notify', { p_retreat: R.id, p_title: t, p_body: bd }); })
+        .then(function (r) {
+          if (r.error) { msg.className = 'form-msg err'; msg.textContent = r.error.message; return; }
+          msg.className = 'form-msg ok';
+          msg.textContent = (r.data || 0) > 0 ? r.data + '명에게 알림을 보냈습니다.' : '새로 보낼 대상이 없습니다. (같은 글을 이미 보냈거나 가입 회원이 없습니다)';
+          SHSCloud.log('create', '수양회 공지 발송', R.title + ' / ' + t);
+        });
+    });
+
+    document.getElementById('st-save').addEventListener('click', function () {
+      var msg = msgBox('st-msg');
+      var kind = document.getElementById('st-kind').value;
+      var title = document.getElementById('st-title').value.trim();
+      var opts = document.getElementById('st-opts').value.split('\n').map(function (x) { return x.trim(); }).filter(Boolean);
+      var vars = document.getElementById('st-vars').value.split(',').map(function (x) { return x.trim(); }).filter(Boolean);
+      if (!title) { msg.className = 'form-msg err'; msg.textContent = '제목을 적어 주세요.'; return; }
+      if (kind === '선택' && !opts.length) { msg.className = 'form-msg err'; msg.textContent = '선택지를 한 줄에 하나씩 적어 주세요.'; return; }
+      var d = {
+        retreat_id: R.id, seq: Number(document.getElementById('st-seq').value) || 0,
+        key: 'step-' + Date.now().toString(36), title: title, kind: kind,
+        body: document.getElementById('st-body').value.trim() || null,
+        due: document.getElementById('st-due').value || null,
+        variants: vars.length ? vars : null, created_by: user.name
+      };
+      msg.className = 'form-msg'; msg.textContent = '만드는 중입니다...';
+      db().then(function (c) {
+        return c.from('retreat_steps').insert(d).select('id').single().then(function (r) {
+          if (r.error || !opts.length) return r;
+          return c.from('retreat_options').insert(opts.map(function (o, i) { return { step_id: r.data.id, seq: i + 1, label: o }; }));
+        });
+      }).then(function (r) {
+        if (r.error) { msg.className = 'form-msg err'; msg.textContent = r.error.message; return; }
+        SHSCloud.log('create', '수양회 단계 추가', R.title + ' / ' + title);
+        load();
+      });
+    });
+
+    document.getElementById('rt-stage-save').addEventListener('click', function () {
+      var v = document.getElementById('rt-stage').value;
+      function u(id) { return document.getElementById(id).value.trim() || null; }
+      var d = { stage: v, chat_url: u('rt-chat'), guide_url: u('rt-guide'), survey_url: u('rt-survey'), updated_at: new Date().toISOString() };
+      db().then(function (c) { return c.from('retreats').update(d).eq('id', R.id); })
+        .then(function (r) {
+          if (r.error) { alert(r.error.message); return; }
+          SHSCloud.log('update', '수양회 상태', R.title + ' → ' + v);
+          load();
+        });
+    });
+
+    /* 저장한 뒤 다시 읽었으면 고치던 단계를 그대로 펼쳐 둔다 */
+    if (editStepId && byId(steps, editStepId)) { drawStepEdit(byId(steps, editStepId), editFlash); editFlash = ''; }
+    if (sumStepId && byId(steps, sumStepId)) drawSummary(byId(steps, sumStepId), false);
+  }
+
+  /* ---------- 단계 보기·수정 (임원) ----------
+   * 제목·안내 글·기한·갈래와 선택지(한 줄에 하나)를 고치고, 참가자 화면에서 어떻게
+   * 보이는지 미리 본다. 미리 보기는 부부 두 분을 예로 들어, 각자 따로 고르는 모습을 보여 준다. */
+  function drawStepEdit(s, flash) {
+    var box = document.getElementById('op-edit');
+    if (!box || !s) return;
+    var opts = (s.options || []).map(function (o) { return o.label; });
+    var chosen = (S.choices || []).filter(function (c) { return String(c.step_id) === String(s.id); }).length;
+    var h = '<div class="admin-card" id="se-card" style="margin-top:4px">' +
+      '<h3 style="margin-top:0">보기·수정 : ' + e(s.title) + ' <span class="rt-badge' + (s.status === '열림' ? ' on' : '') + '">' + e(s.status) + '</span></h3>' +
+      '<div class="inline-form" style="margin-bottom:8px">' +
+      '<div class="field" style="flex:0 0 80px"><label>순서</label><input type="number" id="se-seq" value="' + e(s.seq) + '"></div>' +
+      '<div class="field"><label>제목</label><input type="text" id="se-title" value="' + e(s.title) + '"></div>' +
+      '<div class="field" style="flex:0 0 110px"><label>종류</label><select id="se-kind">' +
+      ['안내', '선택', '배정'].map(function (k) { return '<option' + (s.kind === k ? ' selected' : '') + '>' + k + '</option>'; }).join('') + '</select></div>' +
+      '<div class="field" style="flex:0 0 160px"><label>기한 (선택)</label><input type="date" id="se-due" value="' + e(s.due || '') + '"></div>' +
+      '</div>' +
+      '<div class="field"><label>안내 글</label><textarea id="se-body" rows="3">' + e(s.body || '') + '</textarea></div>' +
+      '<div id="se-optwrap">' +
+      '<div class="field"><label>선택지 (한 줄에 하나 · 지금 ' + opts.length + '개)</label>' +
+      '<textarea id="se-opts" rows="' + Math.min(Math.max(opts.length, 4), 16) + '">' + e(opts.join('\n')) + '</textarea></div>' +
+      '<div class="field"><label>갈래 (쉼표로 · 선택)</label><input type="text" id="se-vars" value="' + e((s.variants || []).join(', ')) + '" placeholder="차갑게 (ICE), 따뜻하게 (HOT), 상관없음"></div>' +
+      (chosen ? '<p class="rt-muted">이미 ' + chosen + '명이 골랐습니다. 고른 사람이 있는 선택지를 지우면 그분의 기록은 남고 목록에서만 감춰집니다.</p>' : '') +
+      '</div>' +
+      '<button class="btn" id="se-save">저장</button> <button class="btn ghost" id="se-cancel">접기</button>' +
+      '<div class="form-msg' + (flash ? ' ok' : '') + '" id="se-msg">' + e(flash || '') + '</div>' +
+      '<h3 style="margin:22px 0 8px;font-size:1rem">미리 보기 ① 열 때 가는 알림 (「열 때 알림 보내기」를 켜 두었을 때)</h3>' +
+      '<div class="rt-preview" style="white-space:pre-line"><strong>' + e(noticeText(s).title) + '</strong>\n' +
+      '<span class="rt-muted" style="font-size:0.9rem">' + e(noticeText(s).body) + '</span></div>' +
+      '<h3 style="margin:22px 0 8px;font-size:1rem">미리 보기 ② 참가자 「내 안내」에 이렇게 보입니다' +
+      (s.status === '닫힘' ? ' (지금은 닫혀 있어 참가자에게 안 보입니다)' : '') + '</h3>' +
+      '<div class="rt-preview" id="se-preview"></div>' +
+      '<p class="rt-muted">미리 보기는 저장된 내용 기준입니다. 고친 뒤 「저장」을 누르면 바뀝니다.</p></div>';
+    box.innerHTML = h;
+
+    /* 미리 보기: 부부 두 분을 예로 — 각자 따로 고르는 모습 */
+    var pv = document.getElementById('se-preview');
+    pv.innerHTML = stepCard(Object.assign({}, s, { status: '열림' }),
+      [{ id: -1, name: '(예) 김목사', role: '목사' }, { id: -2, name: '(예) 이사모', role: '사모' }]);
+    freeze(pv);
+
+    function syncKind() {
+      document.getElementById('se-optwrap').style.display = document.getElementById('se-kind').value === '선택' ? '' : 'none';
+    }
+    document.getElementById('se-kind').addEventListener('change', syncKind);
+    syncKind();
+
+    document.getElementById('se-cancel').addEventListener('click', function () { editStepId = null; box.innerHTML = ''; });
+
+    document.getElementById('se-save').addEventListener('click', function () {
+      var msg = msgBox('se-msg');
+      var kind = document.getElementById('se-kind').value;
+      var labels = document.getElementById('se-opts').value.split('\n').map(function (x) { return x.trim(); }).filter(Boolean);
+      var vars = document.getElementById('se-vars').value.split(',').map(function (x) { return x.trim(); }).filter(Boolean);
+      var d = {
+        seq: Number(document.getElementById('se-seq').value) || 0,
+        title: document.getElementById('se-title').value.trim(),
+        kind: kind,
+        body: document.getElementById('se-body').value.trim() || null,
+        due: document.getElementById('se-due').value || null,
+        variants: vars.length ? vars : null,
+        updated_at: new Date().toISOString()
+      };
+      if (!d.title) { msg.className = 'form-msg err'; msg.textContent = '제목을 적어 주세요.'; return; }
+      if (kind === '선택' && !labels.length) { msg.className = 'form-msg err'; msg.textContent = '선택지를 한 줄에 하나씩 적어 주세요.'; return; }
+      msg.className = 'form-msg'; msg.textContent = '저장 중입니다...';
+      var hidden = 0;
+      db().then(function (c) {
+        return c.from('retreat_steps').update(d).eq('id', s.id).then(function (r) {
+          if (r.error || kind !== '선택') return r;
+          return saveOptions(c, s.id, labels).then(function (r2) { hidden = r2.hidden || 0; return r2; });
+        });
+      }).then(function (r) {
+        if (r.error) { msg.className = 'form-msg err'; msg.textContent = r.error.message || String(r.error); return; }
+        SHSCloud.log('update', '수양회 단계 수정', R.title + ' / ' + d.title + (kind === '선택' ? ' · 선택지 ' + labels.length + '개' : ''));
+        editStepId = s.id;
+        editFlash = '저장했습니다.' + (hidden ? ' 고른 사람이 있는 선택지 ' + hidden + '개는 기록을 남기고 목록에서만 감췄습니다.' : '');
+        load();
+      });
+    });
+
+    box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* 선택지 저장 — 글이 같은 선택지는 그대로 두고(고른 기록이 이어지게) 순서만 맞추며,
+   * 새 글은 더하고, 빠진 것은 고른 사람이 있으면 감추고(enabled=false) 없으면 지운다.
+   * (step_id, seq) 가 겹치지 않도록 먼저 모두 임시 번호(-id)로 비켜 둔 뒤 다시 매긴다. */
+  function saveOptions(c, stepId, labels) {
+    return Promise.all([
+      c.from('retreat_options').select('id,seq,label,enabled').eq('step_id', stepId),
+      c.from('retreat_choices').select('option_id').eq('step_id', stepId)
+    ]).then(function (rs) {
+      if (rs[0].error) return rs[0];
+      if (rs[1].error) return rs[1];
+      var cur = rs[0].data || [], used = {};
+      (rs[1].data || []).forEach(function (x) { if (x.option_id) used[x.option_id] = 1; });
+      var pool = {};
+      cur.slice().sort(function (a, b) { return (b.enabled ? 1 : 0) - (a.enabled ? 1 : 0) || a.seq - b.seq; })
+        .forEach(function (o) { (pool[o.label] = pool[o.label] || []).push(o); });
+      var keep = [], fresh = [], kept = {};
+      labels.forEach(function (l, i) {
+        var o = (pool[l] || []).shift();
+        if (o) { kept[o.id] = 1; keep.push({ id: o.id, step_id: stepId, seq: i + 1, label: l, enabled: true }); }
+        else fresh.push({ step_id: stepId, seq: i + 1, label: l, enabled: true });
+      });
+      var park = cur.map(function (o) { return { id: o.id, step_id: stepId, seq: -o.id, label: o.label, enabled: !!kept[o.id] }; });
+      var drop = cur.filter(function (o) { return !kept[o.id] && !used[o.id]; }).map(function (o) { return o.id; });
+      var hidden = cur.filter(function (o) { return !kept[o.id] && used[o.id] && o.enabled; }).length;
+      function chk(r) { if (r && r.error) throw r.error; return r; }
+      return Promise.resolve(park.length ? c.from('retreat_options').upsert(park) : {}).then(chk)
+        .then(function () { return keep.length ? c.from('retreat_options').upsert(keep) : {}; }).then(chk)
+        .then(function () { return fresh.length ? c.from('retreat_options').insert(fresh) : {}; }).then(chk)
+        .then(function () { return drop.length ? c.from('retreat_options').delete().in('id', drop) : {}; }).then(chk)
+        .then(function () { return { error: null, hidden: hidden }; }, function (err) { return { error: err }; });
+    });
+  }
+
+  /* 선택 단계의 현황 — 선택지별 수와 아직 안 고른 분, 그리고 사람별로 임원이 대신 고르기
+   * (홈페이지를 쓰지 않는 분·배우자 몫을 전화로 받아 넣을 때)
+   *
+   * 열어 두면 30초마다 저절로 다시 읽는다 (홈페이지의 다른 화면처럼 시간마다 확인하는 방식 —
+   * 휴대폰으로 카페 앞에서 열어 두고 기다리면 된다). 화면을 내려 두거나 다른 탭으로 가면 쉰다.
+   * 지난번에 읽은 뒤 새로 고르거나 바꾼 분은 「새로」로 표시한다.
+   * 「주문서」는 카페에 그대로 보여 줄 수 있게 메뉴별 잔 수만 크게 보여 준다. */
+  var SUM_EVERY = 30000;
+  function sumSig(c) { return c ? [c.option_id || '', c.variant || '', c.note || ''].join('|') : ''; }
+  function sumStop() { if (sumTimer) { clearInterval(sumTimer); sumTimer = null; } }
+
+  function drawSummary(s, byClick) {
+    sumStop();
+    if (!s) return;
+    var box = document.getElementById('op-sum');
+    if (!box) return;
+    if (sumStepId !== s.id) { sumFresh = {}; sumSeen = null; }
+    sumStepId = s.id;
+    box.dataset.step = s.id;
+    var ps = S.participants || [];
+
+    function hhmmss(d) { return [d.getHours(), d.getMinutes(), d.getSeconds()].map(function (n) { return (n < 10 ? '0' : '') + n; }).join(':'); }
+    function rememberSeen() {
+      sumSeen = {};
+      ps.forEach(function (p) { sumSeen[p.id] = sumSig(choiceOf(s.id, p.id)); });
+    }
+    if (!sumSeen) rememberSeen();
+    else ps.forEach(function (p) {   /* 화면을 다시 그리는 사이에 들어온 것도 「새로」로 */
+      if (sumSig(choiceOf(s.id, p.id)) !== sumSeen[p.id]) sumFresh[p.id] = 1;
+    });
+
+    box.innerHTML = '<div class="rt-card"><h3>' + e(s.title) + ' · 현황 <span class="rt-count" id="sum-n"></span></h3>' +
+      '<div class="rt-sum-bar">' +
+      '<button class="btn sm' + (sumView === 'order' ? ' ghost' : '') + '" data-sv="table">현황표</button>' +
+      '<button class="btn sm' + (sumView === 'order' ? '' : ' ghost') + '" data-sv="order">주문서</button>' +
+      '<button class="btn ghost sm" id="sum-now">지금 새로 고침</button>' +
+      '<button class="btn ghost sm" id="sum-close">접기</button>' +
+      '<span class="rt-count" id="sum-stamp"></span></div>' +
+      '<div id="sum-fresh"></div>' +
+      '<div id="sum-counts"></div>' +
+      '<details class="rt-sum-people"' + (sumView === 'order' ? ' style="display:none"' : '') + '>' +
+      '<summary>사람별로 보기 · 임원이 대신 고르기 (' + ps.length + '명)</summary>' +
+      '<p class="rt-muted">부부도 한 분씩 따로 고릅니다. 홈페이지를 쓰지 않는 분은 전화로 여쭈어 여기서 넣어 주세요. ' +
+      '마감된 단계도 임원은 고칠 수 있습니다. 고치는 중인 줄은 저절로 새로 고칠 때 건드리지 않습니다.</p>' +
+      '<div data-step="' + s.id + '">' + personRows(s, ps, function (p) {
+        return p.seq + '번' + (p.church ? ' · ' + p.church : '') + (p.companion_of ? ' · 배우자' : '');
+      }) + '</div></details></div>';
+
+    /* 현황표 또는 주문서 */
+    function paint() {
+      var none = ps.filter(function (p) { return !choiceOf(s.id, p.id); });
+      document.getElementById('sum-n').textContent = (ps.length - none.length) + ' / ' + ps.length;
+      document.getElementById('sum-counts').innerHTML = sumView === 'order' ? orderHtml(none) : tableHtml(none);
+      var fresh = ps.filter(function (p) { return sumFresh[p.id]; });
+      document.getElementById('sum-fresh').innerHTML = fresh.length
+        ? '<div class="dash-alert"><strong>새로 고르거나 바꾼 분 ' + fresh.length + '명</strong> — ' +
+          e(fresh.map(function (p) { return p.name; }).join(', ')) +
+          ' <a href="#" id="sum-fresh-clear">표시 지우기</a></div>'
+        : '';
+      var fc = document.getElementById('sum-fresh-clear');
+      if (fc) fc.addEventListener('click', function (ev) { ev.preventDefault(); sumFresh = {}; paint(); });
+      rememberSeen();
+    }
+    function tableHtml(none) {
+      var byOpt = {};
+      ps.forEach(function (p) {
+        var c = choiceOf(s.id, p.id);
+        if (!c) return;
+        var k = (c.option_label || '(메모만)') + (c.variant ? ' · ' + c.variant : '');
+        (byOpt[k] = byOpt[k] || []).push('<span' + (sumFresh[p.id] ? ' class="rt-fresh"' : '') + '>' + e(p.name) +
+          (c.note ? '(' + e(c.note) + ')' : '') + (sumFresh[p.id] ? '<span class="rt-new">새로</span>' : '') + '</span>');
+      });
+      var keys = Object.keys(byOpt).sort(function (a, b) { return byOpt[b].length - byOpt[a].length; });
+      var h = '';
+      if (!keys.length) h += '<p class="rt-muted">아직 고른 분이 없습니다.</p>';
+      else {
+        h += '<table class="tbl" style="max-width:760px"><thead><tr><th>선택</th><th style="width:60px">수</th><th>이름</th></tr></thead><tbody>' +
+          keys.map(function (k) {
+            return '<tr><td class="left">' + e(k) + '</td><td>' + byOpt[k].length + '</td><td class="left" style="font-size:0.86rem">' + byOpt[k].join(', ') + '</td></tr>';
+          }).join('') + '</tbody></table>';
+      }
+      if (none.length) h += '<p class="rt-muted">아직 안 고른 분 (' + none.length + '): ' + e(none.map(function (p) { return p.name; }).join(', ')) + '</p>';
+      return h;
+    }
+    /* 주문서 — 메뉴판 순서대로 「메뉴 · 갈래 — N잔」, 요청은 따로 모아서 */
+    function orderHtml(none) {
+      var seqOf = {};
+      (s.options || []).forEach(function (o) { seqOf[o.id] = o.seq; });
+      var rows = {}, notes = {}, total = 0;
+      ps.forEach(function (p) {
+        var c = choiceOf(s.id, p.id);
+        if (!c) return;
+        if (c.option_label) {
+          var k = c.option_label + '|' + (c.variant || '');
+          if (!rows[k]) rows[k] = { label: c.option_label, variant: c.variant || '', n: 0, seq: seqOf[c.option_id] || 9999 };
+          rows[k].n++; total++;
+        }
+        if (c.note) notes[c.note] = (notes[c.note] || 0) + 1;
+      });
+      var list = Object.keys(rows).map(function (k) { return rows[k]; })
+        .sort(function (a, b) { return a.seq - b.seq || (a.variant < b.variant ? -1 : a.variant > b.variant ? 1 : 0); });
+      var h = '<div class="rt-order"><div class="rt-order-h">' + e(s.title.replace(/^카페 주문 · /, '')) + '</div>' +
+        '<div class="rt-order-sub">' + e(R.title) + ' · 모두 ' + total + '잔</div>';
+      if (!list.length) h += '<p class="rt-muted">아직 고른 분이 없습니다.</p>';
+      list.forEach(function (r) {
+        h += '<div class="rt-order-row"><span>' + e(r.label) + (r.variant ? ' <em>· ' + e(r.variant) + '</em>' : '') + '</span>' +
+          '<strong>' + r.n + '잔</strong></div>';
+      });
+      var nk = Object.keys(notes);
+      if (nk.length) {
+        h += '<div class="rt-order-notes"><strong>요청</strong> ' + nk.map(function (k) {
+          return e(k) + (notes[k] > 1 ? ' ×' + notes[k] : '');
+        }).join(' · ') + '</div>';
+      }
+      h += '</div>';
+      if (none.length) h += '<p class="rt-muted">아직 안 고른 분 ' + none.length + '명 — 이분들 몫은 주문서에 들어 있지 않습니다.</p>';
+      return h;
+    }
+
+    /* 사람별 줄 — 고치기 시작한 줄은 저절로 새로 고칠 때 덮어쓰지 않는다 */
+    var rowsBox = box.querySelector('.rt-sum-people');
+    rowsBox.querySelectorAll('.rt-choice').forEach(function (w) {
+      ['input', 'change'].forEach(function (ev) { w.addEventListener(ev, function () { w.dataset.dirty = '1'; }); });
+    });
+    function syncRows() {
+      rowsBox.querySelectorAll('.rt-choice').forEach(function (w) {
+        if (w.dataset.dirty) return;
+        var c = choiceOf(s.id, w.dataset.p);
+        var m = w.querySelector('.menu'), v = w.querySelector('.var'), n = w.querySelector('.note');
+        if (m) m.value = c && c.option_id ? String(c.option_id) : '';
+        if (v) v.value = (c && c.variant) || '';
+        if (n) n.value = (c && c.note) || '';
+        var cur = w.querySelector('.cur');
+        if (cur) {
+          cur.style.color = '';
+          cur.textContent = c ? '지금 선택: ' + (c.option_label || '') + (c.variant ? ' · ' + c.variant : '') + (c.note ? ' · ' + c.note : '')
+                              : '아직 고르지 않았습니다.';
+        }
+      });
+    }
+
+    /* 다시 읽기 */
+    var busy = false;
+    function refresh() {
+      if (busy) return;
+      var here = document.getElementById('op-sum');
+      if (!here || String(here.dataset.step) !== String(s.id) || !document.body.contains(here)) { sumStop(); return; }
+      busy = true;
+      document.getElementById('sum-stamp').textContent = '확인 중...';
+      db().then(function (c) { return c.rpc('retreat_state', { p_retreat: R.id }); }).then(function (r) {
+        busy = false;
+        var st = document.getElementById('sum-stamp');
+        if (!st) return;
+        if (r.error || !r.data) { st.textContent = '확인하지 못했습니다 — 잠시 뒤 다시 합니다'; return; }
+        S.choices = r.data.choices || [];
+        if (r.data.participants && r.data.participants.length) S.participants = r.data.participants;
+        ps.forEach(function (p) {
+          if (sumSeen && sumSig(choiceOf(s.id, p.id)) !== sumSeen[p.id]) sumFresh[p.id] = 1;
+        });
+        paint();
+        syncRows();
+        st.textContent = '마지막 확인 ' + hhmmss(new Date()) + ' · 30초마다 저절로';
+      }, function () {
+        busy = false;
+        var st = document.getElementById('sum-stamp');
+        if (st) st.textContent = '확인하지 못했습니다 — 잠시 뒤 다시 합니다';
+      });
+    }
+
+    box.querySelectorAll('button[data-sv]').forEach(function (b) {
+      b.addEventListener('click', function () { sumView = b.dataset.sv; drawSummary(s, false); });
+    });
+    document.getElementById('sum-now').addEventListener('click', refresh);
+    document.getElementById('sum-close').addEventListener('click', function () {
+      sumStop(); sumStepId = null; sumFresh = {}; sumSeen = null; box.innerHTML = ''; delete box.dataset.step;
+    });
+
+    paint();
+    document.getElementById('sum-stamp').textContent = '마지막 확인 ' + hhmmss(new Date()) + ' · 30초마다 저절로';
+    bindChoices(rowsBox, function (pay) {
+      var w = rowsBox.querySelector('.rt-choice[data-p="' + pay.participant_id + '"]');
+      if (w) delete w.dataset.dirty;
+      paint();
+    });
+    sumTimer = setInterval(function () { if (!document.hidden) refresh(); }, SUM_EVERY);
+    if (!sumVisBound) {
+      sumVisBound = true;
+      document.addEventListener('visibilitychange', function () {
+        /* 휴대폰 화면을 다시 켜면 곧바로 한 번 확인한다 */
+        if (!document.hidden && sumTimer) { var b = document.getElementById('sum-now'); if (b) b.click(); }
+      });
+    }
+    if (byClick) box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  load();
+ });
+});
+</script>
+</body>
+</html>
