@@ -255,14 +255,16 @@ returns public.retreats language sql stable security definer set search_path = p
    limit 1
 $fn$;
 
--- 이 수양회에서 나는 누구인가 — 회원 연결이 먼저, 없으면 이름이 같은 회원 참가자
+-- 이 수양회에서 나는 누구인가 — 회원 연결(user_id)이 먼저, 아니면 이름이 같은 회원 참가자.
+-- 계정이 둘인 분(서기 등)이 다른 계정으로 들어와도 이름으로 찾도록, 연결된 줄도 이름 대조에 넣는다.
+-- (user_id 는 알림을 보낼 계정을 정할 뿐이다)
 create or replace function public.retreat_my_participant(p_retreat bigint)
 returns bigint language sql stable security definer set search_path = public as $fn$
   select p.id
     from public.retreat_participants p
    where p.retreat_id = p_retreat
      and (p.user_id = auth.uid()
-       or (p.user_id is null and p.companion_of is null
+       or (p.companion_of is null
            and exists (select 1 from public.profiles pr
                         where pr.id = auth.uid() and pr.name is not null and pr.name = p.name)))
    order by (p.user_id = auth.uid()) desc nulls last, p.id
